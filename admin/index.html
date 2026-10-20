@@ -53,7 +53,11 @@ html.nav-open{overflow:hidden!important;height:100%;overscroll-behavior:none}
 html.nav-open body{overflow:hidden!important;position:fixed;inset-inline:0;width:100%;overscroll-behavior:none;touch-action:none}
 html.nav-open .sidebar,html.nav-open .side-nav{touch-action:pan-y;overscroll-behavior:contain}
 .top{display:none;position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
-.top .bar{display:flex;align-items:center;gap:10px;min-height:56px}
+.top .bar{display:flex;align-items:center;gap:10px;min-height:56px;position:relative}
+.top-brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:1}
+.top-brand img{height:32px;width:auto;display:block}
+.top #nav-toggle,.top .sync{position:relative;z-index:2}
+.top .sync{max-width:42vw;overflow:hidden;text-overflow:ellipsis}
 .sp{flex:1}
 .sync{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.8rem;font-weight:700;white-space:nowrap}
 .sync i{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
@@ -487,6 +491,7 @@ dialog .acts{justify-content:flex-start}
   <div class="wrap">
     <div class="bar">
       <button class="btn icon-btn" id="nav-toggle" type="button" title="القائمة" aria-label="فتح القائمة" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="top-brand" aria-hidden="true"><img src="/assets/logo.png" alt="" id="logo-m"></div>
       <span class="sp"></span>
       <span class="sync" id="sync-m"><i></i><span id="sync-t-m">جارٍ التحميل…</span></span>
     </div>
@@ -745,7 +750,10 @@ dialog .acts{justify-content:flex-start}
 
   // ---------- theme (light by default) ----------
   try { const t = localStorage.getItem('et07_admin_theme'); if (t === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}
-  const syncLogo = () => { $('#logo').src = document.documentElement.dataset.theme === 'dark' ? '/assets/logo-white.png' : '/assets/logo.png'; };
+  const syncLogo = () => {
+    const src = document.documentElement.dataset.theme === 'dark' ? '/assets/logo-white.png' : '/assets/logo.png';
+    ['#logo', '#logo-m'].forEach(s => { const n = $(s); if (n) n.src = src; });
+  };
   syncLogo();
   $('#theme').addEventListener('click', () => {
     const d = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
