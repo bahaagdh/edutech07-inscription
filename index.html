@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>التسجيل — الملتقى الوطني السابع | EduTech Solutions 07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Layout: light brand page (white + light blue) with a navy hero; sections: hero+timer → topics → offers → form → verify → badges → footer */
+:root{
+  --bg:#f2f6fc; --surface:#ffffff; --surface-2:#eaf1fb; --fg:#0f2a5a; --fg-soft:#3b5584; --muted:#6b84ad; --line:#cfdcf0;
+  --brand:#1a6fd9; --brand-deep:#0b4fa8; --navy:#0a1f4d; --navy-2:#102c66; --lime:#d6f41f; --lime-ink:#1f2a05; --cyan:#1fd8ff; --gold:#e9c46a;
+  --hero-bg:#0a2a66; --hero-fg:#ffffff; --shadow:0 18px 50px rgba(15,42,90,.12); --radius:18px;
+  --logo-dark:block; --logo-light:none;
+  --font:'Cairo',"Noto Kufi Arabic",Tahoma,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#061532; --surface:#0c2250; --surface-2:#122c62; --fg:#eaf2ff; --fg-soft:#c3d4f2; --muted:#8fa9d6; --line:#24407a; --brand:#4a9bff; --brand-deep:#2f7fe6; --shadow:0 18px 50px rgba(0,0,0,.45); --logo-dark:none; --logo-light:block; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#061532; --surface:#0c2250; --surface-2:#122c62; --fg:#eaf2ff; --fg-soft:#c3d4f2; --muted:#8fa9d6; --line:#24407a; --brand:#4a9bff; --brand-deep:#2f7fe6; --shadow:0 18px 50px rgba(0,0,0,.45); --logo-dark:none; --logo-light:block; color-scheme:dark }
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.7;direction:rtl}
+img{max-width:100%;display:block}
+h1,h2,h3,h4{margin:0;line-height:1.25;text-wrap:balance}
+.wrap{width:min(1180px,100%);margin-inline:auto;padding-inline:clamp(16px,4vw,36px)}
+.logo-d{display:var(--logo-dark)}.logo-l{display:var(--logo-light)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:8px 26px;border-radius:12px;border:0;font:inherit;font-weight:800;font-size:1rem;cursor:pointer;text-decoration:none;transition:transform .15s,filter .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn-lime{background:var(--lime);color:var(--lime-ink)}
+.btn-blue{background:var(--brand);color:#fff}
+.btn-navy{background:#fff;color:var(--navy)}
+.btn-outline{background:transparent;color:var(--fg);border:2px solid var(--line)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+.btn svg{width:20px;height:20px;flex:none}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:1000;isolation:isolate;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 2px 14px rgba(15,42,90,.06);padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:calc(var(--nav-h,66px) + 10px)}
+section[id],[id=register],[id=done]{scroll-margin-top:calc(var(--nav-h,66px) + 10px)}
+.nav .wrap{display:flex;flex-direction:row-reverse;align-items:center;gap:18px;padding-block:10px}
+.nav .brand{margin-right:auto}
+.nav .brand img{height:44px;width:auto}
+.nav nav{display:flex;flex-direction:row-reverse;gap:26px}
+.nav nav a{color:var(--fg);text-decoration:none;font-weight:700}
+.nav nav a:hover{color:var(--brand)}
+.nav .cta{min-height:44px;padding:6px 18px;font-size:.95rem}
+.theme{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--fg);cursor:pointer;flex:none}
+.theme svg{width:22px;height:22px}
+.theme .sun{display:none}.theme .moon{display:block}
+:root[data-theme="dark"] .theme .sun{display:block} :root[data-theme="dark"] .theme .moon{display:none}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .theme .sun{display:block} :root:not([data-theme="light"]) .theme .moon{display:none} }
+
+/* hero */
+.hero{position:relative;overflow:hidden;display:flex;min-height:calc(100svh - var(--nav-h,66px));background:radial-gradient(ellipse at 85% 10%,rgba(31,216,255,.25),transparent 45%),linear-gradient(135deg,#0d2f74 0%,#0a2460 55%,#061b4a 100%);color:var(--hero-fg)}
+.hero .hex{position:absolute;top:-30px;left:auto;right:-40px;width:260px;opacity:.14;pointer-events:none}
+.hero .wrap{position:relative;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(22px,4vw,40px)}
+.hero-copy{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;min-width:0}
+.hero-art{min-width:0;align-self:center;display:flex;justify-content:center}
+.hero-art img{width:100%;height:auto;max-height:calc(100svh - var(--nav-h,66px) - 2*clamp(22px,4vw,40px));object-fit:cover;border-radius:22px;box-shadow:0 20px 60px rgba(0,10,40,.5)}
+.timer-label{display:inline-flex;align-items:center;gap:10px;padding:7px 16px 7px 14px;border-radius:999px;background:rgba(2,16,46,.5);border:1px solid rgba(144,200,255,.35);color:#eaf2ff;font-weight:700;font-size:.95rem;letter-spacing:.2px;backdrop-filter:blur(6px)}
+.timer-label::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(214,244,31,.6);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(214,244,31,.55)}100%{box-shadow:0 0 0 12px rgba(214,244,31,0)}}
+.clock{display:flex;gap:clamp(12px,3vw,22px);direction:ltr;justify-content:center;margin-top:2px}
+.clock div{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:clamp(66px,16vw,104px);padding:14px 6px 10px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.035));border:1px solid rgba(144,200,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 34px rgba(0,10,40,.42);backdrop-filter:blur(8px)}
+.clock div::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,transparent,var(--lime),transparent)}
+.clock div:not(:last-child)::after{content:"";position:absolute;top:50%;right:calc(-1*clamp(12px,3vw,22px)/2 - 3px);width:6px;height:26px;transform:translateY(-62%);background:radial-gradient(circle at 50% 22%,var(--lime) 2.6px,transparent 3px),radial-gradient(circle at 50% 78%,var(--lime) 2.6px,transparent 3px);opacity:.9}
+.clock b{font-size:clamp(2rem,6.2vw,3.1rem);font-weight:900;line-height:1;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#ffffff 10%,var(--lime) 75%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 12px rgba(214,244,31,.25));transition:opacity .25s}
+.clock b.flip{animation:flip .45s ease}
+@keyframes flip{0%{transform:translateY(-6px);opacity:.2}100%{transform:none;opacity:1}}
+.clock span{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b9cdf2;margin-top:7px}
+.eyebrow{color:#fff;font-weight:700;font-size:1.05rem}
+.h-title{font-weight:900;font-size:clamp(2.2rem,5.4vw,3.9rem);line-height:1.15;text-shadow:0 6px 18px rgba(0,12,48,.5)}
+.h-sub{font-weight:800;font-size:clamp(1rem,2vw,1.25rem);color:#fff}
+.h-desc{color:#d9e8ff;margin:0;max-width:46ch}
+.h-points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;color:#d9e8ff;max-width:52ch;font-weight:600;line-height:1.7}
+.h-points li{position:relative}
+.h-title{max-width:16ch}
+.meta{display:flex;flex-wrap:nowrap;justify-content:center;gap:10px;max-width:100%}
+.meta div{display:flex;align-items:center;gap:8px;padding:6px 12px;white-space:nowrap;min-width:0;border:1.5px solid rgba(31,216,255,.7);border-radius:10px;background:rgba(2,16,46,.45);font-weight:700;font-size:.95rem}
+.meta svg{width:20px;height:20px;color:var(--lime);flex:none}
+.hero .btn-lime{font-size:1.15rem;min-height:58px;align-self:center;padding-inline:40px;box-shadow:0 10px 30px rgba(214,244,31,.3)}
+.hero small{color:#d9e8ff;font-weight:600}
+
+/* sections */
+section.block{padding-block:clamp(40px,6vw,72px)}
+.sec-head{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:30px}
+.sec-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:900;position:relative;padding-inline:26px}
+.sec-head h2::before,.sec-head h2::after{content:"";position:absolute;top:50%;width:18px;height:3px;background:var(--brand);border-radius:2px}
+.sec-head h2::before{right:0}.sec-head h2::after{left:0}
+.sec-head p{margin:0;color:var(--fg-soft)}
+.topics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.topic{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.topic img{width:100%;aspect-ratio:16/8;object-fit:cover}
+.topic .body{padding:18px 20px 22px}
+.topic h3{display:flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:900;color:var(--brand);margin-bottom:8px}
+.topic h3 svg{width:30px;height:30px;flex:none;padding:5px;border-radius:9px;background:var(--surface-2);color:var(--brand)}
+.topic p{margin:0;color:var(--fg-soft);font-size:.98rem}
+
+/* offers */
+.offers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:stretch}
+.offer{position:relative;display:flex;flex-direction:column;gap:16px;padding:26px 24px;border-radius:var(--radius);min-width:0;box-shadow:var(--shadow)}
+.offer.std{background:var(--surface);border:2px solid var(--brand)}
+.offer.vip{background:linear-gradient(160deg,#0f2f74,#071b4a);border:2px solid #1b3e8f;color:#fff}
+.offer.grp{background:var(--surface);border:2px solid var(--lime)}
+:root[data-theme="dark"] .offer.grp{border-color:#a8c215}
+.offer-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.offer-top h3{font-size:2rem;font-weight:900;letter-spacing:.02em;line-height:1}
+.offer.std h3{color:var(--brand)}
+.offer.vip h3{color:#fff;font-size:2.6rem}
+.offer.grp h3{color:var(--fg)}
+.offer-top small{display:block;font-size:.9rem;font-weight:700;color:var(--muted);margin-top:6px}
+.offer.vip .offer-top small{color:#bcd2ff}
+.offer-top svg{width:54px;height:54px;flex:none;color:var(--brand)}
+.offer.vip .offer-top svg{color:#fff}.offer.grp .offer-top svg{color:#7a8f0c}
+:root[data-theme="dark"] .offer.grp .offer-top svg{color:var(--lime)}
+.price{display:flex;align-items:baseline;gap:8px;font-weight:900}
+.price b{font-size:2.1rem;line-height:1;font-variant-numeric:tabular-nums}
+.price span{font-size:1rem;color:var(--muted)}
+.offer.vip .price span{color:#bcd2ff}
+.price .old{text-decoration:line-through;font-weight:600;font-size:1rem;color:var(--muted)}
+.price .now{font-size:.85rem;font-weight:800;padding:2px 10px;border-radius:999px;background:var(--lime);color:var(--lime-ink)}
+.offer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.offer li{display:flex;align-items:center;gap:10px;font-weight:600}
+.offer li svg{width:22px;height:22px;flex:none;border-radius:6px;padding:3px}
+.offer li svg.no{background:rgba(255,255,255,.14)!important;color:#c7d3ea!important}
+.offer li.off{color:#aebbd6}
+.offer.std li svg{background:var(--brand);color:#fff}
+.offer.vip li svg{background:#fff;color:var(--navy)}
+.offer.grp li svg{background:var(--lime);color:var(--lime-ink)}
+.offer .btn{margin-top:auto}
+.disc{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 28px;padding:12px 20px;border-radius:12px;background:linear-gradient(90deg,#1fd8ff,#8be3ff 55%,#d6f41f);color:#0a1f4d;font-weight:800}
+.disc .pct{font-size:1.4rem;font-weight:900}
+
+/* form */
+.formcard{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:clamp(18px,3vw,32px);display:flex;flex-direction:column;gap:22px}
+.formgrid{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px}
+.side{display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);align-self:start}
+.side h4{font-size:1.05rem;font-weight:800}
+.side label{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font-weight:800}
+.side label input{appearance:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--brand);margin:0;flex:none;display:grid;place-items:center}
+.side label input::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--brand);transform:scale(0);transition:transform .15s}
+.side label input:checked::after{transform:scale(1)}
+.side label:has(input:checked){border-color:var(--brand);box-shadow:0 0 0 3px rgba(26,111,217,.15)}
+.side label small{margin-inline-start:auto;font-weight:700;color:var(--muted);font-size:.85rem;white-space:nowrap}
+.sum{margin-top:6px;padding:12px;border-radius:10px;background:var(--surface);border:1px dashed var(--brand);font-size:.95rem}
+.sum div{display:flex;justify-content:space-between;gap:10px}
+.sum div span:last-child{white-space:nowrap}
+.sum .tot{font-weight:900;font-size:1.15rem;color:var(--brand);border-top:1px solid var(--line);margin-top:6px;padding-top:6px}
+.sum .off{color:#1b8a3a;font-weight:700}
+:root[data-theme="dark"] .sum .off{color:#7be39a}
+.main{display:flex;flex-direction:column;gap:18px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-weight:700;font-size:.95rem}
+.field input,.field select{width:100%;min-height:48px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:1rem}
+.field input::placeholder{color:var(--muted)}
+.field input:invalid:not(:placeholder-shown){border-color:#e05252}
+.mhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+@media (max-width:480px){.mhead h4{flex:1 1 auto}.mhead .tabs{order:3;flex:1 0 100%}.tabs button{flex:1 1 0;justify-content:center;padding:4px 8px;white-space:nowrap;font-size:.92rem}}
+.mhead h4{font-size:1.05rem;font-weight:800}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{min-height:40px;padding:4px 18px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-weight:700;cursor:pointer}
+.tabs button[aria-selected="true"]{border-color:var(--brand);color:var(--brand);background:var(--surface-2)}
+.tabs button.done::after{content:" ✓";color:#1b8a3a}
+.mcount{margin-inline-start:auto;white-space:nowrap;font-weight:800;color:var(--muted);direction:ltr}
+.member[hidden]{display:none}
+.hint{font-size:.9rem;color:var(--muted);margin:0}
+.spam-hint{font-size:.88rem;line-height:1.7;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:rgba(233,196,106,.14);border:1px solid rgba(233,196,106,.45);color:var(--fg)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:.95rem;color:var(--fg-soft)}
+.consent input{width:20px;height:20px;margin-top:4px;accent-color:var(--brand);flex:none}
+.msg{display:none;padding:12px 16px;border-radius:10px;font-weight:700}
+.msg.err{display:block;background:rgba(224,82,82,.12);border:1.5px solid #e05252;color:#b22}
+:root[data-theme="dark"] .msg.err{color:#ffb3b3}
+.msg.ok{display:block;background:rgba(27,138,58,.12);border:1.5px solid #1b8a3a;color:#176b2f}
+:root[data-theme="dark"] .msg.ok{color:#9ff0b6}
+.submit{width:100%;min-height:58px;font-size:1.1rem}
+
+/* verify */
+.verify{display:none;max-width:560px;margin:26px auto 0;background:var(--surface);border:2px solid var(--brand);border-radius:18px;box-shadow:var(--shadow);padding:26px;text-align:center;flex-direction:column;gap:14px}
+.verify.show{display:flex}
+.verify h3{font-size:1.4rem;font-weight:900}
+.verify p{margin:0;color:var(--fg-soft)}
+.verify .mail{font-weight:800;color:var(--brand);direction:ltr;display:inline-block}
+.code{width:min(100%,300px);margin-inline:auto;text-align:center;font-size:2rem;font-weight:900;letter-spacing:.35em;direction:ltr;min-height:64px;padding:8px;border-radius:12px;border:2px solid var(--line);background:var(--surface-2);color:var(--fg);font-family:ui-monospace,Menlo,monospace}
+.verify .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.retrieve{border-style:dashed;border-color:var(--line);box-shadow:none;background:var(--surface-2)}
+#r-step2{margin-top:14px}#r-step2:not([hidden]){display:flex;flex-direction:column;gap:16px}#r-code{display:block;letter-spacing:.35em;font-size:1.25rem}
+.retrieve input{width:min(100%,380px);margin-inline:auto;text-align:center;font:inherit;font-weight:700;direction:ltr;min-height:52px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg)}
+.preview{font-size:.9rem;padding:10px;border-radius:10px;background:rgba(233,196,106,.18);border:1px dashed var(--gold);color:var(--fg)}
+.preview b{direction:ltr;display:inline-block;letter-spacing:.2em}
+
+/* badges */
+.badge-bg{background:var(--surface-2)}
+.badgegrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px;align-items:center}
+.samples{display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+.samples figure{margin:0;width:min(44%,230px);display:flex;flex-direction:column;align-items:center;gap:8px}
+.samples canvas{width:100%;height:auto;border-radius:14px;box-shadow:0 20px 40px rgba(15,42,90,.25)}
+.samples figcaption{font-size:.85rem;color:var(--muted);font-weight:700}
+.binfo{display:flex;flex-direction:column;gap:16px}
+.binfo .card{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:14px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.binfo .card svg{width:46px;height:46px;flex:none;color:var(--brand)}
+.binfo .card b{display:block;font-size:1.05rem}
+.binfo .card span{color:var(--fg-soft);font-size:.95rem}
+.binfo .btn{align-self:flex-start}
+#done{display:none}
+#done.show{display:block}
+.done-head{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:26px}
+.done-head h2{font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:900}
+.done-head .rc{font-family:ui-monospace,Menlo,monospace;font-size:1.1rem;padding:6px 16px;border-radius:8px;background:var(--surface);border:1.5px solid var(--brand);color:var(--brand);direction:ltr}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:26px}
+.badge-card{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(100%,330px);min-width:0}
+.badge-card canvas{width:100%;height:auto;border-radius:8px;box-shadow:0 24px 50px rgba(15,42,90,.3)}
+
+/* footer */
+footer{background:var(--surface);border-top:1px solid var(--line)}
+footer .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;padding-block:26px}
+.org{display:flex;align-items:center;gap:12px}
+.org img{height:64px;width:auto}
+.org b{display:block;font-size:.8rem;color:var(--muted)}
+.org span{font-weight:800;font-size:.95rem}
+footer .flogo img{height:44px;width:auto}
+footer .copy{color:var(--muted);font-size:.85rem;font-weight:700;direction:ltr}
+
+@media (max-width:960px){
+  .hero{min-height:auto}
+  .hero .wrap{grid-template-columns:1fr;padding-block:clamp(22px,4vw,40px)}
+  .hero-art{order:2}
+  .hero-art img{max-height:none}
+  .topics,.offers{grid-template-columns:1fr}
+  .formgrid{grid-template-columns:1fr}
+  .badgegrid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .nav nav{display:none}
+  .nav .wrap{gap:10px}
+}
+@media (max-width:560px){
+  .grid2{grid-template-columns:1fr}
+  .clock{justify-content:center}
+  .nav .brand img{height:34px}
+  .nav .cta{padding:6px 12px;font-size:.85rem}
+  .hero .btn-lime{align-self:stretch}
+  .submit{font-size:.92rem;white-space:normal;line-height:1.3;padding-inline:14px}
+  .meta{flex-wrap:wrap}
+  .samples figure{width:46%}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="EduTech Solutions 07">
+      <img class="logo-d" src="assets/logo.png" alt="EduTech Solutions 07">
+      <img class="logo-l" src="assets/logo-white.png" alt="">
+    </a>
+    <nav aria-label="الأقسام"><a href="#about">عن الملتقى</a><a href="#offers">العروض</a><a href="#register">التسجيل</a></nav>
+    <a class="btn btn-lime cta" href="#register"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>سجّل الآن</a>
+    <button class="theme" id="theme" type="button" aria-label="تبديل الوضع الليلي">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <img class="hex" src="assets/hex.png" alt="" aria-hidden="true">
+  <div class="wrap">
+    <div class="hero-copy">
+      <div class="timer-label">التسجيل المبكر إلى 22 أكتوبر 2026</div>
+      <div class="clock" id="clock" aria-live="off">
+        <div><b id="cd-d">00</b><span>أيام</span></div>
+        <div><b id="cd-h">00</b><span>ساعات</span></div>
+        <div><b id="cd-m">00</b><span>دقائق</span></div>
+        <div><b id="cd-s">00</b><span>ثوانٍ</span></div>
+      </div>
+      <span class="eyebrow">الملتقى الوطني السابع</span>
+      <h1 class="h-title">انتقل بمؤسستك لتعليم المستقبل</h1>
+      <p class="h-sub">الروبوتات، الذكاء الاصطناعي، والتصميم والطباعة ثلاثية الأبعاد.</p>
+      <ul class="h-points"><li>اكتشف أحدث العتاد لتعليم الروبوتيك والذكاء الاصطناعي.</li><li>جرب منصات تعليمية.</li><li>شارك في المحاضرات والورشات التفاعلية.</li></ul>
+      <div class="meta">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>31 أكتوبر 2026</span></div>
+        <div><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg><span>الجزائر العاصمة</span></div>
+      </div>
+      <a class="btn btn-lime" href="#register">سجّل مؤسستك الآن <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+    </div>
+    <div class="hero-art"><img src="assets/hero.jpg" alt="روبوت تعليمي وذراع آلية وطابعة ثلاثية الأبعاد في مخبر"></div>
+  </div>
+</section>
+
+<section class="block" id="about">
+  <div class="wrap">
+    <div class="sec-head"><h2>من الفكرة إلى التطبيق</h2><p>اكتشف أحدث التقنيات التعليمية وكن جزءًا من مستقبل التعليم</p></div>
+    <div class="topics">
+      <article class="topic"><img src="assets/robotics.jpg" alt="روبوت تعليمي"><div class="body"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><circle cx="10" cy="13" r="1.3" fill="currentColor"/><circle cx="14" cy="13" r="1.3" fill="currentColor"/><path d="M12 8V4M2 13h3M19 13h3"/></svg>الروبوتات</h3><p>اكتشف أحدث عتاد تعليم الروبوتيك</p></div></article>
+      <article class="topic"><img src="assets/ai.jpg" alt="الذكاء الاصطناعي"><div class="body"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5v1a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM15 3a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-2 5v1a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/></svg>الذكاء الاصطناعي</h3><p>محاضرات وتكوينات حول تطبيقات الذكاء الاصطناعي في التعليم</p></div></article>
+      <article class="topic"><img src="assets/3d-printing.jpg" alt="طابعة ثلاثية الأبعاد"><div class="body"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 4.5v11L12 22l-8-4.5v-11z"/><path d="M12 22V12M4 6.5l8 5.5 8-5.5"/></svg>التصميم والطباعة ثلاثية الأبعاد</h3><p>جرب أول منصة تعليمية هجينة متخصصة في التصميم الرقمي والطباعة ثلاثية الأبعاد، وشارك في ورشات الطباعة ثلاثية الأبعاد</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="offers">
+  <div class="wrap">
+    <div class="sec-head"><h2>اختر عرض مشاركتك</h2><p>عرضان فرديان وعرض للمجموعات من 3 أشخاص</p></div>
+    <div class="offers">
+      <article class="offer std">
+        <div class="offer-top"><div><h3>STANDARD</h3><small>مشارك واحد</small></div><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-8 2-8 5v2h16v-2c0-3-4-5-8-5z"/></svg></div>
+        <div class="price"><b dir="ltr">5 900</b><span>دج</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>المشاركة في الورشات التفاعلية</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>حضور المحاضرات</li>
+                  <li class="off"><svg class="no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>بدون وجبة غداء</li>
+        </ul>
+        <a class="btn btn-blue" href="#register" data-pick="standard">اختر STANDARD <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a>
+      </article>
+      <article class="offer vip">
+        <div class="offer-top"><div><h3>VIP</h3><small>تجربة مشاركة مميّزة · مشارك واحد</small></div><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill="#e9c46a" d="M7.6 6.6 6.8 1.8l2.9 2.1L12 .8l2.3 3.1 2.9-2.1-.8 4.8z"/><path d="M12 15a3.9 3.9 0 1 0 0-7.8A3.9 3.9 0 0 0 12 15zm0 1.6c-4.2 0-8 2-8 4.8V24h16v-2.6c0-2.8-3.8-4.8-8-4.8z"/></svg></div>
+        <div class="price"><b dir="ltr">9 900</b><span>دج</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>المشاركة في الورشات التفاعلية</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>حضور المحاضرات</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>تخفيضات على التجهيزات والبرامج المقدمة</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>وجبة الغداء في الفندق</li>
+        </ul>
+        <a class="btn btn-navy" href="#register" data-pick="vip">اختر VIP <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a>
+      </article>
+      <article class="offer grp">
+        <div class="offer-top"><div><h3>GROUPE</h3><small>عرض المجموعات · 3 أشخاص</small></div><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm-6.5 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm13 0a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM12 13c-3 0-6.5 1.5-6.5 4v3h13v-3c0-2.5-3.5-4-6.5-4zM4.5 14C2.5 14 0 15.2 0 17v3h4v-3c0-1.2.5-2.2 1.3-3-.3 0-.5 0-.8 0zm15 0c-.3 0-.5 0-.8 0 .8.8 1.3 1.8 1.3 3v3h4v-3c0-1.8-2.5-3-4.5-3z"/></svg></div>
+        <div class="price"><b dir="ltr">24 900</b><span>دج</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>المشاركة في الورشات التفاعلية</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>حضور المحاضرات</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>وجبة الغداء في الفندق</li>
+        </ul>
+        <a class="btn btn-lime" href="#register" data-pick="groupe">اختر GROUPE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a>
+      </article>
+    </div>
+    <div class="disc" id="disc"><span class="pct">خصم 20%</span><span>على المجموع لكل من يسجّل قبل 22 أكتوبر 2026</span><span id="disc-note">يُطبَّق تلقائيًا عند التسجيل</span></div>
+  </div>
+</section>
+
+<section class="block" id="register">
+  <div class="wrap">
+    <div class="sec-head"><h2>سجّل مؤسستك الآن</h2><p>أكمل البيانات، اختر العرض، أكّد بريدك الإلكتروني واستلم بطاقات المشاركين</p></div>
+    <form class="formcard" id="regform" novalidate>
+      <div class="formgrid">
+        <aside class="side">
+          <h4>نوع المشاركة</h4>
+          <label><input type="radio" name="offer" value="standard" checked>STANDARD<small><bdi dir="ltr">5 900</bdi> دج</small></label>
+          <label><input type="radio" name="offer" value="vip">VIP<small><bdi dir="ltr">9 900</bdi> دج</small></label>
+          <label><input type="radio" name="offer" value="groupe">GROUPE<small><bdi dir="ltr">24 900</bdi> دج</small></label>
+          <div class="sum" id="sum">
+            <div><span>السعر</span><span id="s-base"><bdi dir="ltr">5 900</bdi> دج</span></div>
+            <div class="off" id="s-disc-row"><span>خصم مبكر <bdi dir="ltr">20%</bdi></span><span id="s-disc">− <bdi dir="ltr">1 180</bdi> دج</span></div>
+            <div class="tot"><span>المجموع</span><span id="s-total"><bdi dir="ltr">4 720</bdi> دج</span></div>
+          </div>
+        </aside>
+        <div class="main">
+          <div class="grid2">
+            <div class="field"><label for="inst">المؤسسة</label><input id="inst" name="inst" required placeholder="اسم المؤسسة" autocomplete="organization"></div>
+            <div class="field"><label for="wilaya">الولاية</label><select id="wilaya" name="wilaya" required><option value="">اختر الولاية</option></select></div>
+          </div>
+          <div class="mhead"><h4>بيانات المشاركين</h4><div class="tabs" id="tabs" role="tablist"></div><span class="mcount" id="mcount">1 / 1</span></div>
+          <div id="members"></div>
+          <p class="hint" id="mhint">عرض STANDARD و VIP لمشارك واحد؛ عرض GROUPE لثلاثة مشاركين من نفس المؤسسة.</p>
+          <label class="consent"><input type="checkbox" id="consent" required><span>أوافق على استخدام بياناتي لإتمام التسجيل والتواصل معي بخصوص الملتقى.</span></label>
+          <div class="msg" id="msg"></div>
+          <button type="submit" class="btn btn-lime submit" id="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>تأكيد التسجيل وإرسال رمز التحقق</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="verify" id="verify">
+      <h3>أكد البريد الالكتروني</h3>
+      <p>أرسلنا رمز تحقق من 6 أرقام إلى <span class="mail" id="v-mail">—</span>. أدخله هنا لتأكيد التسجيل والحصول على البطاقة.</p>
+      <p class="spam-hint">📭 لم يصلكم الرمز خلال دقيقة؟ تحقّقوا من مجلد <b>Spam / البريد غير المرغوب</b>، ثم اضغطوا «ليس بريدًا مزعجًا» ليصلكم القادم في الوارد. يمكنكم أيضًا طلب إعادة الإرسال.</p>
+      <input class="code" id="v-code" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="one-time-code" aria-label="رمز التحقق">
+      <div class="msg" id="v-msg"></div>
+      <div class="row"><button type="button" class="btn btn-blue" id="v-btn">تحقق</button><button type="button" class="btn btn-outline" id="v-resend">إعادة إرسال الرمز</button></div>
+      <div class="preview" id="v-preview" hidden>وضع المعاينة (لم يُضبط خادم البريد بعد): رمزك هو <b id="v-preview-code"></b></div>
+    </div>
+
+    <div class="verify retrieve show" id="retrieve">
+      <h3>لديكم بطاقة مسبقًا؟</h3>
+      <p>أدخلوا البريد الإلكتروني الذي سجّلتم به لعرض بطاقتكم وتحميلها مباشرة.</p>
+      <input type="email" id="r-email" placeholder="name@example.com" autocomplete="email" aria-label="البريد الإلكتروني">
+      <div class="msg" id="r-msg"></div>
+      <div class="row"><button type="button" class="btn btn-outline" id="r-btn">عرض بطاقتي</button></div>
+      <div id="r-step2" hidden>
+        <input type="text" id="r-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="• • • • • •" aria-label="رمز الاسترجاع">
+        <div class="row"><button type="button" class="btn btn-lime" id="r-code-btn">تأكيد الرمز وعرض البطاقة</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block badge-bg" id="badges-info">
+  <div class="wrap">
+    <div class="badgegrid">
+      <div class="binfo">
+        <div class="sec-head" style="align-items:flex-start;text-align:start;margin-bottom:4px"><h2>بطاقة شخصية لكل مشارك</h2><p>تصدر بطاقة تعريف خاصة لكل مشارك بعد تأكيد البريد الإلكتروني</p></div>
+        <div class="card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M21 14v7h-7M17 21h1"/></svg><div><b>رمز QR يتضمّن بيانات التسجيل مباشرة</b><span>الاسم، اللقب، المؤسسة، الولاية، البريد الإلكتروني، الهاتف ونوع العرض — تظهر عند المسح فقط، لا على البطاقة.</span></div></div>
+        <div class="card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 17v3h16v-3"/></svg><div><b>تحميل بجودة عالية</b><span>بطاقة PNG بدقة طباعة، تُحمَّل بعد تأكيد التسجيل وتُقدَّم عند الاستقبال.</span></div></div>
+        <a class="btn btn-outline" href="#register">تظهر البطاقة بعد تأكيد التسجيل</a>
+      </div>
+      <div class="samples" id="samples">
+        <figure><canvas id="sample-std" role="img" aria-label="نموذج بطاقة STANDARD"></canvas><figcaption>نموذج توضيحي STANDARD</figcaption></figure>
+        <figure><canvas id="sample-vip" role="img" aria-label="نموذج بطاقة VIP"></canvas><figcaption>نموذج توضيحي VIP</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="done">
+  <div class="wrap">
+    <div class="done-head"><h2>تم تأكيد البريد الإلكتروني بنجاح ✓</h2><p class="hint">رقم التسجيل</p><span class="rc" id="done-code">—</span><div class="msg ok show" id="mail-msg">يمكنكم الآن تحميل بطاقة الملتقى وحفظها على الهاتف أو طباعتها، وتقديمها عند الاستقبال يوم 31 أكتوبر 2026 للدخول إلى الملتقى.</div></div>
+    <div class="badges" id="badges"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="org"><img src="assets/robot-educatif.png" alt="Robot Éducatif Algérie"><div><b>تنظيم</b><span>Robot Éducatif Algérie</span></div></div>
+    <div class="flogo"><img class="logo-d" src="assets/logo.png" alt="EduTech Solutions 07"><img class="logo-l" src="assets/logo-white.png" alt=""></div>
+    <span class="copy">EDUTECH SOLUTIONS 07 • 2026</span>
+  </div>
+</footer>
+
+<script>/* QR Code generator library — Project Nayuki (MIT License) https://www.nayuki.io/page/qr-code-generator-library */
+"use strict";var qrcodegen;!function(t){class e{constructor(t,r,n,s){if(this.version=t,this.errorCorrectionLevel=r,this.modules=[],this.isFunction=[],t<e.MIN_VERSION||t>e.MAX_VERSION)throw new RangeError("Version value out of range");if(s<-1||s>7)throw new RangeError("Mask value out of range");this.size=4*t+17;let i=[];for(let t=0;t<this.size;t++)i.push(!1);for(let t=0;t<this.size;t++)this.modules.push(i.slice()),this.isFunction.push(i.slice());this.drawFunctionPatterns();const a=this.addEccAndInterleave(n);if(this.drawCodewords(a),-1==s){let t=1e9;for(let e=0;e<8;e++){this.applyMask(e),this.drawFormatBits(e);const r=this.getPenaltyScore();r<t&&(s=e,t=r),this.applyMask(e)}}o(0<=s&&s<=7),this.mask=s,this.applyMask(s),this.drawFormatBits(s),this.isFunction=[]}static encodeText(r,n){const o=t.QrSegment.makeSegments(r);return e.encodeSegments(o,n)}static encodeBinary(r,n){const o=t.QrSegment.makeBytes(r);return e.encodeSegments([o],n)}static encodeSegments(t,n,i=1,a=40,l=-1,h=!0){if(!(e.MIN_VERSION<=i&&i<=a&&a<=e.MAX_VERSION)||l<-1||l>7)throw new RangeError("Invalid value");let u,c;for(u=i;;u++){const r=8*e.getNumDataCodewords(u,n),o=s.getTotalBits(t,u);if(o<=r){c=o;break}if(u>=a)throw new RangeError("Data too long")}for(const t of[e.Ecc.MEDIUM,e.Ecc.QUARTILE,e.Ecc.HIGH])h&&c<=8*e.getNumDataCodewords(u,t)&&(n=t);let d=[];for(const e of t){r(e.mode.modeBits,4,d),r(e.numChars,e.mode.numCharCountBits(u),d);for(const t of e.getData())d.push(t)}o(d.length==c);const f=8*e.getNumDataCodewords(u,n);o(d.length<=f),r(0,Math.min(4,f-d.length),d),r(0,(8-d.length%8)%8,d),o(d.length%8==0);for(let t=236;d.length<f;t^=253)r(t,8,d);let m=[];for(;8*m.length<d.length;)m.push(0);return d.forEach(((t,e)=>m[e>>>3]|=t<<7-(7&e))),new e(u,n,m,l)}getModule(t,e){return 0<=t&&t<this.size&&0<=e&&e<this.size&&this.modules[e][t]}drawFunctionPatterns(){for(let t=0;t<this.size;t++)this.setFunctionModule(6,t,t%2==0),this.setFunctionModule(t,6,t%2==0);this.drawFinderPattern(3,3),this.drawFinderPattern(this.size-4,3),this.drawFinderPattern(3,this.size-4);const t=this.getAlignmentPatternPositions(),e=t.length;for(let r=0;r<e;r++)for(let n=0;n<e;n++)0==r&&0==n||0==r&&n==e-1||r==e-1&&0==n||this.drawAlignmentPattern(t[r],t[n]);this.drawFormatBits(0),this.drawVersion()}drawFormatBits(t){const e=this.errorCorrectionLevel.formatBits<<3|t;let r=e;for(let t=0;t<10;t++)r=r<<1^1335*(r>>>9);const s=21522^(e<<10|r);o(s>>>15==0);for(let t=0;t<=5;t++)this.setFunctionModule(8,t,n(s,t));this.setFunctionModule(8,7,n(s,6)),this.setFunctionModule(8,8,n(s,7)),this.setFunctionModule(7,8,n(s,8));for(let t=9;t<15;t++)this.setFunctionModule(14-t,8,n(s,t));for(let t=0;t<8;t++)this.setFunctionModule(this.size-1-t,8,n(s,t));for(let t=8;t<15;t++)this.setFunctionModule(8,this.size-15+t,n(s,t));this.setFunctionModule(8,this.size-8,!0)}drawVersion(){if(this.version<7)return;let t=this.version;for(let e=0;e<12;e++)t=t<<1^7973*(t>>>11);const e=this.version<<12|t;o(e>>>18==0);for(let t=0;t<18;t++){const r=n(e,t),o=this.size-11+t%3,s=Math.floor(t/3);this.setFunctionModule(o,s,r),this.setFunctionModule(s,o,r)}}drawFinderPattern(t,e){for(let r=-4;r<=4;r++)for(let n=-4;n<=4;n++){const o=Math.max(Math.abs(n),Math.abs(r)),s=t+n,i=e+r;0<=s&&s<this.size&&0<=i&&i<this.size&&this.setFunctionModule(s,i,2!=o&&4!=o)}}drawAlignmentPattern(t,e){for(let r=-2;r<=2;r++)for(let n=-2;n<=2;n++)this.setFunctionModule(t+n,e+r,1!=Math.max(Math.abs(n),Math.abs(r)))}setFunctionModule(t,e,r){this.modules[e][t]=r,this.isFunction[e][t]=!0}addEccAndInterleave(t){const r=this.version,n=this.errorCorrectionLevel;if(t.length!=e.getNumDataCodewords(r,n))throw new RangeError("Invalid argument");const s=e.NUM_ERROR_CORRECTION_BLOCKS[n.ordinal][r],i=e.ECC_CODEWORDS_PER_BLOCK[n.ordinal][r],a=Math.floor(e.getNumRawDataModules(r)/8),l=s-a%s,h=Math.floor(a/s);let u=[];const c=e.reedSolomonComputeDivisor(i);for(let r=0,n=0;r<s;r++){let o=t.slice(n,n+h-i+(r<l?0:1));n+=o.length;const s=e.reedSolomonComputeRemainder(o,c);r<l&&o.push(0),u.push(o.concat(s))}let d=[];for(let t=0;t<u[0].length;t++)u.forEach(((e,r)=>{(t!=h-i||r>=l)&&d.push(e[t])}));return o(d.length==a),d}drawCodewords(t){if(t.length!=Math.floor(e.getNumRawDataModules(this.version)/8))throw new RangeError("Invalid argument");let r=0;for(let e=this.size-1;e>=1;e-=2){6==e&&(e=5);for(let o=0;o<this.size;o++)for(let s=0;s<2;s++){const i=e-s,a=!(e+1&2)?this.size-1-o:o;!this.isFunction[a][i]&&r<8*t.length&&(this.modules[a][i]=n(t[r>>>3],7-(7&r)),r++)}}o(r==8*t.length)}applyMask(t){if(t<0||t>7)throw new RangeError("Mask value out of range");for(let e=0;e<this.size;e++)for(let r=0;r<this.size;r++){let n;switch(t){case 0:n=(r+e)%2==0;break;case 1:n=e%2==0;break;case 2:n=r%3==0;break;case 3:n=(r+e)%3==0;break;case 4:n=(Math.floor(r/3)+Math.floor(e/2))%2==0;break;case 5:n=r*e%2+r*e%3==0;break;case 6:n=(r*e%2+r*e%3)%2==0;break;case 7:n=((r+e)%2+r*e%3)%2==0;break;default:throw new Error("Unreachable")}!this.isFunction[e][r]&&n&&(this.modules[e][r]=!this.modules[e][r])}}getPenaltyScore(){let t=0;for(let r=0;r<this.size;r++){let n=!1,o=0,s=[0,0,0,0,0,0,0];for(let i=0;i<this.size;i++)this.modules[r][i]==n?(o++,5==o?t+=e.PENALTY_N1:o>5&&t++):(this.finderPenaltyAddHistory(o,s),n||(t+=this.finderPenaltyCountPatterns(s)*e.PENALTY_N3),n=this.modules[r][i],o=1);t+=this.finderPenaltyTerminateAndCount(n,o,s)*e.PENALTY_N3}for(let r=0;r<this.size;r++){let n=!1,o=0,s=[0,0,0,0,0,0,0];for(let i=0;i<this.size;i++)this.modules[i][r]==n?(o++,5==o?t+=e.PENALTY_N1:o>5&&t++):(this.finderPenaltyAddHistory(o,s),n||(t+=this.finderPenaltyCountPatterns(s)*e.PENALTY_N3),n=this.modules[i][r],o=1);t+=this.finderPenaltyTerminateAndCount(n,o,s)*e.PENALTY_N3}for(let r=0;r<this.size-1;r++)for(let n=0;n<this.size-1;n++){const o=this.modules[r][n];o==this.modules[r][n+1]&&o==this.modules[r+1][n]&&o==this.modules[r+1][n+1]&&(t+=e.PENALTY_N2)}let r=0;for(const t of this.modules)r=t.reduce(((t,e)=>t+(e?1:0)),r);const n=this.size*this.size,s=Math.ceil(Math.abs(20*r-10*n)/n)-1;return o(0<=s&&s<=9),t+=s*e.PENALTY_N4,o(0<=t&&t<=2568888),t}getAlignmentPatternPositions(){if(1==this.version)return[];{const t=Math.floor(this.version/7)+2,e=32==this.version?26:2*Math.ceil((4*this.version+4)/(2*t-2));let r=[6];for(let n=this.size-7;r.length<t;n-=e)r.splice(1,0,n);return r}}static getNumRawDataModules(t){if(t<e.MIN_VERSION||t>e.MAX_VERSION)throw new RangeError("Version number out of range");let r=(16*t+128)*t+64;if(t>=2){const e=Math.floor(t/7)+2;r-=(25*e-10)*e-55,t>=7&&(r-=36)}return o(208<=r&&r<=29648),r}static getNumDataCodewords(t,r){return Math.floor(e.getNumRawDataModules(t)/8)-e.ECC_CODEWORDS_PER_BLOCK[r.ordinal][t]*e.NUM_ERROR_CORRECTION_BLOCKS[r.ordinal][t]}static reedSolomonComputeDivisor(t){if(t<1||t>255)throw new RangeError("Degree out of range");let r=[];for(let e=0;e<t-1;e++)r.push(0);r.push(1);let n=1;for(let o=0;o<t;o++){for(let t=0;t<r.length;t++)r[t]=e.reedSolomonMultiply(r[t],n),t+1<r.length&&(r[t]^=r[t+1]);n=e.reedSolomonMultiply(n,2)}return r}static reedSolomonComputeRemainder(t,r){let n=r.map((t=>0));for(const o of t){const t=o^n.shift();n.push(0),r.forEach(((r,o)=>n[o]^=e.reedSolomonMultiply(r,t)))}return n}static reedSolomonMultiply(t,e){if(t>>>8!=0||e>>>8!=0)throw new RangeError("Byte out of range");let r=0;for(let n=7;n>=0;n--)r=r<<1^285*(r>>>7),r^=(e>>>n&1)*t;return o(r>>>8==0),r}finderPenaltyCountPatterns(t){const e=t[1];o(e<=3*this.size);const r=e>0&&t[2]==e&&t[3]==3*e&&t[4]==e&&t[5]==e;return(r&&t[0]>=4*e&&t[6]>=e?1:0)+(r&&t[6]>=4*e&&t[0]>=e?1:0)}finderPenaltyTerminateAndCount(t,e,r){return t&&(this.finderPenaltyAddHistory(e,r),e=0),e+=this.size,this.finderPenaltyAddHistory(e,r),this.finderPenaltyCountPatterns(r)}finderPenaltyAddHistory(t,e){0==e[0]&&(t+=this.size),e.pop(),e.unshift(t)}}function r(t,e,r){if(e<0||e>31||t>>>e!=0)throw new RangeError("Value out of range");for(let n=e-1;n>=0;n--)r.push(t>>>n&1)}function n(t,e){return!!(t>>>e&1)}function o(t){if(!t)throw new Error("Assertion error")}e.MIN_VERSION=1,e.MAX_VERSION=40,e.PENALTY_N1=3,e.PENALTY_N2=3,e.PENALTY_N3=40,e.PENALTY_N4=10,e.ECC_CODEWORDS_PER_BLOCK=[[-1,7,10,15,20,26,18,20,24,30,18,20,24,26,30,22,24,28,30,28,28,28,28,30,30,26,28,30,30,30,30,30,30,30,30,30,30,30,30,30,30],[-1,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26,26,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28],[-1,13,22,18,26,18,24,18,22,20,24,28,26,24,20,30,24,28,28,26,30,28,30,30,30,30,28,30,30,30,30,30,30,30,30,30,30,30,30,30,30],[-1,17,28,22,16,22,28,26,26,24,28,24,28,22,24,24,30,28,28,26,28,30,24,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30]],e.NUM_ERROR_CORRECTION_BLOCKS=[[-1,1,1,1,1,1,2,2,2,2,4,4,4,4,4,6,6,6,6,7,8,8,9,9,10,12,12,12,13,14,15,16,17,18,19,19,20,21,22,24,25],[-1,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16,17,17,18,20,21,23,25,26,28,29,31,33,35,37,38,40,43,45,47,49],[-1,1,1,2,2,4,4,6,6,8,8,8,10,12,16,12,17,16,18,21,20,23,23,25,27,29,34,34,35,38,40,43,45,48,51,53,56,59,62,65,68],[-1,1,1,2,4,4,4,5,6,8,8,11,11,16,16,18,16,19,21,25,25,25,34,30,32,35,37,40,42,45,48,51,54,57,60,63,66,70,74,77,81]],t.QrCode=e;class s{constructor(t,e,r){if(this.mode=t,this.numChars=e,this.bitData=r,e<0)throw new RangeError("Invalid argument");this.bitData=r.slice()}static makeBytes(t){let e=[];for(const n of t)r(n,8,e);return new s(s.Mode.BYTE,t.length,e)}static makeNumeric(t){if(!s.isNumeric(t))throw new RangeError("String contains non-numeric characters");let e=[];for(let n=0;n<t.length;){const o=Math.min(t.length-n,3);r(parseInt(t.substr(n,o),10),3*o+1,e),n+=o}return new s(s.Mode.NUMERIC,t.length,e)}static makeAlphanumeric(t){if(!s.isAlphanumeric(t))throw new RangeError("String contains unencodable characters in alphanumeric mode");let e,n=[];for(e=0;e+2<=t.length;e+=2){let o=45*s.ALPHANUMERIC_CHARSET.indexOf(t.charAt(e));o+=s.ALPHANUMERIC_CHARSET.indexOf(t.charAt(e+1)),r(o,11,n)}return e<t.length&&r(s.ALPHANUMERIC_CHARSET.indexOf(t.charAt(e)),6,n),new s(s.Mode.ALPHANUMERIC,t.length,n)}static makeSegments(t){return""==t?[]:s.isNumeric(t)?[s.makeNumeric(t)]:s.isAlphanumeric(t)?[s.makeAlphanumeric(t)]:[s.makeBytes(s.toUtf8ByteArray(t))]}static makeEci(t){let e=[];if(t<0)throw new RangeError("ECI assignment value out of range");if(t<128)r(t,8,e);else if(t<16384)r(2,2,e),r(t,14,e);else{if(!(t<1e6))throw new RangeError("ECI assignment value out of range");r(6,3,e),r(t,21,e)}return new s(s.Mode.ECI,0,e)}static isNumeric(t){return s.NUMERIC_REGEX.test(t)}static isAlphanumeric(t){return s.ALPHANUMERIC_REGEX.test(t)}getData(){return this.bitData.slice()}static getTotalBits(t,e){let r=0;for(const n of t){const t=n.mode.numCharCountBits(e);if(n.numChars>=1<<t)return 1/0;r+=4+t+n.bitData.length}return r}static toUtf8ByteArray(t){t=encodeURI(t);let e=[];for(let r=0;r<t.length;r++)"%"!=t.charAt(r)?e.push(t.charCodeAt(r)):(e.push(parseInt(t.substr(r+1,2),16)),r+=2);return e}}s.NUMERIC_REGEX=/^[0-9]*$/,s.ALPHANUMERIC_REGEX=/^[A-Z0-9 $%*+.\/:-]*$/,s.ALPHANUMERIC_CHARSET="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:",t.QrSegment=s}(qrcodegen||(qrcodegen={})),function(t){!function(t){class e{constructor(t,e){this.ordinal=t,this.formatBits=e}}e.LOW=new e(0,1),e.MEDIUM=new e(1,0),e.QUARTILE=new e(2,3),e.HIGH=new e(3,2),t.Ecc=e}(t.QrCode||(t.QrCode={}))}(qrcodegen||(qrcodegen={})),function(t){!function(t){class e{constructor(t,e){this.modeBits=t,this.numBitsCharCount=e}numCharCountBits(t){return this.numBitsCharCount[Math.floor((t+7)/17)]}}e.NUMERIC=new e(1,[10,12,14]),e.ALPHANUMERIC=new e(2,[9,11,13]),e.BYTE=new e(4,[8,16,16]),e.KANJI=new e(8,[8,10,12]),e.ECI=new e(7,[0,0,0]),t.Mode=e}(t.QrSegment||(t.QrSegment={}))}(qrcodegen||(qrcodegen={})),window.qrcodegen=qrcodegen;</script>
+<script>
+(function(){
+  'use strict';
+  // ===== configuration =====
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwhxbN6WaM1nCo68IeJPOeWQBBcqLIbPw9Yu8Y35fiAZujR_6-bXmFtcD-VuhExWzBG/exec';            // Google Apps Script web-app URL (sends the e-mail code). Empty = preview mode.
+  const DEADLINE = new Date('2026-10-21T23:00:00Z'); // 22 Oct 2026 00:00 Algiers
+  const OFFERS = { standard:{label:'STANDARD', price:5900, members:1}, vip:{label:'VIP', price:9900, members:1}, groupe:{label:'GROUPE', price:24900, members:3} };
+  const DISCOUNT = 0.20;
+  const WILAYAS = ["01 أدرار","02 الشلف","03 الأغواط","04 أم البواقي","05 باتنة","06 بجاية","07 بسكرة","08 بشار","09 البليدة","10 البويرة","11 تمنراست","12 تبسة","13 تلمسان","14 تيارت","15 تيزي وزو","16 الجزائر","17 الجلفة","18 جيجل","19 سطيف","20 سعيدة","21 سكيكدة","22 سيدي بلعباس","23 عنابة","24 قالمة","25 قسنطينة","26 المدية","27 مستغانم","28 المسيلة","29 معسكر","30 ورقلة","31 وهران","32 البيض","33 إليزي","34 برج بوعريريج","35 بومرداس","36 الطارف","37 تندوف","38 تيسمسيلت","39 الوادي","40 خنشلة","41 سوق أهراس","42 تيبازة","43 ميلة","44 عين الدفلى","45 النعامة","46 عين تموشنت","47 غرداية","48 غليزان","49 تيميمون","50 برج باجي مختار","51 أولاد جلال","52 بني عباس","53 إن صالح","54 إن قزام","55 تقرت","56 جانت","57 المغير","58 المنيعة"];
+  const $ = (s, r=document) => r.querySelector(s);
+  // hero height = viewport minus the real navbar height
+  const setNavH = () => document.documentElement.style.setProperty('--nav-h', ((document.querySelector('.nav') || {}).offsetHeight || 66) + 'px');
+  setNavH(); window.addEventListener('resize', setNavH); window.addEventListener('load', setNavH);
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = n => '<bdi dir="ltr">' + Math.round(n).toLocaleString('fr-FR').replace(/[\u202f\u00a0]/g,' ') + '</bdi> دج';
+
+  // ===== theme =====
+  const root = document.documentElement, themeBtn = $('#theme');
+  try { const t = localStorage.getItem('et07-theme'); if (t === 'dark' || t === 'light') root.setAttribute('data-theme', t); } catch(e){}
+  themeBtn.addEventListener('click', () => {
+    const dark = root.getAttribute('data-theme') === 'dark' || (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    const next = dark ? 'light' : 'dark'; root.setAttribute('data-theme', next);
+    try { localStorage.setItem('et07-theme', next); } catch(e){}
+  });
+
+  // ===== countdown =====
+  const early = () => Date.now() < DEADLINE.getTime();
+  function tick(){
+    let diff = Math.max(0, DEADLINE - Date.now());
+    const set = (id, v) => { const el = $(id); if (el.textContent !== v){ el.textContent = v; el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip'); } };
+    set('#cd-d', pad(Math.floor(diff/864e5))); set('#cd-h', pad(Math.floor(diff/36e5)%24));
+    set('#cd-m', pad(Math.floor(diff/6e4)%60)); set('#cd-s', pad(Math.floor(diff/1e3)%60));
+    if (!diff && !tick.ended){ tick.ended = true;
+      $('.timer-label').textContent = 'انتهى التسجيل المبكر — التسجيل ما زال مفتوحًا'; $('#clock').hidden = true;
+      $('#disc .pct').textContent = 'انتهى الخصم'; $('#disc-note').textContent = 'انتهت فترة الخصم في 22 أكتوبر 2026 — تُطبَّق الأسعار الكاملة';
+      setTimeout(() => { try { applyOffer(); } catch(e){} }, 0);   // refresh the price summary (deferred: the form may not be set up yet on first run)
+    }
+  }
+  tick(); setInterval(tick, 1000);
+
+  // ===== wilayas =====
+  const sel = $('#wilaya'); WILAYAS.forEach(w => { const o = document.createElement('option'); o.value = w; o.textContent = w; sel.appendChild(o); });
+
+  // ===== members / tabs =====
+  const form = $('#regform'), membersEl = $('#members'), tabsEl = $('#tabs'), mcount = $('#mcount');
+  const panels = [];
+  for (let i=0;i<3;i++){
+    const d = document.createElement('div'); d.className = 'member grid2'; d.dataset.i = i; d.hidden = i>0;
+    d.innerHTML = `
+      <div class="field"><label for="fn${i}">الاسم</label><input id="fn${i}" required placeholder="الاسم" autocomplete="given-name"></div>
+      <div class="field"><label for="ln${i}">اللقب</label><input id="ln${i}" required placeholder="اللقب" autocomplete="family-name"></div>
+      <div class="field"><label for="em${i}">البريد الإلكتروني</label><input id="em${i}" type="email" required placeholder="name@example.com" autocomplete="email" dir="ltr" style="text-align:right"></div>
+      <div class="field"><label for="ph${i}">رقم الهاتف</label><input id="ph${i}" type="tel" required placeholder="05 / 06 / 07 …" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right"></div>`;
+    membersEl.appendChild(d); panels.push(d);
+    const t = document.createElement('button'); t.type = 'button'; t.role = 'tab'; t.textContent = 'العضو ' + (i+1); t.addEventListener('click', () => showTab(i)); tabsEl.appendChild(t);
+    d.querySelectorAll('input').forEach(inp => inp.addEventListener('input', markTabs));
+  }
+  let active = 0;
+  function showTab(i){ active = i; panels.forEach((p,k) => { p.hidden = k!==i; }); [...tabsEl.children].forEach((t,k) => t.setAttribute('aria-selected', k===i)); }
+  function memberFilled(i){ return [...panels[i].querySelectorAll('input')].every(x => x.value.trim()); }
+  function markTabs(){ [...tabsEl.children].forEach((t,k) => t.classList.toggle('done', memberFilled(k))); }
+  function offerKey(){ return form.offer.value; }
+  function applyOffer(){
+    const o = OFFERS[offerKey()];
+    [...tabsEl.children].forEach((t,k) => { t.hidden = k >= o.members; });
+    if (active >= o.members) showTab(0);
+    mcount.textContent = o.members + ' / ' + o.members;
+    const base = o.price, disc = early() ? base*DISCOUNT : 0;
+    $('#s-base').innerHTML = fmt(base); $('#s-disc').innerHTML = '− ' + fmt(disc); $('#s-disc-row').hidden = !early(); $('#s-total').innerHTML = fmt(base - disc);
+  }
+  form.querySelectorAll('input[name=offer]').forEach(r => r.addEventListener('change', applyOffer));
+  document.querySelectorAll('[data-pick]').forEach(a => a.addEventListener('click', () => { const r = form.querySelector('input[name=offer][value="'+a.dataset.pick+'"]'); if (r){ r.checked = true; applyOffer(); } }));
+  showTab(0); applyOffer(); setInterval(applyOffer, 60000);
+
+  // ===== capabilities =====
+  let db = null, downloads = null;
+  if (window.claude && typeof window.claude.use === 'function'){
+    window.claude.use('db').then(v => { db = v; }); window.claude.use('downloads').then(v => { downloads = v; });
+  }
+
+  // ===== badge images =====
+  const IMG = {};
+  const load = (n, src) => new Promise(res => { const im = new Image(); im.onload = () => { IMG[n] = im; res(); }; im.onerror = () => res(); im.src = src; });
+  const fontsReady = (document.fonts && document.fonts.load) ? Promise.all(['700','800','900'].map(w => document.fonts.load(w + ' 40px Cairo').catch(() => null))) : Promise.resolve();
+  const imgsReady = Promise.all([load('logoW','assets/logo-white.png'), load('org','assets/robot-educatif.png'), Promise.race([fontsReady, new Promise(r => setTimeout(r, 4000))])]);
+  imgsReady.then(() => { if (document.fonts && document.fonts.ready) return document.fonts.ready; }).then(() => {
+    const demo = { code:'ET07-DEMO', inst:'مؤسسة نموذجية', wilaya:'16 الجزائر', createdAt:new Date().toISOString(), earlyBird:true, members:[{fn:'مشارك',ln:'تجريبي',em:'demo@example.com',ph:'0500000000'}] };
+    drawBadge($('#sample-std'), {...demo, offer:'standard'}, demo.members[0], 0, true);
+    drawBadge($('#sample-vip'), {...demo, offer:'vip'}, demo.members[0], 0, true);
+  });
+
+  // ===== submit → verification =====
+  const msg = $('#msg'), submitBtn = $('#submit'), verify = $('#verify');
+  let pending = null; // {rec, code, docRef}
+  function showMsg(el, t, kind){ el.textContent = t; el.className = 'msg ' + kind; }
+  // shown when an e-mail already obtained the maximum number of badges (2)
+  const limitText = em => 'أنتم مسجّلون مسبقًا بهذا البريد الإلكتروني' + (em ? ' (' + em + ')' : '') + '، ولا يمكن التسجيل مرة ثانية. لاسترجاع بطاقتكم استعملوا «لديكم بطاقة مسبقًا؟» وأدخلوا بريدكم.';
+  const busyText = 'محاولات كثيرة في وقت قصير، انتظروا دقيقة ثم أعيدوا المحاولة.';
+  const quotaText = 'تعذّر إرسال البريد الإلكتروني اليوم بسبب كثرة الطلبات. يرجى المحاولة غدًا أو التواصل مع المنظمين.';
+  function serverText(r, fallback){ return r && r.error === 'busy' ? busyText : r && r.error === 'quota' ? quotaText : r && r.error === 'too many' ? 'محاولات خاطئة كثيرة. اطلبوا رمزًا جديدًا ثم أعيدوا المحاولة.' : fallback; }
+  // Weak mobile connections: every call has a 30 s limit, and the calls that are safe to repeat
+  // (the server recognises a repeat) are retried automatically before showing any error.
+  const RETRY_SAFE = { register:1, verify:1 };
+  async function api(action, payload){
+    const body = JSON.stringify({ action, ...payload }), tries = RETRY_SAFE[action] ? 3 : 1;
+    for (let i = 0; i < tries; i++){
+      const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 30000);
+      try {
+        const r = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body, signal: ctl.signal });
+        if (!r.ok) throw new Error('http ' + r.status);
+        const j = await r.json(); clearTimeout(timer); return j;
+      } catch (e){
+        clearTimeout(timer);
+        if (i === tries - 1){ const err = new Error('network'); err.network = true; throw err; }
+        await new Promise(res => setTimeout(res, 1500 * (i + 1)));
+      }
+    }
+  }
+  let lastTry = null;   // same form sent again → same registration code (no duplicate row, no second e-mail)
+
+  // ===== once an action succeeds, empty the fields it used =====
+  const submitHTML = submitBtn.innerHTML;
+  function clearRegForm(){
+    $('#inst').value = ''; sel.selectedIndex = 0;
+    for (let i = 0; i < 3; i++) ['fn','ln','em','ph'].forEach(k => { $('#' + k + i).value = ''; });
+    $('#consent').checked = false; markTabs(); showTab(0);
+    lastTry = null; msg.className = 'msg';
+    submitBtn.disabled = false; submitBtn.innerHTML = submitHTML;
+    $('#v-code').value = ''; $('#v-msg').className = 'msg';
+  }
+  function clearLookup(){ $('#r-email').value = ''; $('#r-code').value = ''; $('#r-step2').hidden = true; }
+  function clearAllFields(){ clearRegForm(); clearLookup(); }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); msg.className = 'msg';
+    const o = OFFERS[offerKey()];
+    const inst = $('#inst').value.trim(), wilaya = sel.value;
+    if (!inst || !wilaya) return showMsg(msg, 'أكمل اسم المؤسسة والولاية.', 'err');
+    const members = [];
+    for (let i=0;i<o.members;i++){
+      const p = panels[i], m = { fn:$('#fn'+i).value.trim(), ln:$('#ln'+i).value.trim(), em:$('#em'+i).value.trim(), ph:$('#ph'+i).value.replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x6F0).replace(/[\s.-]+/g,'') };
+      if (!m.fn || !m.ln){ showTab(i); return showMsg(msg, 'أكمل الاسم واللقب للعضو ' + (i+1) + '.', 'err'); }
+      if (!/^[A-Za-z0-9_][A-Za-z0-9._%+\-]{0,63}@[A-Za-z0-9](?:[A-Za-z0-9\-]{0,62}\.)+[A-Za-z]{2,24}$/.test(m.em)){ showTab(i); return showMsg(msg, 'البريد الإلكتروني غير صحيح للعضو ' + (i+1) + '.', 'err'); }
+      if (!/^0[5-7]\d{8}$/.test(m.ph)){ showTab(i); return showMsg(msg, 'رقم الهاتف غير صحيح للعضو ' + (i+1) + ' (10 أرقام يبدأ بـ 05/06/07).', 'err'); }
+      members.push(m);
+    }
+    if (!$('#consent').checked) return showMsg(msg, 'يرجى الموافقة على استخدام البيانات أولًا.', 'err');
+    submitBtn.disabled = true; submitBtn.textContent = 'جارٍ الإرسال… (بضع ثوانٍ)';
+    const now = new Date(), isEarly = now < DEADLINE;
+    const sig = JSON.stringify([offerKey(), inst, wilaya, members]);
+    const code = (lastTry && lastTry.sig === sig) ? lastTry.code : 'ET07-' + now.getTime().toString(36).toUpperCase().slice(-6);
+    lastTry = { sig, code };
+    const rec = { code, inst, wilaya, offer:offerKey(), offerLabel:o.label, price:o.price, discount: isEarly ? Math.round(o.price*DISCOUNT) : 0, total: Math.round(o.price*(isEarly?1-DISCOUNT:1)), members, earlyBird:isEarly, createdAt:now.toISOString(), event:'2026-10-31', status:'pending' };
+    try {
+      let vcode = null;
+      if (API_URL){ const r = await api('register', rec);
+        if (!r.ok && r.error === 'limit'){ showMsg(msg, limitText(r.email), 'err'); submitBtn.disabled = false; submitBtn.textContent = 'تأكيد التسجيل وإرسال رمز التحقق'; return; }
+        if (!r.ok && (r.error === 'busy' || r.error === 'quota')){ showMsg(msg, serverText(r), 'err'); submitBtn.disabled = false; submitBtn.textContent = 'تأكيد التسجيل وإرسال رمز التحقق'; return; }
+        if (!r.ok && r.error === 'missing fields'){ showMsg(msg, 'بعض البيانات غير مقبولة: تحققوا من البريد الإلكتروني (بدون مسافات أو نقطة في آخره) ومن رقم الهاتف (10 أرقام).', 'err'); submitBtn.disabled = false; submitBtn.textContent = 'تأكيد التسجيل وإرسال رمز التحقق'; return; }
+        if (!r.ok) throw new Error(r.error || 'server'); }
+      else {
+        vcode = String(Math.floor(100000 + Math.random()*900000));
+        if (db) await db.doc('registrations/' + code).set({ ...rec, verifyCode: vcode });
+        $('#v-preview-code').textContent = vcode; $('#v-preview').hidden = false;
+      }
+      pending = { rec, vcode };
+      $('#v-mail').textContent = members[0].em; $('#v-code').value = ''; $('#v-msg').className = 'msg';
+      verify.classList.add('show'); verify.scrollIntoView({ behavior:'smooth', block:'center' }); $('#v-code').focus();
+      submitBtn.textContent = 'تم إرسال رمز التحقق ✓';
+    } catch (err){
+      console.warn(err);
+      if (err.network){
+        // the request very probably reached the server (the reply was lost): let the person use the code from the e-mail
+        pending = { rec, uncertain: true };
+        $('#v-mail').textContent = members[0].em; $('#v-code').value = '';
+        showMsg($('#v-msg'), 'الاتصال ضعيف ولم يصلنا ردّ الخادم. تفقدوا بريدكم (وكذلك Spam): إن وصلكم الرمز فأدخلوه هنا. إن لم يصل خلال دقيقتين اضغطوا «إعادة الإرسال».', 'ok');
+        verify.classList.add('show'); verify.scrollIntoView({ behavior:'smooth', block:'center' });
+        submitBtn.disabled = false; submitBtn.textContent = 'تأكيد التسجيل وإرسال رمز التحقق';
+        return;
+      }
+      showMsg(msg, 'تعذّر إرسال رمز التحقق، حاول مجددًا.', 'err'); submitBtn.disabled = false; submitBtn.textContent = 'تأكيد التسجيل وإرسال رمز التحقق';
+    }
+  });
+
+  $('#v-resend').addEventListener('click', async () => {
+    if (!pending) return;
+    const b = $('#v-resend'); b.disabled = true;
+    try { if (API_URL){ const r = await api('resend', { code: pending.rec.code });
+        if (!r.ok && r.error === 'not found' && pending.uncertain){
+          // the first request never reached the server: send the form again (same code, so no duplicate)
+          verify.classList.remove('show'); b.disabled = false;
+          showMsg(msg, 'لم يصل طلب التسجيل بسبب الاتصال. اضغطوا «تأكيد التسجيل وإرسال رمز التحقق» مرة أخرى.', 'err');
+          form.scrollIntoView({ behavior:'smooth', block:'end' }); return; }
+        if (!r.ok) { showMsg($('#v-msg'), serverText(r, 'تعذّرت إعادة الإرسال.'), 'err'); setTimeout(() => { b.disabled = false; }, 30000); return; } }
+      showMsg($('#v-msg'), 'أُعيد إرسال الرمز إلى بريدك.', 'ok'); }
+    catch(e){ showMsg($('#v-msg'), 'تعذّرت إعادة الإرسال.', 'err'); }
+    setTimeout(() => { b.disabled = false; }, 30000);
+  });
+
+  $('#v-btn').addEventListener('click', async () => {
+    if (!pending) return;
+    const entered = $('#v-code').value.trim(), vm = $('#v-msg');
+    if (!/^\d{6}$/.test(entered)) return showMsg(vm, 'أدخل الرمز المكوّن من 6 أرقام.', 'err');
+    const b = $('#v-btn'); b.disabled = true;
+    try {
+      let ok = false;
+      if (API_URL){ const r = await api('verify', { code: pending.rec.code, otp: entered });
+        if (!r.ok && r.error === 'limit'){ showMsg(vm, limitText(r.email), 'err'); return; }
+        if (!r.ok && (r.error === 'too many' || r.error === 'busy')){ showMsg(vm, serverText(r), 'err'); b.disabled = false; return; }
+        if (!r.ok && r.error === 'expired'){ showMsg(vm, 'انتهت صلاحية الرمز. اضغطوا «إعادة الإرسال» للحصول على رمز جديد.', 'err'); b.disabled = false; return; }
+        ok = !!r.ok; if (ok && r.rec) pending.rec = r.rec; }
+      else { ok = entered === pending.vcode; if (ok && db) await db.doc('registrations/' + pending.rec.code).update({ status:'verified', verifiedAt:new Date().toISOString() }).catch(()=>{}); }
+      if (!ok){ showMsg(vm, 'الرمز غير صحيح، تحقق من بريدك وحاول مجددًا.', 'err'); b.disabled = false; return; }
+      showMsg(vm, 'تم التحقق بنجاح.', 'ok');
+      saveLocal(pending.rec);
+      await imgsReady; renderBadges(pending.rec);
+      $('#verify').classList.remove('show');   // the code is confirmed: hide the verification box
+      clearAllFields(); b.disabled = false;
+      $('#done-code').textContent = pending.rec.code; $('#done').classList.add('show'); $('#done').scrollIntoView({ behavior:'smooth', block:'start' });
+      autoDownload(pending.rec);
+    } catch(e){ showMsg(vm, e.network ? 'الاتصال ضعيف. تحققوا من الإنترنت ثم اضغطوا «تحقق» مرة أخرى بنفس الرمز.' : 'تعذّر التحقق، حاول مجددًا.', 'err'); b.disabled = false; }
+  });
+
+  // ===== remember confirmed badges on this device, keyed by e-mail =====
+  const LS_KEY = 'et07_badges';
+  function saveLocal(rec){ try { const all = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); rec.members.forEach((m, i) => { all[(m.em||'').trim().toLowerCase()] = { rec, idx:i, at:Date.now() }; }); localStorage.setItem(LS_KEY, JSON.stringify(all)); } catch(e){} }
+  function getLocal(em){ try { return (JSON.parse(localStorage.getItem(LS_KEY) || '{}'))[em] || null; } catch(e){ return null; } }
+
+  // ===== download the badge(s) automatically once the code is confirmed =====
+  async function autoDownload(rec){
+    if (downloads) return;                      // inside the preview: the manual button asks for permission instead
+    const cvs = document.querySelectorAll('#badges canvas');
+    for (let i = 0; i < cvs.length; i++){
+      try {
+        const blob = await new Promise(r => cvs[i].toBlob(r, 'image/png'));
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'badge-' + rec.code + '-' + (i+1) + '.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        await new Promise(r => setTimeout(r, 900));
+      } catch(e){ console.warn(e); }
+    }
+  }
+
+  // ===== returning participant: e-mail → badge =====
+  async function showExisting(rec, idx){
+    pending = { rec };
+    await imgsReady; renderBadges(rec, idx > 0 ? [idx] : null);
+    $('#verify').classList.remove('show'); clearAllFields();
+    $('#done-code').textContent = rec.code; $('#done').classList.add('show'); $('#done').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  // ===== one-click link from the e-mail: /?c=REGISTRATION&k=CODE → verify, show + download the badge =====
+  (async () => {
+    const q = new URLSearchParams(location.search), c = q.get('c'), k = q.get('k');
+    if (!c || !k) return;
+    history.replaceState(null, '', location.pathname);           // the code is single-use: keep it out of the address bar
+    const rm = $('#r-msg');
+    $('#retrieve').scrollIntoView({ behavior:'smooth', block:'center' });
+    if (!API_URL) return showMsg(rm, 'وضع المعاينة: رابط التأكيد يعمل في النسخة النهائية فقط.', 'err');
+    showMsg(rm, 'جارٍ تأكيد بريدكم…', 'ok');
+    try {
+      const r = await api('verify', { code: c, otp: k });
+      if (r.ok && r.rec){ showMsg(rm, 'تم تأكيد بريدكم بنجاح.', 'ok'); saveLocal(r.rec); pending = { rec: r.rec };
+        await imgsReady; renderBadges(r.rec); $('#verify').classList.remove('show'); clearAllFields();
+        $('#done-code').textContent = r.rec.code; $('#done').classList.add('show'); $('#done').scrollIntoView({ behavior:'smooth', block:'start' });
+        autoDownload(r.rec); return; }
+      if (r.error === 'limit') return showMsg(rm, limitText(r.email), 'err');
+      // wrong or expired: maybe it was already confirmed → try the e-mail lookup hint
+      showMsg(rm, 'انتهت صلاحية هذا الرابط أو سبق استخدامه. إن كان بريدكم مؤكَّدًا، أدخلوه هنا لاسترجاع البطاقة؛ وإلا سجّلوا من جديد.', 'err');
+    } catch(e){ showMsg(rm, 'تعذّر الاتصال بالخادم، حاولوا مجددًا.', 'err'); }
+  })();
+
+  let rEmail = '';
+  $('#r-btn').addEventListener('click', async () => {
+    const em = $('#r-email').value.trim().toLowerCase(), rm = $('#r-msg'), b = $('#r-btn');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return showMsg(rm, 'أدخلوا بريدًا إلكترونيًا صحيحًا.', 'err');
+    const local = getLocal(em);
+    if (local){ showMsg(rm, 'تم العثور على بطاقتكم (محفوظة على هذا الجهاز).', 'ok'); return showExisting(local.rec, local.idx); }
+    if (!API_URL) return showMsg(rm, 'وضع المعاينة: البحث عن التسجيلات السابقة يعمل في النسخة النهائية فقط.', 'err');
+    // for privacy the badge is only shown after a one-time code sent to that e-mail
+    b.disabled = true; showMsg(rm, 'جارٍ الإرسال…', 'ok');
+    try {
+      const r = await api('lookup_start', { email: em });
+      if (!r.ok){ showMsg(rm, serverText(r, 'تعذّر الإرسال، حاولوا مجددًا.'), 'err'); b.disabled = false; return; }
+      rEmail = em; $('#r-email').value = ''; $('#r-step2').hidden = false; $('#r-code').value = ''; $('#r-code').focus();
+      showMsg(rm, 'إن كان البريد ' + em + ' مسجّلًا ومؤكدًا، فقد أرسلنا إليه رمزًا من 6 أرقام (صالح 15 دقيقة). تفقدوا أيضًا البريد غير المرغوب فيه (Spam).', 'ok');
+    } catch(e){ showMsg(rm, 'تعذّر الاتصال بالخادم، حاولوا مجددًا.', 'err'); }
+    setTimeout(() => { b.disabled = false; }, 45000);
+  });
+  $('#r-code-btn').addEventListener('click', async () => {
+    const otp = $('#r-code').value.replace(/\D/g, ''), rm = $('#r-msg'), b = $('#r-code-btn');
+    if (!/^\d{6}$/.test(otp)) return showMsg(rm, 'أدخلوا الرمز المكوّن من 6 أرقام.', 'err');
+    b.disabled = true;
+    try {
+      const r = await api('lookup_verify', { email: rEmail, otp });
+      if (r.ok && r.rec){ saveLocal(r.rec); $('#r-step2').hidden = true; showMsg(rm, 'تم العثور على بطاقتكم.', 'ok'); await showExisting(r.rec, r.idx); }
+      else if (r.error === 'expired') showMsg(rm, 'انتهت صلاحية الرمز أو لم يُرسل. اضغطوا «عرض بطاقتي» لطلب رمز جديد، وتأكدوا أن البريد هو الذي سجّلتم به وأكّدتموه.', 'err');
+      else showMsg(rm, serverText(r, 'الرمز غير صحيح، تحقق من بريدك وحاول مجددًا.'), 'err');
+    } catch(e){ showMsg(rm, 'تعذّر الاتصال بالخادم، حاولوا مجددًا.', 'err'); }
+    b.disabled = false;
+  });
+
+  // ===== e-mail the badges after verification =====
+  async function emailBadges(rec){
+    const mm = $('#mail-msg');
+    if (!API_URL){ showMsg(mm, 'وضع المعاينة: في النسخة النهائية تُرسل البطاقات تلقائيًا إلى بريد كل مشارك.', 'ok'); return; }
+    showMsg(mm, 'جارٍ إرسال البطاقات إلى بريدكم الإلكتروني…', 'ok');
+    try {
+      const files = [], previews = [];
+      const cvs = document.querySelectorAll('#badges canvas');
+      for (let i=0;i<cvs.length;i++){
+        // full-resolution PNG (lossless: sharp QR, transparent rounded corners) as the attachment
+        files.push({ name: 'badge-' + rec.code + '-' + (i+1) + '.png', type: 'image/png', data: cvs[i].toDataURL('image/png').split(',')[1] });
+        // light preview shown inside the e-mail body
+        const pv = document.createElement('canvas'); pv.width = 560; pv.height = 840;
+        const pc = pv.getContext('2d'); pc.fillStyle = '#ffffff'; pc.fillRect(0,0,560,840); pc.imageSmoothingQuality = 'high'; pc.drawImage(cvs[i], 0, 0, 560, 840);
+        previews.push(pv.toDataURL('image/jpeg', 0.88).split(',')[1]);
+      }
+      const r = await api('badges', { code: rec.code, files, previews });
+      if (!r.ok) throw new Error(r.error || 'server');
+      showMsg(mm, 'أُرسلت البطاقات إلى ' + rec.members.map(m => m.em).join('، ') + '.', 'ok');
+    } catch (e){ console.warn(e); showMsg(mm, 'تعذّر إرسال البطاقات بالبريد، يمكنكم تحميلها من هنا مباشرة.', 'err'); }
+  }
+
+  // ===== badges =====
+  const BADGE_RADIUS = 25;   // design units (1024-wide template) → looks like 8px at on-screen size
+  function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function fitText(ctx, text, maxW, size, weight){ let s = size; do { ctx.font = weight + ' ' + s + 'px Cairo, sans-serif'; if (ctx.measureText(text).width <= maxW) break; s -= 2; } while (s > 18); }
+  function drawImg(ctx, im, x, y, w){ if (!im) return 0; const h = w*im.height/im.width; ctx.drawImage(im, x, y, w, h); return h; }
+  // QR payload = a standard contact card (vCard 3.0): every phone camera (iPhone + Android) opens it
+  // as a contact showing name, institution, phone, e-mail and the registration details. Text only, no link.
+  function vEsc(v){ return String(v == null ? '' : v).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,' ').trim(); }
+  function qrText(rec, m, idx){
+    const n = rec.members.length;
+    const note = [rec.code + '-' + (idx+1), rec.offerLabel, rec.total + ' DA', rec.wilaya].concat(n > 1 ? [(idx+1) + '/' + n] : []).join(' · ');
+    return ['BEGIN:VCARD','VERSION:3.0',
+      'N:' + vEsc(m.ln) + ';' + vEsc(m.fn) + ';;;',
+      'FN:' + vEsc(m.fn + ' ' + m.ln),
+      'ORG:' + vEsc(rec.inst),
+      'TITLE:' + vEsc('EduTech 07 · ' + rec.offerLabel),
+      'TEL:' + vEsc(m.ph),
+      'EMAIL:' + vEsc(m.em),
+      'NOTE:' + vEsc(note),
+      'END:VCARD'].join('\r\n');
+  }
+  function utf8Bytes(str){ return Array.from(new TextEncoder().encode(str)); }
+  // Draws the QR inside the box (x,y,s). UTF-8 is declared with an ECI marker so Arabic reads correctly
+  // in every scanner; module edges are snapped to whole pixels so the code stays razor-sharp.
+  function drawQR(ctx, text, x, y, s, dark){
+    const Q = window.qrcodegen; if (!Q) return false;
+    try {
+      const bytes = utf8Bytes(text), ascii = bytes.every(v => v < 128);
+      const segs = ascii ? [Q.QrSegment.makeBytes(bytes)] : [Q.QrSegment.makeEci(26), Q.QrSegment.makeBytes(bytes)];
+      const q = Q.QrCode.encodeSegments(segs, Q.QrCode.Ecc.MEDIUM);
+      const n = q.size, quiet = 2, total = n + quiet*2, edge = i => Math.round(x + i*s/total), edgeY = i => Math.round(y + i*s/total);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(Math.round(x), Math.round(y), Math.round(s), Math.round(s)); ctx.fillStyle = dark;
+      for (let r=0;r<n;r++) for (let c=0;c<n;c++) if (q.getModule(c,r)){
+        const x0 = edge(c+quiet), x1 = edge(c+quiet+1), y0 = edgeY(r+quiet), y1 = edgeY(r+quiet+1);
+        ctx.fillRect(x0, y0, x1-x0, y1-y0);
+      }
+      return true;
+    } catch(e){ console.warn(e); return false; }
+  }
+  // ===== Badge v2 — premium ID card, drawn entirely on canvas (no photo). 1024×1536 design units, rendered at 2×. =====
+  const TIER = {
+    standard:{ label:'STANDARD', sub:'مشارك', accent:'#1aa7ec', accent2:'#d6f41f', top:['#0b3f93','#071f52'] },
+    vip:     { label:'VIP',      sub:'ضيف مميّز', accent:'#e9c46a', accent2:'#f4e3a1', top:['#0a2a66','#040f2e'] },
+    groupe:  { label:'GROUPE',   sub:'عضو مجموعة', accent:'#d6f41f', accent2:'#1aa7ec', top:['#0b3f93','#071f52'] }
+  };
+  function hexPath(ctx, cx, cy, r){ ctx.beginPath(); for (let i=0;i<6;i++){ const a = Math.PI/3*i - Math.PI/6; const x = cx + r*Math.cos(a), y = cy + r*Math.sin(a); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); } ctx.closePath(); }
+  function drawBadge(cv, rec, m, idx, sample){
+    const K = 2, W = 1024*K, H = 1536*K; cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d'); const k = rec.offer; const T = TIER[k] || TIER.standard; const vip = k === 'vip';
+    const R = 26*K;                       // corner radius
+    ctx.clearRect(0,0,W,H);
+    ctx.save(); roundRect(ctx, 0, 0, W, H, R); ctx.clip();
+    // --- card base
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+    // --- navy top panel with a diagonal cut
+    const cut = 905*K;                    // where the white part starts (at the left edge)
+    const g = ctx.createLinearGradient(0,0,W,cut); g.addColorStop(0, T.top[0]); g.addColorStop(1, T.top[1]);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W,0); ctx.lineTo(W, cut-70*K); ctx.lineTo(0, cut); ctx.closePath(); ctx.fill();
+    // soft glow top-right
+    const rg = ctx.createRadialGradient(W*0.82, 120*K, 10, W*0.82, 120*K, 620*K); rg.addColorStop(0,'rgba(26,167,236,.45)'); rg.addColorStop(1,'rgba(26,167,236,0)');
+    ctx.fillStyle = rg; ctx.fillRect(0,0,W,cut);
+    // hex line pattern (subtle)
+    ctx.save(); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W,0); ctx.lineTo(W,cut-70*K); ctx.lineTo(0,cut); ctx.closePath(); ctx.clip();
+    ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 2*K;
+    const hr = 78*K, hh = hr*Math.sqrt(3)/2;
+    for (let row=-1; row<14; row++) for (let col=-1; col<9; col++){ const cx = col*hr*3 + (row%2 ? hr*1.5 : 0), cy = row*hh; hexPath(ctx, cx, cy, hr-6*K); ctx.stroke(); }
+    // large outlined hexes (brand icon echo)
+    ctx.strokeStyle = 'rgba(255,255,255,.10)'; ctx.lineWidth = 7*K; hexPath(ctx, 160*K, 760*K, 210*K); ctx.stroke(); hexPath(ctx, 900*K, 640*K, 150*K); ctx.stroke();
+    ctx.restore();
+    // --- accent band along the diagonal
+    ctx.save(); ctx.beginPath(); ctx.moveTo(0, cut); ctx.lineTo(W, cut-70*K); ctx.lineTo(W, cut-70*K+14*K); ctx.lineTo(0, cut+14*K); ctx.closePath();
+    const ag = ctx.createLinearGradient(0,0,W,0); ag.addColorStop(0, T.accent); ag.addColorStop(1, T.accent2); ctx.fillStyle = ag; ctx.fill(); ctx.restore();
+    // --- lanyard slot
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; roundRect(ctx, W/2-70*K, 52*K, 140*K, 24*K, 12*K); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.08)'; roundRect(ctx, W/2-70*K, 50*K, 140*K, 24*K, 12*K); ctx.fill();
+    // --- tier pill (top-left in RTL layout = start side)
+    ctx.font = '800 ' + (30*K) + 'px Cairo, sans-serif'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center'; ctx.direction = 'ltr';
+    const pw = ctx.measureText(T.label).width + 56*K, px = W - 60*K - pw, py = 60*K;
+    ctx.fillStyle = T.accent; roundRect(ctx, px, py, pw, 54*K, 27*K); ctx.fill();
+    ctx.fillStyle = vip ? '#1b1400' : '#06153f'; ctx.fillText(T.label, px + pw/2, py + 27*K + 2*K);
+    // --- logo
+    if (IMG.logoW){ const lw = 560*K, lh = lw*IMG.logoW.height/IMG.logoW.width; ctx.shadowColor='rgba(0,10,40,.45)'; ctx.shadowBlur=24*K; ctx.shadowOffsetY=8*K; ctx.drawImage(IMG.logoW, W/2-lw/2, 150*K, lw, lh); ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0; }
+    // --- event line under the logo
+    ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.fillStyle = '#dbe8ff'; ctx.font = '700 ' + (34*K) + 'px Cairo, sans-serif';
+    ctx.fillText('الملتقى الوطني السابع', W/2, 345*K);
+    ctx.fillStyle = T.accent; ctx.fillRect(W/2-180*K, 372*K, 60*K, 3*K); ctx.fillRect(W/2+120*K, 372*K, 60*K, 3*K);
+    ctx.fillStyle = 'rgba(219,232,255,.85)'; ctx.font = '600 ' + (24*K) + 'px Cairo, sans-serif';
+    ctx.fillText('وسائل وبرامج تعليم الروبوت، الذكاء الاصطناعي والطباعة ثلاثية الأبعاد', W/2, 420*K);
+    // --- VIP wordmark on the panel
+    if (vip){ // big gold VIP wordmark centred in the blue space between the subtitle and the diagonal band
+      ctx.direction='ltr'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      const vy = 640*K, vg = ctx.createLinearGradient(0, vy-120*K, 0, vy+120*K); vg.addColorStop(0,'#fff6d5'); vg.addColorStop(.45,'#f0cf6f'); vg.addColorStop(1,'#b8892b');
+      ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=30*K; ctx.shadowOffsetY=12*K;
+      ctx.fillStyle = vg; ctx.font = '900 ' + (330*K) + 'px Cairo, sans-serif'; ctx.fillText('VIP', W/2, vy);
+      ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+      ctx.strokeStyle='rgba(255,246,213,.35)'; ctx.lineWidth=2*K; ctx.strokeText('VIP', W/2, vy);
+      ctx.textBaseline='alphabetic'; ctx.direction='rtl'; }
+    // --- name + role + institution (white part)
+    const full = m.fn + ' ' + m.ln;
+    ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'right'; const xr = W - 70*K;
+    if (vip){ const ng = ctx.createLinearGradient(xr-540*K, 0, xr, 0); ng.addColorStop(0,'#b8892b'); ng.addColorStop(.5,'#e9c46a'); ng.addColorStop(1,'#b8892b'); ctx.fillStyle = ng; fitText(ctx, full, 540*K, 84*K, '900'); ctx.shadowColor='rgba(184,137,43,.25)'; ctx.shadowBlur=14*K; ctx.shadowOffsetY=4*K; ctx.fillText(full, xr, 1020*K); ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0; }
+    else { ctx.fillStyle = '#0e2a56'; fitText(ctx, full, 540*K, 76*K, '900'); ctx.fillText(full, xr, 1020*K); }
+    ctx.fillStyle = vip ? '#b8892b' : '#1aa7ec'; ctx.font = '800 ' + (30*K) + 'px Cairo, sans-serif'; ctx.direction = 'ltr'; ctx.textAlign = 'right';
+    ctx.fillText(T.label + '  ·  ' + T.sub, xr, 1068*K); ctx.direction = 'rtl';
+    ctx.fillStyle = T.accent; ctx.fillRect(xr-90*K, 1086*K, 90*K, 4*K);
+    ctx.fillStyle = '#5b6b8a'; fitText(ctx, rec.inst, 540*K, 34*K, '700'); ctx.fillText(rec.inst, xr, 1140*K);
+    if (rec.members.length > 1){ ctx.fillStyle = '#9aa7bf'; ctx.font = '700 ' + (24*K) + 'px Cairo, sans-serif'; ctx.fillText('العضو ' + (idx+1) + ' من ' + rec.members.length, xr, 1180*K); }
+    // --- QR with a framed panel (left side)
+    const qs = 300*K, qx = 70*K, qy = 1005*K;
+    ctx.fillStyle = '#ffffff'; ctx.shadowColor = 'rgba(15,42,90,.18)'; ctx.shadowBlur = 30*K; ctx.shadowOffsetY = 10*K; roundRect(ctx, qx-14*K, qy-14*K, qs+28*K, qs+28*K, 18*K); ctx.fill(); ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+    ctx.strokeStyle = '#e3e9f3'; ctx.lineWidth = 2*K; roundRect(ctx, qx-14*K, qy-14*K, qs+28*K, qs+28*K, 18*K); ctx.stroke();
+    // corner marks
+    ctx.strokeStyle = T.accent; ctx.lineWidth = 6*K; const cm = 34*K, o = 22*K;
+    [[qx-o,qy-o,1,1],[qx+qs+o,qy-o,-1,1],[qx-o,qy+qs+o,1,-1],[qx+qs+o,qy+qs+o,-1,-1]].forEach(([x,y,sx,sy]) => { ctx.beginPath(); ctx.moveTo(x, y+sy*cm); ctx.lineTo(x,y); ctx.lineTo(x+sx*cm, y); ctx.stroke(); });
+    if (!drawQR(ctx, sample ? 'نموذج توضيحي — EduTech Solutions 07' : qrText(rec,m,idx), qx, qy, qs, '#0a1f4d')){ ctx.fillStyle='#0a1f4d'; ctx.font='700 '+(30*K)+'px Cairo'; ctx.textAlign='center'; ctx.fillText('QR', qx+qs/2, qy+qs/2); }
+    ctx.fillStyle = '#9aa7bf'; ctx.font = '700 ' + (20*K) + 'px Cairo, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('امسح للتحقق', qx+qs/2, qy+qs+52*K);
+    // --- code + footer
+    ctx.textAlign = 'right'; ctx.fillStyle = '#9aa7bf'; ctx.font = '700 ' + (22*K) + 'px Cairo, sans-serif'; ctx.fillText('رقم التسجيل', xr, 1250*K);
+    ctx.fillStyle = '#0e2a56'; ctx.font = '800 ' + (36*K) + 'px "Courier New", monospace'; ctx.direction = 'ltr'; ctx.textAlign = 'right'; ctx.fillText(rec.code + '-' + (idx+1), xr, 1296*K); ctx.direction = 'rtl';
+    ctx.fillStyle = '#e3e9f3'; ctx.fillRect(70*K, 1372*K, W-140*K, 2*K);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#5b6b8a'; ctx.font = '700 ' + (26*K) + 'px Cairo, sans-serif';
+    ctx.fillText('31 أكتوبر 2026  ·  الجزائر العاصمة', xr, 1430*K);
+    let lx = 70*K;
+    if (IMG.org){ const oh = 110*K, ow = oh*IMG.org.width/IMG.org.height; ctx.drawImage(IMG.org, 70*K, 1420*K-oh/2, ow, oh); lx = 70*K + ow + 18*K; }
+    ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillStyle = '#9aa7bf'; ctx.font = '600 ' + (21*K) + 'px Cairo, sans-serif'; ctx.fillText((/^(https?:)$/.test(location.protocol) && location.hostname) ? location.hostname : 'edutech07-inscription.vercel.app', lx, 1430*K); ctx.direction = 'rtl';
+    if (sample){ ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(14,42,86,.35)'; ctx.font = '700 ' + (22*K) + 'px Cairo, sans-serif'; ctx.fillText('نموذج توضيحي', W/2, 1500*K); }
+    // --- outer border
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(10,31,77,.12)'; ctx.lineWidth = 2*K; roundRect(ctx, K, K, W-2*K, H-2*K, R); ctx.stroke();
+  }
+  function renderBadges(rec, only){
+    const box = $('#badges'); box.innerHTML = '';
+    rec.members.forEach((m, idx) => {
+      if (only && only.indexOf(idx) < 0) return;
+      const card = document.createElement('div'); card.className = 'badge-card';
+      const cv = document.createElement('canvas'); cv.setAttribute('role','img'); cv.setAttribute('aria-label','بطاقة ' + m.fn + ' ' + m.ln);
+      drawBadge(cv, rec, m, idx, false);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (rec.offer==='vip' ? 'btn-blue' : 'btn-lime'); b.textContent = 'تحميل البطاقة (PNG عالي الجودة)';
+      b.addEventListener('click', async () => {
+        b.disabled = true;
+        try {
+          const blob = await new Promise(r => cv.toBlob(r,'image/png'));
+          if (downloads){ await downloads.save({ filename:'badge-'+rec.code+'-'+(idx+1)+'.png', data:blob }); b.textContent = 'تم الحفظ ✓'; }
+          else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'badge-'+rec.code+'-'+(idx+1)+'.png'; document.body.appendChild(a); a.click(); a.remove(); b.textContent = 'تحميل البطاقة (PNG عالي الجودة)'; }
+        } catch(err){ b.textContent = err && err.code==='declined' ? 'تحميل البطاقة (PNG عالي الجودة)' : 'اضغط مطوّلًا على البطاقة لحفظها'; }
+        b.disabled = false;
+      });
+      card.appendChild(cv); card.appendChild(b); box.appendChild(card);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>لوحة الإدارة — EduTech Solutions 07</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a1f4d'/%3E%3Cpath d='M9 10h14M9 16h10M9 22h14' stroke='%23d6f41f' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f6fb; --surface:#ffffff; --surface-2:#f0f4fa; --surface-3:#e6edf7; --fg:#0f2a5a; --fg-soft:#3b5584; --muted:#6b84ad; --line:#dbe4f1; --line-2:#c8d6ea;
+  --brand:#1a6fd9; --brand-soft:#e3efff; --navy:#0a1f4d; --navy-2:#13306b; --lime:#d6f41f; --lime-ink:#1f2a05;
+  --std:#1a6fd9; --vip:#c99a2e; --grp:#7fa10a; --grp-bg:#f2f9d6; --grp-ink:#4d5f00; --grp-line:#d7ec8a;
+  --ok:#1f9d55; --ok-bg:#e6f6ec; --warn:#b26a00; --warn-bg:#fff4e0; --bad:#c2352b; --bad-bg:#fdecea; --info-bg:#eef3fb;
+  --shadow:0 1px 2px rgba(15,42,90,.06),0 8px 24px rgba(15,42,90,.06); --radius:14px;
+  --font:'Cairo',"Noto Kufi Arabic",Tahoma,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#061532; --surface:#0c2250; --surface-2:#10295c; --surface-3:#163369; --fg:#eaf2ff; --fg-soft:#c3d4f2; --muted:#8fa9d6; --line:#21407a; --line-2:#2c4f8f;
+  --brand:#5aa4ff; --brand-soft:#123a78; --std:#5aa4ff; --vip:#e9c46a; --grp:#b7d63a; --grp-bg:#26330a; --grp-ink:#e4f59a; --grp-line:#4f6414;
+  --ok:#4cd486; --ok-bg:#0f3a2a; --warn:#ffc266; --warn-bg:#3a2a10; --bad:#ff7b72; --bad-bg:#3a1414; --info-bg:#122c62;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.6;direction:rtl;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+.wrap{width:min(1360px,100%);margin-inline:auto;padding-inline:clamp(14px,2.6vw,28px)}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:6px 14px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);font-weight:800;font-size:.9rem;cursor:pointer;white-space:nowrap;text-decoration:none;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--brand)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.tab:focus-visible,.row-btn:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn-primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy-2)}
+.btn-lime{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+.btn-ghost{background:transparent;border-color:transparent}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-danger{color:var(--bad)}
+.btn-sm{min-height:32px;padding:3px 10px;font-size:.8rem;border-radius:8px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn svg,.ic{width:18px;height:18px;flex:none}
+.icon-btn{width:40px;padding:0}
+
+/* ---------- top bar + tabs ---------- */
+.top{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .bar{display:flex;align-items:center;gap:10px;min-height:62px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{height:32px;width:auto}
+.brand .t{font-weight:900;font-size:1rem;padding-inline-start:12px;border-inline-start:1px solid var(--line-2);white-space:nowrap}
+.sp{flex:1}
+.sync{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.8rem;font-weight:700;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.sync.busy i{background:var(--warn);animation:blink 1s infinite}
+.sync.err i{background:var(--bad)}
+@keyframes blink{50%{opacity:.3}}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:-1px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:0;border-bottom:3px solid transparent;background:none;font-weight:800;font-size:.9rem;color:var(--fg-soft);cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--fg)}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--brand)}
+.tab .c{min-width:22px;padding:0 7px;border-radius:99px;background:var(--surface-3);font-size:.75rem;line-height:20px;text-align:center}
+.tab .c.bad{background:var(--bad-bg);color:var(--bad)}
+.tab .c.warn{background:var(--warn-bg);color:var(--warn)}
+
+/* ---------- login ---------- */
+.login{min-height:100svh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(ellipse at 80% 0%,rgba(31,216,255,.18),transparent 50%),linear-gradient(160deg,#0b3f93,#071f52 70%)}
+.login .card{width:min(400px,100%);padding:30px 26px;border-radius:18px;background:var(--surface);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.login img{height:40px;width:auto;margin-bottom:18px}
+.login h1{margin:0 0 4px;font-size:1.35rem;font-weight:900}
+.login p{margin:0 0 18px;color:var(--fg-soft);font-size:.92rem}
+label{display:block;font-weight:800;font-size:.85rem;margin:12px 0 6px}
+.in{width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface)}
+.in:focus{border-color:var(--brand)}
+.login .btn{width:100%;margin-top:18px;min-height:46px;font-size:1rem}
+.msg{display:none;margin-top:12px;padding:10px 12px;border-radius:10px;font-weight:700;font-size:.88rem}
+.msg.err{display:block;background:var(--bad-bg);color:var(--bad)}
+.secure{display:flex;align-items:center;gap:6px;margin-top:16px;color:var(--muted);font-size:.78rem;font-weight:700}
+
+/* ---------- layout ---------- */
+main{padding-block:20px 70px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:16px 18px;min-width:0}
+.kpi .k{display:flex;align-items:center;gap:8px;color:var(--fg-soft);font-size:.82rem;font-weight:800}
+.kpi .k .ic{color:var(--muted)}
+.kpi .v{font-size:1.9rem;font-weight:900;line-height:1.15;margin-top:6px}
+.kpi .v small{font-size:.9rem;font-weight:800;color:var(--muted);margin-inline-start:4px}
+.kpi .s{color:var(--muted);font-size:.78rem;font-weight:700;margin-top:2px}
+.kpi.hero{background:var(--navy);border-color:var(--navy);color:#fff}
+.kpi.hero .k,.kpi.hero .k .ic,.kpi.hero .s{color:#a9bfe6}
+.kpi.hero .v{color:var(--lime)}
+.meter{height:6px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:10px}
+.meter i{display:block;height:100%;border-radius:99px;background:var(--ok)}
+.two{grid-template-columns:1.6fr 1fr;margin-top:14px}
+.two-b{grid-template-columns:1fr 1fr;margin-top:14px}
+@media (max-width:900px){.two,.two-b{grid-template-columns:1fr}}
+.panel{padding:16px 18px;min-width:0}
+.panel h2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px;font-size:.98rem;font-weight:900}
+.panel h2 span{color:var(--muted);font-size:.78rem;font-weight:700}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:.78rem;font-weight:700;color:var(--fg-soft)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
+.donut-wrap{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}
+@media (max-width:420px){.donut-wrap{grid-template-columns:1fr;justify-items:center}}
+.olist{display:grid;gap:10px;width:100%}
+.olist div{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;font-weight:800;font-size:.9rem}
+.olist div em{grid-column:2;grid-row:2}
+.olist i{width:12px;height:12px;border-radius:4px}
+.olist em{font-style:normal;color:var(--muted);font-weight:700;font-size:.8rem}
+.hbars{display:grid;gap:9px}
+.hbar{display:grid;grid-template-columns:minmax(90px,140px) 1fr 34px;gap:10px;align-items:center;font-size:.85rem;font-weight:700}
+.hbar .t{height:10px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.hbar .t i{display:block;height:100%;border-radius:99px;background:var(--brand)}
+.hbar b{text-align:left}
+.latest{display:grid;gap:2px}
+.latest button{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:9px 8px;border:0;border-radius:10px;background:none;text-align:start;cursor:pointer}
+.latest button:hover{background:var(--surface-2)}
+.latest b{font-weight:800}.latest span{color:var(--muted);font-size:.78rem}
+.empty-s{color:var(--muted);font-weight:700;font-size:.88rem;padding:10px 0}
+
+/* ---------- toolbar + table ---------- */
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.search{flex:1 1 280px;position:relative}
+.search .in{padding-inline-start:38px}
+.search svg{position:absolute;inset-inline-start:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
+.tools select{min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);font-weight:700}
+.count{color:var(--muted);font-weight:700;font-size:.85rem;margin:0 2px 10px}
+.tablebox{overflow:hidden}
+table.tbl{width:100%;border-collapse:collapse}
+.tbl th{background:var(--surface-2);color:var(--fg-soft);font-size:.76rem;font-weight:800;text-align:start;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:.88rem}
+.tbl tbody tr{cursor:pointer;transition:background .12s}
+.tbl tbody tr:hover{background:var(--surface-2)}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl tr.dim td{opacity:.55}
+.code{font-family:ui-monospace,"Cascadia Mono","Courier New",monospace;font-weight:700;font-size:.85rem;direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+.sub{display:block;color:var(--muted);font-size:.76rem;font-weight:700}
+.name{font-weight:800}
+.more{display:inline-block;margin-inline-start:6px;padding:0 7px;border-radius:99px;background:var(--surface-3);color:var(--fg-soft);font-size:.72rem;font-weight:800}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.74rem;font-weight:900;white-space:nowrap;letter-spacing:.2px}
+.pill.STANDARD{background:var(--brand-soft);color:var(--std)}
+.pill.VIP{background:#fbf1d6;color:#8a6a12}
+.pill.GROUPE{background:#eef8c4;color:#4d5f00}
+:root[data-theme="dark"] .pill.VIP{background:#4a3a10;color:#f4e3a1}
+:root[data-theme="dark"] .pill.GROUPE{background:#33400a;color:#e4f59a}
+.st{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:99px;font-size:.74rem;font-weight:800;white-space:nowrap}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st.ok{background:var(--ok-bg);color:var(--ok)}.st.wait{background:var(--warn-bg);color:var(--warn)}.st.no{background:var(--bad-bg);color:var(--bad)}.st.test{background:var(--surface-3);color:var(--fg-soft)}
+.flag{display:inline-block;margin-top:4px;padding:1px 8px;border-radius:6px;background:var(--bad-bg);color:var(--bad);font-size:.7rem;font-weight:800}
+.flag.info{background:var(--info-bg);color:var(--fg-soft)}
+/* group registrations: one block listing the members, same green family as the GROUPE pill */
+.gm{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.gm-head{display:inline-flex;align-items:center;gap:6px;padding:1px 9px 1px 8px;border-radius:99px;background:var(--grp-bg);color:var(--grp-ink);font-size:.7rem;font-weight:800;line-height:1.7}
+.gm-head svg{width:13px;height:13px;flex:none}
+.gm ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;position:relative}
+.gm ol::before{content:"";position:absolute;inset-block:10px;inset-inline-start:9px;width:2px;border-radius:2px;background:var(--grp-line)}
+.gm li{position:relative;display:flex;align-items:center;gap:8px;min-width:0;font-weight:800;line-height:1.5}
+.gm li .n{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2px solid var(--grp-line);color:var(--grp-ink);font-size:.66rem;font-weight:900;line-height:1}
+.gm li.lead .n{background:var(--grp);border-color:var(--grp);color:#fff}
+.gm li .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gm li .role{flex:none;font-size:.64rem;font-weight:800;color:var(--grp-ink);background:var(--grp-bg);border-radius:99px;padding:0 7px}
+.gm .ph{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:.76rem;font-weight:700;direction:ltr}
+.gm .ph svg{width:13px;height:13px}
+.tbl tr.grp{box-shadow:inset -3px 0 0 var(--grp)}
+.tbl tr.grp td{background:color-mix(in srgb,var(--grp-bg) 38%,var(--surface))}
+.tbl td>div{min-width:0}
+.tbl tr.grp:hover td{background:var(--surface-2)}
+/* participants tab: group members sit together and say who they came with */
+.gtag{display:flex;width:fit-content;flex-direction:column;gap:1px;margin-top:4px;padding:3px 10px;border-radius:8px;background:var(--grp-bg);color:var(--grp-ink);font-size:.7rem;font-weight:800;line-height:1.55;max-width:100%}
+.gtag b{display:flex;align-items:center;gap:6px;min-width:0;font-weight:900}
+.gtag b svg{width:13px;height:13px;flex:none}
+.gtag b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gtag em{font-style:normal;font-weight:700;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl tr.grp-first td{border-bottom-color:transparent}
+.tbl tr.grp-mid td{border-bottom-color:transparent}
+@media (max-width:900px){
+  .tbl tr.grp{box-shadow:inset -4px 0 0 var(--grp)}
+  .tbl tr.grp td{background:none}
+  .tbl tr.grp-first,.tbl tr.grp-mid{border-bottom-color:var(--grp-line)}
+  .gm{width:100%}
+}
+.del-acts{display:flex;flex-wrap:wrap;gap:6px}
+.money{font-weight:900;white-space:nowrap}
+.yes{color:var(--ok);font-weight:800}.no-{color:var(--muted);font-weight:700}
+.chk{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:.8rem;white-space:nowrap}
+.chk i{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--line-2);display:grid;place-items:center;font-style:normal;font-size:.7rem;color:transparent}
+.chk.on{color:var(--ok)}.chk.on i{background:var(--ok);border-color:var(--ok);color:#fff}
+.empty{padding:46px 16px;text-align:center;color:var(--muted);font-weight:700}
+@media (max-width:900px){
+  .tbl thead{display:none}
+  .tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tbody tr{padding:10px 4px;border-bottom:1px solid var(--line)}
+  .tbl td{border:0;padding:4px 12px;display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center}
+  .tbl td::before{content:attr(data-l);color:var(--muted);font-size:.74rem;font-weight:800}
+  .tbl td.hide-m{display:none}
+}
+
+/* ---------- checks ---------- */
+.checks{display:grid;gap:12px}
+.check{padding:14px 16px}
+.check h3{display:flex;align-items:center;gap:10px;margin:0;font-size:.95rem;font-weight:900}
+.check h3 .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.check.bad .dot{background:var(--bad)}.check.warn .dot{background:var(--warn)}.check.ok .dot{background:var(--ok)}.check.info .dot{background:var(--brand)}
+.check p{margin:6px 0 0;color:var(--fg-soft);font-size:.86rem}
+.check ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.check li{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:var(--surface-2);font-size:.85rem}
+.check li .grow{flex:1;min-width:160px}
+.summary-ok{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--ok-bg);color:var(--ok);border-radius:var(--radius);font-weight:800}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(6,21,50,.45);z-index:40}
+.drawer{position:fixed;inset-block:0;inset-inline-end:0;width:min(520px,100%);background:var(--surface);z-index:41;display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.2)}
+.drawer header{display:flex;align-items:flex-start;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.drawer header .grow{flex:1;min-width:0}
+.drawer header h2{margin:0;font-size:1.05rem;font-weight:900}
+.drawer .body{flex:1;overflow:auto;padding:16px 20px 24px;display:grid;gap:16px;align-content:start}
+.sec h3{margin:0 0 8px;font-size:.78rem;font-weight:900;color:var(--muted);letter-spacing:.3px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:.88rem}
+.kv dt{color:var(--fg-soft);font-weight:700}.kv dd{margin:0;font-weight:800;min-width:0;overflow-wrap:anywhere}
+.person{padding:12px 14px;border:1px solid var(--line);border-radius:12px;display:grid;gap:6px}
+.person .hd{display:flex;align-items:center;gap:8px}
+.person .hd b{font-size:.95rem;font-weight:900}
+.person .role{font-size:.72rem;font-weight:800;color:var(--muted);background:var(--surface-2);border-radius:6px;padding:0 6px}
+.person .ln{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.85rem}
+.person .ln .v{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.switch b{display:block;font-weight:800}.switch span{color:var(--muted);font-size:.78rem}
+.tg{position:relative;width:46px;height:26px;border-radius:99px;border:0;background:var(--line-2);cursor:pointer;flex:none}
+.tg::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:inset-inline-start .15s}
+.tg[aria-checked="true"]{background:var(--ok)}
+.tg[aria-checked="true"]::after{inset-inline-start:23px}
+.tg[disabled]{opacity:.5;cursor:wait}
+.drawer textarea{width:100%;min-height:80px;padding:10px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);resize:vertical}
+.toast{position:fixed;inset-inline:0;bottom:18px;margin-inline:auto;width:max-content;max-width:calc(100% - 32px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:12px;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:60}
+.toast.err{background:var(--bad)}
+dialog{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--fg);padding:22px;width:min(420px,calc(100% - 32px));box-shadow:0 30px 80px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(6,21,50,.55)}
+dialog h3{margin:0 0 6px;font-weight:900}
+dialog p{margin:0 0 14px;color:var(--fg-soft)}
+dialog .acts{justify-content:flex-start}
+/* skeleton */
+.skel{background:linear-gradient(90deg,var(--surface-2),var(--surface-3),var(--surface-2));background-size:200% 100%;animation:sk 1.2s infinite;border-radius:10px}
+@keyframes sk{to{background-position:-200% 0}}
+.errbox{padding:28px 18px;text-align:center}
+.errbox b{display:block;font-size:1rem;margin-bottom:6px}
+@media (max-width:560px){.brand .t,.sync span{display:none}.brand img{height:28px}}
+@media print{.top,.tools,.drawer,.scrim{display:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ login ============ -->
+<section class="login" id="login">
+  <form class="card" id="login-form" autocomplete="on">
+    <img class="logo-d" src="/assets/logo.png" alt="EduTech Solutions 07">
+    <h1>لوحة الإدارة</h1>
+    <p>متابعة تسجيلات الملتقى الوطني السابع.</p>
+    <label for="user">اسم المستخدم</label>
+    <input class="in ltr" id="user" name="username" autocomplete="username" required maxlength="80">
+    <label for="pass">كلمة المرور</label>
+    <input class="in ltr" id="pass" name="password" type="password" autocomplete="current-password" required maxlength="200">
+    <button class="btn btn-primary" id="login-btn" type="submit">دخول</button>
+    <div class="msg" id="login-msg" role="alert"></div>
+    <div class="secure"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>اتصال مشفّر · تنتهي الجلسة بعد 6 ساعات</div>
+  </form>
+</section>
+
+<!-- ============ app ============ -->
+<div id="app" hidden>
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <div class="brand"><img src="/assets/logo.png" alt="EduTech Solutions 07" id="logo"><span class="t">لوحة الإدارة</span></div>
+      <span class="sp"></span>
+      <span class="sync" id="sync"><i></i><span id="sync-t">جارٍ التحميل…</span></span>
+      <button class="btn icon-btn" id="refresh" title="تحديث البيانات" aria-label="تحديث البيانات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg></button>
+      <button class="btn icon-btn" id="theme" title="الوضع الليلي" aria-label="تبديل الوضع الليلي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <button class="btn" id="logout">خروج</button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="أقسام اللوحة">
+      <button class="tab" role="tab" data-tab="overview" aria-selected="true">نظرة عامة</button>
+      <button class="tab" role="tab" data-tab="regs" aria-selected="false">التسجيلات <span class="c" id="c-regs">0</span></button>
+      <button class="tab" role="tab" data-tab="people" aria-selected="false">المشاركون <span class="c" id="c-people">0</span></button>
+      <button class="tab" role="tab" data-tab="pending" aria-selected="false">بانتظار التأكيد <span class="c warn" id="c-pending">0</span></button>
+      <button class="tab" role="tab" data-tab="deleted" aria-selected="false">المحذوفة <span class="c" id="c-deleted">0</span></button>
+      <button class="tab" role="tab" data-tab="checks" aria-selected="false">فحص البيانات <span class="c" id="c-checks">0</span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="loading">
+    <div class="grid kpis"><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div></div>
+    <div class="grid two"><div class="skel" style="height:280px"></div><div class="skel" style="height:280px"></div></div>
+  </div>
+  <div class="card errbox" id="loaderr" hidden><b>تعذّر تحميل البيانات</b><p class="sub" id="loaderr-t">تحقق من الاتصال ثم أعد المحاولة.</p><button class="btn btn-primary" id="retry">إعادة المحاولة</button></div>
+
+  <!-- overview -->
+  <section id="tab-overview" role="tabpanel" hidden>
+    <div class="grid kpis">
+      <div class="card kpi hero"><div class="k">المشاركون المؤكدون</div><div class="v num" id="k-people">0</div><div class="s" id="k-people-s"></div></div>
+      <div class="card kpi"><div class="k">التسجيلات المؤكدة</div><div class="v num" id="k-conf">0</div><div class="s" id="k-conf-s"></div></div>
+      <div class="card kpi"><div class="k">المبلغ المتوقع</div><div class="v"><span class="num" id="k-rev">0</span><small>دج</small></div><div class="s" id="k-rev-s"></div></div>
+      <div class="card kpi"><div class="k">المدفوع</div><div class="v"><span class="num" id="k-paid">0</span><small>دج</small></div><div class="meter"><i id="k-paid-m" style="width:0"></i></div><div class="s" id="k-paid-s"></div></div>
+      <div class="card kpi"><div class="k">الحضور يوم الملتقى</div><div class="v num" id="k-in">0</div><div class="meter"><i id="k-in-m" style="width:0"></i></div><div class="s" id="k-in-s"></div></div>
+    </div>
+    <div class="grid two">
+      <div class="card panel"><h2>المشاركون يوميًا <span id="days-t"></span></h2><div class="chart" id="chart-days"></div>
+        <div class="legend"><span><i style="background:var(--brand)"></i>مؤكَّدون</span><span><i style="background:var(--line-2)"></i>لم يُؤكِّدوا</span></div></div>
+      <div class="card panel"><h2>حسب العرض <span>بعدد المشاركين المؤكدين</span></h2><div class="donut-wrap"><div class="chart" id="chart-offer"></div><div class="olist" id="offer-list"></div></div></div>
+    </div>
+    <div class="grid two-b">
+      <div class="card panel"><h2>الولايات <span id="wil-t"></span></h2><div class="hbars" id="wilayas"></div></div>
+      <div class="card panel"><h2>آخر التسجيلات المؤكدة</h2><div class="latest" id="latest"></div></div>
+    </div>
+  </section>
+
+  <!-- registrations -->
+  <section id="tab-regs" role="tabpanel" hidden>
+    <div class="tools">
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="in" id="q" type="search" placeholder="بحث: اسم، بريد، هاتف، رقم تسجيل، مؤسسة، ولاية…" aria-label="بحث"></div>
+      <select id="f-status" aria-label="الحالة"><option value="confirmed">المؤكدة</option><option value="cancelled">الملغاة</option><option value="test">التجريبية</option><option value="all">الكل (عدا بانتظار التأكيد)</option></select>
+      <select id="f-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select>
+      <select id="f-paid" aria-label="الدفع"><option value="">الدفع: الكل</option><option value="yes">مدفوع</option><option value="no">غير مدفوع</option></select>
+      <select id="f-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select>
+      <select id="f-sort" aria-label="الترتيب"><option value="new">الأحدث أولًا</option><option value="old">الأقدم أولًا</option><option value="amount">المبلغ</option><option value="inst">المؤسسة</option></select>
+      <button class="btn" id="csv-regs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel</button>
+    </div>
+    <div class="count" id="count-regs"></div>
+    <div class="card tablebox">
+      <table class="tbl"><thead><tr><th>التسجيل</th><th>المشارك</th><th>المؤسسة</th><th>العرض</th><th>المبلغ</th><th>الحالة</th><th>الدفع</th><th>الحضور</th></tr></thead><tbody id="rows-regs"></tbody></table>
+      <div class="empty" id="empty-regs" hidden>لا توجد تسجيلات مطابقة.</div>
+    </div>
+  </section>
+
+  <!-- people -->
+  <section id="tab-people" role="tabpanel" hidden>
+    <div class="tools">
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="in" id="qp" type="search" placeholder="بحث عن مشارك…" aria-label="بحث عن مشارك"></div>
+      <select id="fp-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select>
+      <select id="fp-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select>
+      <button class="btn" id="csv-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel</button>
+      <button class="btn" id="print-people">طباعة القائمة</button>
+    </div>
+    <div class="count" id="count-people"></div>
+    <div class="card tablebox">
+      <table class="tbl"><thead><tr><th>#</th><th>المشارك</th><th>المؤسسة</th><th>العرض</th><th>الهاتف</th><th>البريد</th><th>التسجيل</th><th>الحضور</th></tr></thead><tbody id="rows-people"></tbody></table>
+      <div class="empty" id="empty-people" hidden>لا يوجد مشاركون مطابقون.</div>
+    </div>
+  </section>
+
+  <!-- pending -->
+  <section id="tab-pending" role="tabpanel" hidden>
+    <div class="card panel" style="margin-bottom:14px"><h2>ما معنى «بانتظار التأكيد»؟</h2>
+      <p class="sub" style="font-size:.86rem;font-weight:600;color:var(--fg-soft)">ملأ الشخص الاستمارة لكنه لم يُدخل رمز التحقق المرسل إلى بريده، فلا يُحسب تسجيله ولا تصدر بطاقته. إن ظهر تحته «أكمل التسجيل لاحقًا» فهو محاولة متروكة لا تحتاج متابعة. الآخرون يمكن الاتصال بهم لمساعدتهم على الإكمال.</p></div>
+    <div class="card tablebox">
+      <table class="tbl"><thead><tr><th>التسجيل</th><th>المشارك</th><th>المؤسسة</th><th>العرض</th><th>الوضع</th><th>تواصل</th></tr></thead><tbody id="rows-pending"></tbody></table>
+      <div class="empty" id="empty-pending" hidden>لا توجد تسجيلات بانتظار التأكيد.</div>
+    </div>
+  </section>
+
+  <!-- deleted (cancelled) -->
+  <section id="tab-deleted" role="tabpanel" hidden>
+    <div class="card panel" style="margin-bottom:14px"><h2>التسجيلات المحذوفة</h2>
+      <p class="sub" style="font-size:.86rem;font-weight:600;color:var(--fg-soft)">كل تسجيل ضُغط عليه «إلغاء التسجيل». لا يُحذف شيء نهائيًا: يبقى محفوظًا في Google Sheet ولا يُحسب في الإحصاءات، ويمكن إرجاعه بزر «إرجاع». تسجيل المجموعة يُحذف ويُرجَع بأعضائه الثلاثة معًا.</p></div>
+    <div class="count" id="count-deleted"></div>
+    <div class="card tablebox">
+      <table class="tbl"><thead><tr><th>التسجيل</th><th>المشاركون</th><th>المؤسسة</th><th>العرض</th><th>المبلغ</th><th>إجراء</th></tr></thead><tbody id="rows-deleted"></tbody></table>
+      <div class="empty" id="empty-deleted" hidden>لا توجد تسجيلات محذوفة.</div>
+    </div>
+  </section>
+
+  <!-- checks -->
+  <section id="tab-checks" role="tabpanel" hidden>
+    <div class="checks" id="checks"></div>
+  </section>
+</main>
+</div>
+
+<!-- drawer -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="d-title">
+  <header><div class="grow"><h2 id="d-title"></h2><div class="sub" id="d-sub"></div></div><button class="btn icon-btn btn-ghost" id="d-close" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+  <div class="body" id="d-body"></div>
+</aside>
+
+<dialog id="dlg"><form method="dialog"><h3 id="dlg-title"></h3><p id="dlg-text"></p><div class="acts"><button class="btn btn-primary" value="ok" id="dlg-ok">تأكيد</button><button class="btn" value="cancel">رجوع</button></div></form></dialog>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(() => {
+  'use strict';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwhxbN6WaM1nCo68IeJPOeWQBBcqLIbPw9Yu8Y35fiAZujR_6-bXmFtcD-VuhExWzBG/exec';
+  const PRICES = { STANDARD: 5900, VIP: 9900, GROUPE: 24900 }, MEMBERS = { STANDARD: 1, VIP: 1, GROUPE: 3 };
+  const OFFER_COLOR = { STANDARD: 'var(--std)', VIP: 'var(--vip)', GROUPE: 'var(--grp)' };
+  const TZ = 'Africa/Algiers', TK = 'et07_admin';
+  const $ = s => document.querySelector(s);
+  let token = null, rows = [], meta = {}, loading = false, timer = null, tab = 'overview', openCode = null;
+
+  // ---------- theme (light by default) ----------
+  try { const t = localStorage.getItem('et07_admin_theme'); if (t === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}
+  const syncLogo = () => { $('#logo').src = document.documentElement.dataset.theme === 'dark' ? '/assets/logo-white.png' : '/assets/logo.png'; };
+  syncLogo();
+  $('#theme').addEventListener('click', () => {
+    const d = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = d; syncLogo();
+    try { localStorage.setItem('et07_admin_theme', d); } catch (e) {}
+    if (rows.length) renderOverview();
+  });
+
+  // ---------- helpers: every value is inserted with textContent, never as HTML ----------
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    if (attrs) for (const k in attrs) { const v = attrs[k]; if (v == null || v === false) continue; if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else if (k === 'style') n.style.cssText = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? '' : v); }
+    kids.flat().forEach(c => { if (c != null && c !== false) n.append(c instanceof Node ? c : document.createTextNode(String(c))); });
+    return n;
+  }
+  const svgEl = (tag, attrs) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+  // numbers sit in a left-to-right isolate so "34 220" never shows as "220 34" inside Arabic text
+  const fmt = n => '\u2066' + Math.round(Number(n) || 0).toLocaleString('fr-FR').replace(/[\u202f\u00a0]/g, ' ') + '\u2069';
+  const dfmt = (s, opt) => { const d = new Date(s); return isNaN(d) ? '—' : d.toLocaleString('fr-FR', Object.assign({ timeZone: TZ }, opt)); };
+  const dt = s => dfmt(s, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const dshort = s => dfmt(s, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const dayKey = s => { const d = new Date(s); return isNaN(d) ? '' : d.toLocaleDateString('en-CA', { timeZone: TZ }); };
+  const norm = s => String(s || '').trim().toLowerCase();
+  const phoneIntl = p => { const d = String(p || '').replace(/\D/g, ''); return d.startsWith('0') ? '213' + d.slice(1) : d; };
+  const isConf = r => r.status === 'verified' || r.status === 'badges sent';
+  const fullName = m => (String(m.fn || '') + ' ' + String(m.ln || '')).trim();
+  function toast(t, bad) { const n = $('#toast'); n.textContent = t; n.className = 'toast' + (bad ? ' err' : ''); n.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { n.hidden = true; }, 2600); }
+  function sync(state, text) { const s = $('#sync'); s.className = 'sync ' + (state || ''); $('#sync-t').textContent = text; }
+  const ICON = {
+    phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',
+    mail: 'M4 6h16v12H4z M4 7l8 6 8-6', copy: 'M9 9h10v10H9z M5 15V5h10', wa: 'M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5z'
+  };
+  const icon = d => { const s = svgEl('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'ic' }); d.split(' M').forEach((p, i) => s.append(svgEl('path', { d: (i ? 'M' : '') + p }))); return s; };
+
+  async function api(action, payload) {
+    const r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(Object.assign({ action }, payload || {})), cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer' });
+    if (!r.ok) throw new Error('http ' + r.status);
+    const j = await r.json();
+    if (j && j.error === 'auth') { logout(true); throw new Error('auth'); }
+    return j;
+  }
+
+  // ---------- login / session ----------
+  function loginMsg(t) { const m = $('#login-msg'); m.textContent = t; m.className = 'msg err'; }
+  $('#login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const b = $('#login-btn'); b.disabled = true; b.textContent = 'جارٍ التحقق…'; $('#login-msg').className = 'msg';
+    try {
+      const r = await api('admin_login', { user: $('#user').value.trim(), pass: $('#pass').value });
+      if (r.ok && r.token) {
+        token = r.token;
+        try { sessionStorage.setItem(TK, JSON.stringify({ token, exp: Date.now() + (r.ttl || 21600) * 1000 })); } catch (e) {}
+        $('#pass').value = ''; enter(r.rows ? r : null);
+      } else if (r.error === 'locked') loginMsg('محاولات خاطئة كثيرة. أُغلق الدخول مؤقتًا لمدة 15 دقيقة.');
+      else if (r.error === 'busy') loginMsg('ضغط كبير على الخادم، أعيدوا المحاولة بعد دقيقة.');
+      else loginMsg('اسم المستخدم أو كلمة المرور غير صحيحة.');
+    } catch (err) { loginMsg('تعذّر الاتصال بالخادم. تحققوا من الإنترنت ثم أعيدوا المحاولة.'); }
+    b.disabled = false; b.textContent = 'دخول';
+  });
+  function logout(expired) {
+    if (token && !expired) api('admin_logout', { token }).catch(() => {});
+    token = null; rows = []; clearInterval(timer); closeDrawer();
+    try { sessionStorage.removeItem(TK); } catch (e) {}
+    ['#rows-regs', '#rows-people', '#rows-pending', '#checks'].forEach(s => { $(s).textContent = ''; });
+    $('#app').hidden = true; $('#login').hidden = false;
+    if (expired) loginMsg('انتهت الجلسة، سجّلوا الدخول من جديد.');
+  }
+  $('#logout').addEventListener('click', () => logout(false));
+  function enter(first) {
+    $('#login').hidden = true; $('#app').hidden = false;
+    showTab(tab);
+    if (first) apply(first); else load();
+    clearInterval(timer); timer = setInterval(() => { if (!document.hidden && !loading) load(true); }, 60000);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && token && Date.now() - (meta.at || 0) > 60000) load(true); });
+
+  // ---------- tabs ----------
+  function showTab(t) {
+    tab = t;
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+    ['overview', 'regs', 'people', 'pending', 'deleted', 'checks'].forEach(x => { $('#tab-' + x).hidden = x !== t || !rows.length && !meta.loaded; });
+    try { history.replaceState(null, '', '#' + t); } catch (e) {}
+  }
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  const h = location.hash.slice(1); if (['overview', 'regs', 'people', 'pending', 'deleted', 'checks'].includes(h)) tab = h;
+
+  // ---------- data ----------
+  async function load(quiet) {
+    if (loading || !token) return; loading = true;
+    sync('busy', 'جارٍ التحديث…'); $('#refresh').disabled = true;
+    if (!meta.loaded) { $('#loading').hidden = false; $('#loaderr').hidden = true; }
+    try {
+      const r = await api('admin_list', { token });
+      if (!r.ok) throw new Error(r.error || 'server');
+      apply(r);
+    } catch (e) {
+      if (e.message === 'auth') { loading = false; return; }
+      sync('err', 'غير متصل');
+      if (!meta.loaded) { $('#loading').hidden = true; $('#loaderr').hidden = false; }
+      else if (!quiet) toast('تعذّر تحديث البيانات', true);
+    }
+    $('#refresh').disabled = false; loading = false;
+  }
+  function apply(r) {
+    rows = (r.rows || []).filter(x => x && x.code);
+    meta = { loaded: true, at: Date.now(), mailLeft: r.mailLeft, now: r.now, earlyDeadline: r.earlyDeadline };
+    analyse(); renderAll();
+    $('#loading').hidden = true; $('#loaderr').hidden = true; showTab(tab);
+    sync('', 'محدَّث ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
+  }
+  $('#refresh').addEventListener('click', () => load());
+  $('#retry').addEventListener('click', () => load());
+
+  // ---------- analysis: one pass that every view and every check reads from ----------
+  let A = {};
+  function analyse() {
+    const conf = rows.filter(isConf);
+    const confEmails = new Map(), confPhones = new Set();
+    conf.forEach(r => r.members.forEach(m => { const e = norm(m.em); if (!confEmails.has(e)) confEmails.set(e, []); if (!confEmails.get(e).includes(r)) confEmails.get(e).push(r); confPhones.add(String(m.ph)); }));
+    rows.forEach(r => {
+      r._flags = [];
+      const listPrice = PRICES[r.offer];
+      if (!listPrice) r._flags.push({ k: 'bad', t: 'عرض غير معروف' });
+      else if (r.price !== listPrice) r._flags.push({ k: 'bad', t: 'سعر مختلف عن سعر العرض' });
+      if (r.total !== r.price - r.discount) r._flags.push({ k: 'bad', t: 'المبلغ ≠ السعر − الخصم' });
+      if (MEMBERS[r.offer] && r.members.length !== MEMBERS[r.offer]) r._flags.push({ k: 'bad', t: 'عدد المشاركين لا يطابق العرض' });
+      r._rate = r.price ? Math.round(100 * r.discount / r.price) : 0;
+      if (isConf(r)) {
+        const dupe = r.members.some(m => (confEmails.get(norm(m.em)) || []).length > 1);
+        if (dupe) r._flags.push({ k: 'bad', t: 'نفس البريد مؤكَّد في تسجيل آخر' });
+        if (!r.verifiedAt) r._flags.push({ k: 'warn', t: 'مؤكد دون تاريخ تأكيد' });
+        const ems = r.members.map(m => norm(m.em));
+        if (ems.length > 1 && new Set(ems).size < ems.length) r._flags.push({ k: 'info', t: 'أعضاء المجموعة يتشاركون نفس البريد' });
+      }
+      if (r.status === 'pending') {
+        r._later = r.members.some(m => confEmails.has(norm(m.em)) || confPhones.has(String(m.ph)));
+      }
+    });
+    const people = [];
+    conf.forEach(r => r.members.forEach((m, i) => people.push({ r, m, i })));
+    A = { conf, people, pending: rows.filter(r => r.status === 'pending'), cancelled: rows.filter(r => r.status === 'cancelled'), test: rows.filter(r => r.status === 'test') };
+    A.issues = rows.filter(r => r.status !== 'test' && r.status !== 'cancelled' && r._flags.some(f => f.k === 'bad')).length;
+  }
+
+  function renderAll() {
+    $('#c-regs').textContent = A.conf.length; $('#c-people').textContent = A.people.length;
+    $('#c-pending').textContent = A.pending.filter(r => !r._later).length;
+    const c = $('#c-checks'); c.textContent = A.issues; c.className = 'c' + (A.issues ? ' bad' : '');
+    $('#c-deleted').textContent = A.cancelled.length;
+    renderOverview(); renderRegs(); renderPeople(); renderPending(); renderDeleted(); renderChecks();
+    if (openCode) { const r = rows.find(x => x.code === openCode); if (r) openDrawer(r); else closeDrawer(); }
+  }
+
+  // ---------- overview ----------
+  function renderOverview() {
+    const conf = A.conf, people = A.people.length;
+    const expected = conf.reduce((s, r) => s + r.total, 0);
+    const paidR = conf.filter(r => r.paid), paid = paidR.reduce((s, r) => s + r.total, 0);
+    const inPeople = conf.filter(r => r.checkin).reduce((s, r) => s + r.members.length, 0);
+    const today = dayKey(new Date());
+    const todayP = conf.filter(r => dayKey(r.verifiedAt || r.createdAt) === today).reduce((s, r) => s + r.members.length, 0);
+    const by = o => conf.filter(r => r.offer === o);
+    const grpPeople = by('GROUPE').reduce((s, r) => s + r.members.length, 0);
+    $('#k-people').textContent = people;
+    $('#k-people-s').textContent = (todayP ? '+' + todayP + ' اليوم · ' : '') + (people - grpPeople) + ' فردي + ' + grpPeople + ' ضمن مجموعات';
+    $('#k-conf').textContent = conf.length;
+    $('#k-conf-s').textContent = by('GROUPE').length + ' مجموعة · ' + (by('STANDARD').length + by('VIP').length) + ' فردي · ' + A.pending.filter(r => !r._later).length + ' بانتظار التأكيد';
+    $('#k-rev').textContent = fmt(expected);
+    $('#k-rev-s').textContent = 'منها خصومات ' + fmt(conf.reduce((s, r) => s + r.discount, 0)) + ' دج';
+    $('#k-paid').textContent = fmt(paid);
+    $('#k-paid-m').style.width = (expected ? 100 * paid / expected : 0) + '%';
+    $('#k-paid-s').textContent = paidR.length + ' من ' + conf.length + ' تسجيل · الباقي ' + fmt(expected - paid) + ' دج';
+    $('#k-in').textContent = inPeople;
+    $('#k-in-m').style.width = (people ? 100 * inPeople / people : 0) + '%';
+    $('#k-in-s').textContent = 'من ' + people + ' مشارك';
+
+    // daily chart: confirmed vs never-confirmed, by registration day
+    const days = []; const first = rows.reduce((m, r) => { const k = dayKey(r.createdAt); return k && (!m || k < m) ? k : m; }, '') || today;
+    for (let d = new Date(first + 'T12:00:00Z'); dayKey(d) <= today && days.length < 60; d = new Date(d.getTime() + 86400000)) days.push(dayKey(d));
+    const live = rows.filter(r => r.status !== 'test' && r.status !== 'cancelled');
+    const ppl = list => list.reduce((s, r) => s + r.members.length, 0);
+    const series = days.map(k => ({ k, c: ppl(live.filter(r => isConf(r) && dayKey(r.createdAt) === k)), p: ppl(live.filter(r => r.status === 'pending' && !r._later && dayKey(r.createdAt) === k)) }));
+    $('#days-t').textContent = 'منذ ' + dfmt(first + 'T12:00:00Z', { day: '2-digit', month: '2-digit' });
+    drawBars($('#chart-days'), series);
+
+    // offers donut
+    const offers = ['STANDARD', 'VIP', 'GROUPE'].map(o => ({ o, n: by(o).length, p: by(o).reduce((s, r) => s + r.members.length, 0), amt: by(o).reduce((s, r) => s + r.total, 0) }));
+    drawDonut($('#chart-offer'), offers.map(x => ({ o: x.o, n: x.p })), people);
+    const ol = $('#offer-list'); ol.textContent = '';
+    offers.forEach(x => ol.append(el('div', {}, el('i', { style: 'background:' + OFFER_COLOR[x.o] }), el('span', { text: x.o }), el('b', { class: 'num', text: x.p + ' مشارك' }), el('em', {}, x.n + ' تسجيل · ', el('span', { class: 'num', text: fmt(x.amt) }), ' دج'))));
+
+    // wilayas
+    const wc = {}; conf.forEach(r => { const w = r.wilaya || '—'; wc[w] = (wc[w] || 0) + r.members.length; });
+    const wl = Object.entries(wc).sort((a, b) => b[1] - a[1]); const top = wl.slice(0, 8), max = Math.max(1, ...top.map(x => x[1]));
+    $('#wil-t').textContent = wl.length + ' ولاية · بعدد المشاركين';
+    const wb = $('#wilayas'); wb.textContent = '';
+    if (!top.length) wb.append(el('div', { class: 'empty-s', text: 'لا توجد بيانات بعد.' }));
+    top.forEach(([w, n]) => { const i = el('i'); i.style.width = (100 * n / max) + '%'; wb.append(el('div', { class: 'hbar' }, el('span', { text: w }), el('div', { class: 't' }, i), el('b', { class: 'num', text: n }))); });
+
+    // latest
+    const lt = $('#latest'); lt.textContent = '';
+    const latest = conf.slice().sort((a, b) => new Date(b.verifiedAt || b.createdAt) - new Date(a.verifiedAt || a.createdAt)).slice(0, 7);
+    if (!latest.length) lt.append(el('div', { class: 'empty-s', text: 'لا توجد تسجيلات مؤكدة بعد.' }));
+    latest.forEach(r => lt.append(el('button', { type: 'button', onclick: () => openDrawer(r) },
+      el('b', { text: fullName(r.members[0]) + (r.members.length > 1 ? ' + ' + (r.members.length - 1) + ' (مجموعة)' : '') }), el('span', { class: 'pill ' + r.offer, text: r.offer }),
+      el('span', { text: r.inst + ' · ' + r.wilaya }), el('span', { class: 'num', text: dshort(r.verifiedAt || r.createdAt) }))));
+  }
+  function drawBars(box, series) {
+    box.textContent = '';
+    const W = 640, H = 190, pad = { l: 8, r: 26, t: 10, b: 26 }, n = series.length;
+    const max = Math.max(2, ...series.map(s => s.c + s.p)); const bw = (W - pad.l - pad.r) / n;
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'المشاركون يوميًا' });
+    const y = v => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+    [0, Math.ceil(max / 2), max].forEach(v => {
+      svg.append(svgEl('line', { x1: pad.l, x2: W - pad.r, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 }));
+      const t = svgEl('text', { x: W - pad.r + 6, y: y(v) + 4, 'font-size': 11, fill: 'var(--muted)', 'font-weight': 700 }); t.textContent = v; svg.append(t);
+    });
+    series.forEach((s, i) => {
+      const x = pad.l + i * bw + bw * 0.18, w = bw * 0.64;
+      const g = svgEl('g', {}); const title = svgEl('title', {}); title.textContent = dfmt(s.k + 'T12:00:00Z', { day: '2-digit', month: '2-digit' }) + ': ' + s.c + ' مشارك مؤكَّد، ' + s.p + ' لم يُؤكِّد'; g.append(title);
+      if (s.c) g.append(svgEl('rect', { x, y: y(s.c), width: w, height: y(0) - y(s.c), rx: 3, fill: 'var(--brand)' }));
+      if (s.p) g.append(svgEl('rect', { x, y: y(s.c + s.p), width: w, height: y(s.c) - y(s.c + s.p) - (s.c ? 1 : 0), rx: 3, fill: 'var(--line-2)' }));
+      svg.append(g);
+      if (n <= 16 || i % Math.ceil(n / 12) === 0) { const t = svgEl('text', { x: x + w / 2, y: H - 8, 'text-anchor': 'middle', 'font-size': 10.5, fill: 'var(--muted)', 'font-weight': 700 }); t.textContent = dfmt(s.k + 'T12:00:00Z', { day: '2-digit', month: '2-digit' }); svg.append(t); }
+      if (s.c) { const t = svgEl('text', { x: x + w / 2, y: y(s.c + s.p) - 4, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--fg)', 'font-weight': 800 }); t.textContent = s.c; svg.append(t); }
+    });
+    box.append(svg);
+  }
+  function drawDonut(box, parts, total) {
+    box.textContent = '';
+    const R = 60, C = 2 * Math.PI * R, svg = svgEl('svg', { viewBox: '0 0 150 150', role: 'img', 'aria-label': 'التوزيع حسب العرض', style: 'max-width:150px' });
+    svg.append(svgEl('circle', { cx: 75, cy: 75, r: R, fill: 'none', stroke: 'var(--surface-3)', 'stroke-width': 18 }));
+    let off = 0;
+    parts.forEach(p => { if (!p.n || !total) return; const len = C * p.n / total; svg.append(svgEl('circle', { cx: 75, cy: 75, r: R, fill: 'none', stroke: OFFER_COLOR[p.o], 'stroke-width': 18, 'stroke-dasharray': `${Math.max(0, len - 2)} ${C}`, 'stroke-dashoffset': -off, transform: 'rotate(-90 75 75)' })); off += len; });
+    const t1 = svgEl('text', { x: 75, y: 78, 'text-anchor': 'middle', 'font-size': 28, 'font-weight': 900, fill: 'var(--fg)' }); t1.textContent = total;
+    const t2 = svgEl('text', { x: 75, y: 98, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: 'var(--muted)' }); t2.textContent = 'مشارك';
+    svg.append(t1, t2); box.append(svg);
+  }
+
+  // ---------- registrations table ----------
+  function statusEl(r) {
+    if (r.status === 'badges sent' || r.status === 'verified') return el('span', { class: 'st ok', text: 'مؤكد' });
+    if (r.status === 'cancelled') return el('span', { class: 'st no', text: 'ملغى' });
+    if (r.status === 'test') return el('span', { class: 'st test', text: 'تجريبي' });
+    return el('span', { class: 'st wait', text: 'بانتظار التأكيد' });
+  }
+  // group registrations: the members listed together (lead first), and a tag on each member in the participants list
+  const ICON_USERS = 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75';
+  const usersIcon = () => { const s = svgEl('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 2.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true' }); s.append(svgEl('path', { d: ICON_USERS })); return s; };
+  function groupBlock(r, extra) {
+    return el('div', { class: 'gm' },
+      el('span', { class: 'gm-head' }, usersIcon(), 'مجموعة · ' + r.members.length + ' أعضاء'),
+      el('ol', {}, r.members.map((m, i) => el('li', { class: i === 0 ? 'lead' : '' }, el('span', { class: 'n', text: i + 1 }), el('span', { class: 'nm', text: fullName(m), title: fullName(m) }), i === 0 ? el('span', { class: 'role', text: 'المسؤول' }) : null))),
+      extra || null);
+  }
+  function grpTag(r, i) {
+    const others = r.members.filter((_, k) => k !== i).map(fullName).join('، ');
+    return el('span', { class: 'gtag', title: 'مجموعة ' + r.inst + ' (' + r.code + ') — مع: ' + others },
+      el('b', {}, usersIcon(), el('span', { text: 'مجموعة · العضو ' + (i + 1) + ' من ' + r.members.length })),
+      el('em', { text: 'مع: ' + others }));
+  }
+  const chk = (on, a, b) => el('span', { class: 'chk' + (on ? ' on' : '') }, el('i', { text: '✓' }), on ? a : b);
+  function hay(r) { return [r.code, r.inst, r.wilaya, r.note, r.offer].concat(r.members.flatMap((m, i) => [r.code + '-' + (i + 1), fullName(m), m.ln + ' ' + m.fn, m.em, m.ph])).join(' ').toLowerCase(); }
+  function regsList() {
+    const q = $('#q').value.trim().toLowerCase(), st = $('#f-status').value, of = $('#f-offer').value, pd = $('#f-paid').value, ci = $('#f-in').value, so = $('#f-sort').value;
+    const list = rows.filter(r => {
+      if (r.status === 'pending') return false;
+      if (st === 'confirmed' && !isConf(r)) return false;
+      if (st === 'cancelled' && r.status !== 'cancelled') return false;
+      if (st === 'test' && r.status !== 'test') return false;
+      if (of && r.offer !== of) return false;
+      if (pd && (pd === 'yes') !== !!r.paid) return false;
+      if (ci && (ci === 'yes') !== !!r.checkin) return false;
+      return !q || hay(r).includes(q);
+    });
+    const t = r => new Date(r.createdAt).getTime() || 0;
+    list.sort(so === 'old' ? (a, b) => t(a) - t(b) : so === 'amount' ? (a, b) => b.total - a.total : so === 'inst' ? (a, b) => a.inst.localeCompare(b.inst, 'ar') : (a, b) => t(b) - t(a));
+    return list;
+  }
+  function renderRegs() {
+    const list = regsList(), tb = $('#rows-regs'); tb.textContent = '';
+    $('#count-regs').textContent = list.length + ' تسجيل · ' + list.reduce((s, r) => s + r.members.length, 0) + ' مشارك · ' + fmt(list.reduce((s, r) => s + r.total, 0)) + ' دج';
+    $('#empty-regs').hidden = list.length > 0;
+    const f = document.createDocumentFragment();
+    list.forEach(r => {
+      const m0 = r.members[0] || {};
+      const bad = r.status !== 'test' && r.status !== 'cancelled' ? r._flags.find(x => x.k === 'bad') : null;
+      const isGrp = r.members.length > 1;
+      f.append(el('tr', { class: (r.status === 'cancelled' || r.status === 'test' ? 'dim' : '') + (isGrp ? ' grp' : ''), tabindex: 0, onclick: () => openDrawer(r), onkeydown: e => { if (e.key === 'Enter') openDrawer(r); } },
+        el('td', { 'data-l': 'التسجيل' }, el('div', {}, el('span', { class: 'code', text: r.code }), el('span', { class: 'sub num', text: dshort(r.createdAt) }))),
+        el('td', { 'data-l': isGrp ? 'المشاركون' : 'المشارك' }, el('div', {}, isGrp ? groupBlock(r, el('span', { class: 'ph' }, icon(ICON.phone), m0.ph || '')) : el('span', { class: 'name', text: fullName(m0) }), isGrp ? null : el('span', { class: 'sub ltr', text: m0.ph || '' }), bad ? el('span', { class: 'flag', text: bad.t }) : null)),
+        el('td', { 'data-l': 'المؤسسة' }, el('div', {}, el('span', { text: r.inst }), el('span', { class: 'sub', text: r.wilaya }))),
+        el('td', { 'data-l': 'العرض' }, el('span', { class: 'pill ' + r.offer, text: r.offer })),
+        el('td', { 'data-l': 'المبلغ' }, el('div', {}, el('span', { class: 'money num', text: fmt(r.total) + ' دج' }), r.discount ? el('span', { class: 'sub', text: 'خصم ' + r._rate + '%' }) : null)),
+        el('td', { 'data-l': 'الحالة' }, statusEl(r)),
+        el('td', { 'data-l': 'الدفع' }, chk(r.paid, 'مدفوع', 'غير مدفوع')),
+        el('td', { 'data-l': 'الحضور' }, chk(r.checkin, 'حضر', '—'))));
+    });
+    tb.append(f);
+  }
+  ['#q', '#f-status', '#f-offer', '#f-paid', '#f-in', '#f-sort'].forEach(s => $(s).addEventListener('input', renderRegs));
+
+  // ---------- people ----------
+  function peopleList() {
+    const q = $('#qp').value.trim().toLowerCase(), of = $('#fp-offer').value, ci = $('#fp-in').value;
+    return A.people.filter(p => (!of || p.r.offer === of) && (!ci || (ci === 'yes') === !!p.r.checkin) && (!q || [fullName(p.m), p.m.ln + ' ' + p.m.fn, p.m.em, p.m.ph, p.r.inst, p.r.code, p.r.code + '-' + (p.i + 1), p.r.wilaya].join(' ').toLowerCase().includes(q)))
+      .sort((a, b) => fullName(a.r.members[0] || a.m).localeCompare(fullName(b.r.members[0] || b.m), 'ar') || (a.r.code < b.r.code ? -1 : a.r.code > b.r.code ? 1 : 0) || a.i - b.i);
+  }
+  function renderPeople() {
+    const list = peopleList(), tb = $('#rows-people'); tb.textContent = '';
+    $('#count-people').textContent = list.length + ' مشارك · ' + list.filter(p => p.r.checkin).length + ' حضر';
+    $('#empty-people').hidden = list.length > 0;
+    const f = document.createDocumentFragment();
+    const pos = (p, i) => { if (p.r.members.length < 2) return ''; const nx = list[i + 1]; return 'grp' + (nx && nx.r === p.r ? (list[i - 1] && list[i - 1].r === p.r ? ' grp-mid' : ' grp-first') : ''); };
+    list.forEach((p, i) => f.append(el('tr', { class: pos(p, i), tabindex: 0, onclick: () => openDrawer(p.r), onkeydown: e => { if (e.key === 'Enter') openDrawer(p.r); } },
+      el('td', { 'data-l': '#', class: 'num', text: i + 1 }),
+      el('td', { 'data-l': 'المشارك' }, el('div', {}, el('span', { class: 'name', text: fullName(p.m) }), p.r.members.length > 1 ? grpTag(p.r, p.i) : null)),
+      el('td', { 'data-l': 'المؤسسة' }, el('div', {}, el('span', { text: p.r.inst }), el('span', { class: 'sub', text: p.r.wilaya }))),
+      el('td', { 'data-l': 'العرض' }, el('span', { class: 'pill ' + p.r.offer, text: p.r.offer })),
+      el('td', { 'data-l': 'الهاتف' }, el('span', { class: 'ltr', text: p.m.ph })),
+      el('td', { 'data-l': 'البريد', class: 'hide-m' }, el('span', { class: 'ltr', style: 'font-size:.82rem', text: p.m.em })),
+      el('td', { 'data-l': 'التسجيل' }, el('span', { class: 'code', text: p.r.code + (p.r.members.length > 1 ? '-' + (p.i + 1) : '') })),
+      el('td', { 'data-l': 'الحضور' }, chk(p.r.checkin, 'حضر', '—')))));
+    tb.append(f);
+  }
+  ['#qp', '#fp-offer', '#fp-in'].forEach(s => $(s).addEventListener('input', renderPeople));
+  $('#print-people').addEventListener('click', () => window.print());
+
+  // ---------- pending ----------
+  function renderPending() {
+    const list = A.pending.slice().sort((a, b) => (a._later - b._later) || (new Date(b.createdAt) - new Date(a.createdAt)));
+    const tb = $('#rows-pending'); tb.textContent = ''; $('#empty-pending').hidden = list.length > 0;
+    list.forEach(r => {
+      const m = r.members[0] || {};
+      tb.append(el('tr', { class: r._later ? 'dim' : '', tabindex: 0, onclick: e => { if (!e.target.closest('a')) openDrawer(r); } },
+        el('td', { 'data-l': 'التسجيل' }, el('div', {}, el('span', { class: 'code', text: r.code }), el('span', { class: 'sub num', text: dshort(r.createdAt) }))),
+        el('td', { 'data-l': 'المشارك' }, el('div', {}, el('span', { class: 'name', text: fullName(m) }), el('span', { class: 'sub ltr', text: m.em }))),
+        el('td', { 'data-l': 'المؤسسة' }, el('div', {}, el('span', { text: r.inst }), el('span', { class: 'sub', text: r.wilaya }))),
+        el('td', { 'data-l': 'العرض' }, el('span', { class: 'pill ' + r.offer, text: r.offer })),
+        el('td', { 'data-l': 'الوضع' }, r._later ? el('span', { class: 'st ok', text: 'أكمل التسجيل لاحقًا' }) : el('span', { class: 'st wait', text: 'لم يُكمل' })),
+        el('td', { 'data-l': 'تواصل' }, r._later ? el('span', { class: 'sub', text: 'لا حاجة' }) : el('div', { class: 'acts' },
+          el('a', { class: 'btn btn-sm', href: 'tel:' + String(m.ph).replace(/[^\d+]/g, '') }, icon(ICON.phone), 'اتصال'),
+          el('a', { class: 'btn btn-sm', href: 'https://wa.me/' + phoneIntl(m.ph), target: '_blank', rel: 'noopener noreferrer' }, 'واتساب')))));
+    });
+  }
+
+  // ---------- deleted (cancelled) registrations ----------
+  function restoreTarget(r) { return r.verifiedAt ? 'verified' : 'pending'; }
+  function restoreAsk(r) {
+    const to = restoreTarget(r);
+    const clash = r.members.map(m => norm(m.em)).filter((e, k, a) => a.indexOf(e) === k)
+      .flatMap(e => A.conf.filter(x => x.code !== r.code && x.members.some(m => norm(m.em) === e)).map(x => e + ' (مؤكَّد في ' + x.code + ')'));
+    const who = r.members.length > 1 ? 'سيعود التسجيل بأعضائه الـ' + r.members.length + ': ' + r.members.map(fullName).join('، ') + '. ' : '';
+    confirmDo('إرجاع ' + r.code, who + (to === 'verified' ? 'يعود مؤكدًا ويُحسب في الإحصاءات.' : 'يعود بانتظار التأكيد.') + (clash.length ? ' تنبيه: ' + clash.join('، ') + ' — قد يُحسب الشخص مرتين.' : ''), () => update(r.code, { status: to }));
+  }
+  function renderDeleted() {
+    const list = A.cancelled.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const tb = $('#rows-deleted'); tb.textContent = ''; $('#empty-deleted').hidden = list.length > 0;
+    $('#count-deleted').textContent = list.length + ' تسجيل محذوف · ' + list.reduce((s, r) => s + r.members.length, 0) + ' مشارك';
+    list.forEach(r => {
+      const isGrp = r.members.length > 1, m0 = r.members[0] || {};
+      tb.append(el('tr', { class: isGrp ? 'grp' : '', tabindex: 0, onclick: e => { if (!e.target.closest('button')) openDrawer(r); }, onkeydown: e => { if (e.key === 'Enter' && !e.target.closest('button')) openDrawer(r); } },
+        el('td', { 'data-l': 'التسجيل' }, el('div', {}, el('span', { class: 'code', text: r.code }), el('span', { class: 'sub num', text: dshort(r.createdAt) }))),
+        el('td', { 'data-l': isGrp ? 'المشاركون' : 'المشارك' }, el('div', {}, isGrp ? groupBlock(r, el('span', { class: 'ph' }, icon(ICON.mail), m0.em || '')) : el('span', { class: 'name', text: fullName(m0) }), isGrp ? null : el('span', { class: 'sub ltr', text: m0.em || '' }))),
+        el('td', { 'data-l': 'المؤسسة' }, el('div', {}, el('span', { text: r.inst }), el('span', { class: 'sub', text: r.wilaya }))),
+        el('td', { 'data-l': 'العرض' }, el('span', { class: 'pill ' + r.offer, text: r.offer })),
+        el('td', { 'data-l': 'المبلغ' }, el('span', { class: 'money num', text: fmt(r.total) + ' دج' })),
+        el('td', { 'data-l': 'إجراء' }, el('div', { class: 'del-acts' },
+          el('button', { class: 'btn btn-sm btn-primary', type: 'button', text: 'إرجاع', onclick: () => restoreAsk(r) }),
+          el('button', { class: 'btn btn-sm', type: 'button', text: 'التفاصيل', onclick: () => openDrawer(r) })))));
+    });
+  }
+
+  // ---------- data checks ----------
+  function renderChecks() {
+    const box = $('#checks'); box.textContent = '';
+    const live = rows.filter(r => r.status !== 'test' && r.status !== 'cancelled');
+    const item = r => el('li', {}, el('span', { class: 'code', text: r.code }), el('span', { class: 'grow' }, fullName(r.members[0] || {}), ' · ', r.inst, ' · ', el('span', { class: 'ltr', text: (r.members[0] || {}).em || '' })), statusEl(r), el('span', { class: 'pill ' + r.offer, text: r.offer }), el('button', { class: 'btn btn-sm', type: 'button', onclick: () => openDrawer(r), text: 'فتح' }));
+    const groups = [];
+    // 1. same e-mail confirmed more than once
+    const byEmail = new Map(); A.conf.forEach(r => new Set(r.members.map(m => norm(m.em))).forEach(e => { if (!byEmail.has(e)) byEmail.set(e, []); byEmail.get(e).push(r); }));
+    const dup = [...byEmail.entries()].filter(([, l]) => l.length > 1);
+    groups.push({ k: dup.length ? 'bad' : 'ok', t: 'بريد مؤكَّد في أكثر من تسجيل', p: dup.length ? 'سُجّلت هذه قبل تفعيل قاعدة «تسجيل واحد لكل بريد». أبقوا التسجيل الصحيح، وحوّلوا الباقي إلى «تجريبي» أو «ملغى» حتى لا يُحسب مرتين.' : 'كل بريد مؤكَّد مرة واحدة فقط.', rows: dup.flatMap(([, l]) => l.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))) });
+    // 2. price / amount consistency
+    const money = live.filter(r => r._flags.some(f => f.t.includes('سعر') || f.t.includes('المبلغ') || f.t.includes('عرض غير')));
+    groups.push({ k: money.length ? 'bad' : 'ok', t: 'الأسعار والمبالغ', p: money.length ? 'هذه التسجيلات لا يطابق سعرها أو مجموعها سعر العرض.' : 'كل الأسعار تطابق العروض، وكل مبلغ = السعر − الخصم.', rows: money });
+    // 3. member count
+    const cnt = live.filter(r => r._flags.some(f => f.t.includes('عدد المشاركين')));
+    groups.push({ k: cnt.length ? 'bad' : 'ok', t: 'عدد المشاركين حسب العرض', p: cnt.length ? 'عدد الأشخاص لا يطابق العرض (مجموعة = 3، فردي = 1).' : 'كل المجموعات فيها 3 مشاركين وكل تسجيل فردي فيه مشارك واحد.', rows: cnt });
+    // 4. confirmed without date
+    const nodate = A.conf.filter(r => !r.verifiedAt);
+    groups.push({ k: nodate.length ? 'warn' : 'ok', t: 'تاريخ التأكيد', p: nodate.length ? 'تسجيلات مؤكدة بلا تاريخ تأكيد.' : 'كل تسجيل مؤكد له تاريخ تأكيد.', rows: nodate });
+    // 5. info: discount rates
+    const rates = {}; A.conf.forEach(r => { const k = r.discount ? r._rate + '%' : 'بدون خصم'; rates[k] = (rates[k] || 0) + 1; });
+    groups.push({ k: 'info', t: 'نسب الخصم المطبّقة', p: Object.entries(rates).map(([k, n]) => n + ' تسجيل بـ ' + k).join(' · ') + (rates['15%'] ? '. التسجيلات الأولى كانت بخصم 15% قبل رفعه إلى 20%، ومبالغها محفوظة كما دُفعت.' : ''), rows: [] });
+    // 6. info: shared group e-mail
+    const shared = A.conf.filter(r => r._flags.some(f => f.t.includes('يتشاركون')));
+    if (shared.length) groups.push({ k: 'info', t: 'مجموعات بنفس البريد لكل الأعضاء', p: 'ليس خطأ، لكن البطاقات كلها تصل إلى بريد واحد.', rows: shared });
+    // 7. info: test / cancelled kept aside
+    groups.push({ k: 'info', t: 'خارج الإحصاءات', p: A.test.length + ' تجريبي · ' + A.cancelled.length + ' ملغى · ' + A.pending.length + ' بانتظار التأكيد (منها ' + A.pending.filter(r => r._later).length + ' أكملوا لاحقًا). كل الصفوف محفوظة في Google Sheet ولا يُحذف شيء.', rows: [] });
+
+    const bad = groups.filter(g => g.k === 'bad').length;
+    box.append(bad ? el('div', { class: 'card check bad' }, el('h3', {}, el('span', { class: 'dot' }), bad + ' نقطة تحتاج انتباهكم')) : el('div', { class: 'summary-ok' }, '✓ البيانات متّسقة: ' + rows.length + ' صفًا في القاعدة، ' + A.conf.length + ' تسجيلًا مؤكدًا.'));
+    groups.forEach(g => box.append(el('div', { class: 'card check ' + g.k }, el('h3', {}, el('span', { class: 'dot' }), g.t, g.rows.length ? el('span', { class: 'more', text: g.rows.length }) : null), el('p', { text: g.p }), g.rows.length ? el('ul', {}, g.rows.map(item)) : null)));
+  }
+
+  // ---------- drawer: every field of a registration ----------
+  function closeDrawer() { openCode = null; $('#drawer').hidden = true; $('#scrim').hidden = true; }
+  $('#d-close').addEventListener('click', closeDrawer); $('#scrim').addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#drawer').hidden && !$('#dlg').open) closeDrawer(); });
+  function copyBtn(v) { return el('button', { class: 'btn btn-sm btn-ghost', type: 'button', title: 'نسخ', 'aria-label': 'نسخ', onclick: () => { navigator.clipboard && navigator.clipboard.writeText(v).then(() => toast('تم النسخ')).catch(() => {}); } }, icon(ICON.copy)); }
+  function openDrawer(r) {
+    openCode = r.code;
+    $('#d-title').textContent = r.code; $('#d-sub').textContent = r.offer + ' · ' + r.members.length + ' مشارك · ' + r.inst;
+    const b = $('#d-body'); b.textContent = '';
+    const flags = r._flags.filter(f => f.k !== 'info' || true);
+    if (flags.length) b.append(el('div', { class: 'acts' }, flags.map(f => el('span', { class: 'flag' + (f.k === 'bad' ? '' : ' info'), text: f.t }))));
+    // status + quick actions
+    const tgl = (label, hint, field) => {
+      const t = el('button', { class: 'tg', type: 'button', role: 'switch', 'aria-checked': String(!!r[field]), 'aria-label': label });
+      t.addEventListener('click', () => update(r.code, { [field]: !r[field] }, t));
+      const at = r[field + 'At'];
+      return el('div', { class: 'switch' }, el('div', {}, el('b', { text: label }), el('span', { text: at ? 'منذ ' + dt(at) : hint })), t);
+    };
+    if (isConf(r)) b.append(el('div', { class: 'grid', style: 'gap:10px' }, tgl('تم الدفع', 'لم يُسجَّل الدفع بعد', 'paid'), tgl('حضر يوم الملتقى', 'لم يُسجَّل الحضور', 'checkin')));
+    b.append(el('div', { class: 'sec' }, el('h3', { text: 'التسجيل' }), el('dl', { class: 'kv' },
+      el('dt', { text: 'الحالة' }), el('dd', {}, statusEl(r), r.status === 'badges sent' ? el('span', { class: 'sub', text: 'أُرسلت البطاقات بالبريد' }) : null),
+      el('dt', { text: 'تاريخ التسجيل' }), el('dd', { class: 'num', text: dt(r.createdAt) }),
+      el('dt', { text: 'تاريخ تأكيد البريد' }), el('dd', { class: 'num', text: r.verifiedAt ? dt(r.verifiedAt) : '—' }),
+      el('dt', { text: 'المؤسسة' }), el('dd', { text: r.inst }),
+      el('dt', { text: 'الولاية' }), el('dd', { text: r.wilaya }))));
+    b.append(el('div', { class: 'sec' }, el('h3', { text: 'المبلغ' }), el('dl', { class: 'kv' },
+      el('dt', { text: 'العرض' }), el('dd', {}, el('span', { class: 'pill ' + r.offer, text: r.offer })),
+      el('dt', { text: 'السعر' }), el('dd', { class: 'num', text: fmt(r.price) + ' دج' }),
+      el('dt', { text: 'الخصم' }), el('dd', { class: 'num', text: r.discount ? '− ' + fmt(r.discount) + ' دج (' + r._rate + '%)' : 'بدون خصم' }),
+      el('dt', { text: 'المبلغ الإجمالي' }), el('dd', { class: 'num', style: 'font-size:1.05rem;font-weight:900', text: fmt(r.total) + ' دج' }))));
+    b.append(el('div', { class: 'sec' }, el('h3', { text: r.members.length > 1 ? 'المشاركون (' + r.members.length + ')' : 'المشارك' }), el('div', { class: 'grid', style: 'gap:8px' }, r.members.map((m, i) => el('div', { class: 'person' },
+      el('div', { class: 'hd' }, el('b', { text: fullName(m) }), r.members.length > 1 ? el('span', { class: 'role', text: i === 0 ? 'المسؤول' : 'عضو ' + (i + 1) }) : null),
+      el('div', { class: 'ln' }, icon(ICON.mail), el('a', { class: 'v ltr', href: 'mailto:' + m.em, text: m.em }), copyBtn(m.em)),
+      el('div', { class: 'ln' }, icon(ICON.phone), el('a', { class: 'v ltr', href: 'tel:' + String(m.ph).replace(/[^\d+]/g, ''), text: m.ph }), copyBtn(m.ph),
+        el('a', { class: 'btn btn-sm', href: 'https://wa.me/' + phoneIntl(m.ph), target: '_blank', rel: 'noopener noreferrer', text: 'واتساب' })))))));
+    const note = el('textarea', { maxlength: 500, placeholder: 'مثلًا: طريقة الدفع، رقم الوصل، طلب خاص…' }); note.value = r.note || '';
+    const saveNote = el('button', { class: 'btn btn-sm btn-primary', type: 'button', text: 'حفظ الملاحظة' });
+    saveNote.addEventListener('click', () => update(r.code, { note: note.value.trim() }, saveNote));
+    b.append(el('div', { class: 'sec' }, el('h3', { text: 'ملاحظة داخلية' }), note, el('div', { class: 'acts', style: 'margin-top:8px' }, saveNote)));
+    const acts = el('div', { class: 'acts' });
+    const grpN = r.members.length > 1 ? r.members.length : 0, grpWho = grpN ? ' يشمل ذلك أعضاء المجموعة الـ' + grpN + ' معًا: ' + r.members.map(fullName).join('، ') + ' (لا يمكن فصل عضو واحد).' : '';
+    if (r.status === 'cancelled' || r.status === 'test') acts.append(el('button', { class: 'btn btn-sm', type: 'button', text: grpN ? 'إرجاع المجموعة كاملة' : 'إرجاعه تسجيلًا عاديًا', onclick: () => restoreAsk(r) }));
+    if (r.status !== 'test') acts.append(el('button', { class: 'btn btn-sm', type: 'button', text: 'وضعه تجريبيًا', onclick: () => confirmDo('تحويل ' + r.code + ' إلى تجريبي', 'يبقى محفوظًا في Google Sheet لكنه لا يُحسب في أي إحصاء، ويُسمح لصاحب البريد بالتسجيل من جديد.' + grpWho, () => update(r.code, { status: 'test' })) }));
+    if (r.status !== 'cancelled') acts.append(el('button', { class: 'btn btn-sm btn-danger', type: 'button', text: grpN ? 'إلغاء تسجيل المجموعة (' + grpN + ' أعضاء)' : 'إلغاء التسجيل', onclick: () => confirmDo('إلغاء ' + r.code, 'لن يُحسب هذا التسجيل، ويمكن للمشارك التسجيل من جديد بنفس البريد. يظهر في قسم «المحذوفة» ويمكن إرجاعه.' + grpWho, () => update(r.code, { status: 'cancelled' })) }));
+    b.append(el('div', { class: 'sec' }, el('h3', { text: 'إجراءات' }), acts));
+    $('#drawer').hidden = false; $('#scrim').hidden = false;
+  }
+
+  async function update(code, patch, btn) {
+    if (btn) btn.disabled = true;
+    try {
+      const r = await api('admin_update', { token, code, patch });
+      if (!r.ok) throw new Error(r.error);
+      const i = rows.findIndex(x => x.code === code); if (i >= 0) rows[i] = r.rec;
+      analyse(); renderAll(); toast('تم الحفظ في Google Sheet');
+    } catch (e) { if (e.message !== 'auth') toast('تعذّر الحفظ، حاولوا مجددًا', true); }
+    if (btn && document.contains(btn)) btn.disabled = false;
+  }
+  const dlg = $('#dlg');
+  function confirmDo(title, text, fn) { $('#dlg-title').textContent = title; $('#dlg-text').textContent = text; dlg.returnValue = ''; dlg.onclose = () => { if (dlg.returnValue === 'ok') fn(); }; dlg.showModal(); }
+
+  // ---------- Excel (CSV, UTF-8 with BOM; cells can never run as formulas) ----------
+  function download(name, head, lines) {
+    const safe = v => { let s = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+    const blob = new Blob(['﻿' + [head].concat(lines).map(l => l.map(safe).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = el('a', { href: URL.createObjectURL(blob), download: name + '-' + new Date().toISOString().slice(0, 10) + '.csv' });
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  }
+  const telTxt = p => { const d = String(p || '').replace(/\D/g, ''); return d.length === 10 ? d.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4') : String(p || ''); };
+  const stTxt = r => ({ 'verified': 'مؤكد', 'badges sent': 'مؤكد', 'pending': 'بانتظار التأكيد', 'cancelled': 'ملغى', 'test': 'تجريبي' })[r.status] || r.status;
+  $('#csv-regs').addEventListener('click', () => download('edutech07-inscriptions',
+    ['رقم التسجيل', 'تاريخ التسجيل', 'تاريخ التأكيد', 'الحالة', 'العرض', 'السعر', 'الخصم', 'المبلغ', 'المؤسسة', 'الولاية', 'عدد المشاركين', 'المشارك 1', 'بريد 1', 'هاتف 1', 'المشارك 2', 'بريد 2', 'هاتف 2', 'المشارك 3', 'بريد 3', 'هاتف 3', 'مدفوع', 'تاريخ الدفع', 'حضر', 'ملاحظة'],
+    regsList().map(r => { const m = i => r.members[i] || { fn: '', ln: '', em: '', ph: '' }; return [r.code, dt(r.createdAt), r.verifiedAt ? dt(r.verifiedAt) : '', stTxt(r), r.offer, r.price, r.discount, r.total, r.inst, r.wilaya, r.members.length, fullName(m(0)), m(0).em, telTxt(m(0).ph), fullName(m(1)), m(1).em, telTxt(m(1).ph), fullName(m(2)), m(2).em, telTxt(m(2).ph), r.paid ? 'نعم' : 'لا', r.paidAt ? dt(r.paidAt) : '', r.checkin ? 'نعم' : 'لا', r.note]; })));
+  $('#csv-people').addEventListener('click', () => download('edutech07-participants',
+    ['#', 'الاسم', 'اللقب', 'المؤسسة', 'الولاية', 'العرض', 'الهاتف', 'البريد', 'رقم التسجيل', 'مدفوع', 'حضر'],
+    peopleList().map((p, i) => [i + 1, p.m.fn, p.m.ln, p.r.inst, p.r.wilaya, p.r.offer, telTxt(p.m.ph), p.m.em, p.r.code + (p.r.members.length > 1 ? '-' + (p.i + 1) : ''), p.r.paid ? 'نعم' : 'لا', p.r.checkin ? 'نعم' : 'لا'])));
+
+  // ---------- resume this tab's session ----------
+  try { const s = JSON.parse(sessionStorage.getItem(TK) || 'null'); if (s && s.token && s.exp > Date.now()) { token = s.token; enter(); } } catch (e) {}
+})();
+</script>
+</body>
+</html>
