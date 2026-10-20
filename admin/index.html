@@ -47,7 +47,8 @@ a{color:inherit}
 .btn svg,.ic{width:18px;height:18px;flex:none}
 .icon-btn{width:40px;padding:0}
 
-/* ---------- top bar + tabs ---------- */
+/* ---------- top bar + sidebar ---------- */
+#app{min-height:100svh;display:flex;flex-direction:column}
 .top{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
 .top .bar{display:flex;align-items:center;gap:10px;min-height:62px}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
@@ -59,14 +60,31 @@ a{color:inherit}
 .sync.busy i{background:var(--warn);animation:blink 1s infinite}
 .sync.err i{background:var(--bad)}
 @keyframes blink{50%{opacity:.3}}
-.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:-1px}
-.tabs::-webkit-scrollbar{display:none}
-.tab{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:0;border-bottom:3px solid transparent;background:none;font-weight:800;font-size:.9rem;color:var(--fg-soft);cursor:pointer;white-space:nowrap}
-.tab:hover{color:var(--fg)}
-.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--brand)}
-.tab .c{min-width:22px;padding:0 7px;border-radius:99px;background:var(--surface-3);font-size:.75rem;line-height:20px;text-align:center}
+.shell{display:flex;flex:1;min-height:0;width:100%}
+.sidebar{width:248px;flex:none;background:var(--surface);border-inline-end:1px solid var(--line);padding:16px 12px 24px;position:sticky;top:62px;align-self:flex-start;height:calc(100svh - 62px);overflow:auto;z-index:20}
+.side-brand{display:none;align-items:center;justify-content:space-between;gap:10px;padding:4px 8px 14px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.side-brand b{font-size:.95rem;font-weight:900}
+.side-nav{display:flex;flex-direction:column;gap:4px}
+.side-nav .lab{margin:10px 10px 6px;font-size:.7rem;font-weight:800;color:var(--muted);letter-spacing:.02em}
+.tab{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 12px;border:0;border-radius:12px;background:transparent;font-weight:800;font-size:.9rem;color:var(--fg-soft);cursor:pointer;text-align:start;transition:background .15s,color .15s}
+.tab:hover{background:var(--surface-2);color:var(--fg)}
+.tab[aria-selected="true"]{background:var(--brand-soft);color:var(--brand)}
+:root[data-theme="dark"] .tab[aria-selected="true"]{color:#eaf2ff}
+.tab .c{min-width:22px;padding:0 7px;border-radius:99px;background:var(--surface-3);font-size:.75rem;line-height:20px;text-align:center;flex:none}
+.tab[aria-selected="true"] .c{background:color-mix(in srgb,var(--brand) 18%,var(--surface))}
 .tab .c.bad{background:var(--bad-bg);color:var(--bad)}
 .tab .c.warn{background:var(--warn-bg);color:var(--warn)}
+.side-scrim{display:none}
+.content{flex:1;min-width:0}
+#nav-toggle{display:none}
+@media (max-width:960px){
+  #nav-toggle{display:inline-flex}
+  .sidebar{position:fixed;top:0;inset-inline-start:0;bottom:0;height:100svh;width:min(280px,86vw);transform:translateX(110%);transition:transform .22s ease;box-shadow:-18px 0 50px rgba(6,21,50,.22);padding-top:12px;z-index:45;border-inline-end:0;border-inline-start:1px solid var(--line)}
+  .sidebar.open{transform:translateX(0)}
+  .side-brand{display:flex}
+  .side-scrim{display:block;position:fixed;inset:0;background:rgba(6,21,50,.45);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+  .side-scrim.on{opacity:1;pointer-events:auto}
+}
 
 /* ---------- login ---------- */
 .login{min-height:100svh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(ellipse at 80% 0%,rgba(31,216,255,.18),transparent 50%),linear-gradient(160deg,#0b3f93,#071f52 70%)}
@@ -74,7 +92,8 @@ a{color:inherit}
 .login img{height:40px;width:auto;margin-bottom:18px}
 .login h1{margin:0 0 4px;font-size:1.35rem;font-weight:900}
 .login p{margin:0 0 18px;color:var(--fg-soft);font-size:.92rem}
-label{display:block;font-weight:800;font-size:.85rem;margin:12px 0 6px}
+.login label{display:block;font-weight:800;font-size:.85rem;margin:12px 0 6px}
+label.field{margin:0}
 .in{width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface)}
 .in:focus{border-color:var(--brand)}
 .login .btn{width:100%;margin-top:18px;min-height:46px;font-size:1rem}
@@ -83,7 +102,7 @@ label{display:block;font-weight:800;font-size:.85rem;margin:12px 0 6px}
 .secure{display:flex;align-items:center;gap:6px;margin-top:16px;color:var(--muted);font-size:.78rem;font-weight:700}
 
 /* ---------- layout ---------- */
-main{padding-block:20px 70px}
+main.content{padding-block:20px 70px;width:min(1360px,100%);margin-inline:auto;padding-inline:clamp(14px,2.6vw,28px)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
 .grid{display:grid;gap:14px}
 .kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
@@ -128,12 +147,35 @@ main{padding-block:20px 70px}
 .empty-s{color:var(--muted);font-weight:700;font-size:.88rem;padding:10px 0}
 
 /* ---------- toolbar + table ---------- */
-.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
-.search{flex:1 1 280px;position:relative}
-.search .in{padding-inline-start:38px}
-.search svg{position:absolute;inset-inline-start:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
-.tools select{min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);font-weight:700}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px}
+.search{flex:1 1 260px;position:relative;min-width:min(100%,220px)}
+.search .in{padding-inline-start:38px;background:var(--surface-2);border-radius:12px}
+.search svg{position:absolute;inset-inline-start:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.field{display:grid;gap:5px;min-width:0}
+.field-l{margin:0;padding-inline:2px;font-size:.72rem;font-weight:800;color:var(--muted);line-height:1.2}
+.field-ctl{position:relative;display:block}
+.field select{
+  appearance:none;-webkit-appearance:none;-moz-appearance:none;
+  display:block;width:100%;min-width:148px;min-height:42px;
+  padding:8px 12px;padding-inline-end:38px;
+  border-radius:12px;border:1px solid var(--line-2);
+  background:var(--surface-2);font-weight:800;font-size:.86rem;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.field select:hover{border-color:color-mix(in srgb,var(--brand) 45%,var(--line-2));background:var(--surface)}
+.field select:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 20%,transparent);outline:none}
+.field-ctl::after{
+  content:"";position:absolute;inset-inline-end:14px;top:50%;width:8px;height:8px;
+  border-inline-end:2px solid var(--muted);border-bottom:2px solid var(--muted);
+  transform:translateY(-65%) rotate(45deg);pointer-events:none;
+}
+.tools .btn{min-height:42px;border-radius:12px}
 .count{color:var(--muted);font-weight:700;font-size:.85rem;margin:0 2px 10px}
+@media (max-width:640px){
+  .field{flex:1 1 calc(50% - 10px)}
+  .field select{min-width:0;width:100%}
+  .search{flex:1 1 100%}
+}
 .tablebox{overflow:hidden}
 table.tbl{width:100%;border-collapse:collapse}
 .tbl th{background:var(--surface-2);color:var(--fg-soft);font-size:.76rem;font-weight:800;text-align:start;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -370,7 +412,7 @@ dialog .acts{justify-content:flex-start}
 .errbox{padding:28px 18px;text-align:center}
 .errbox b{display:block;font-size:1rem;margin-bottom:6px}
 @media (max-width:560px){.brand .t,.sync span{display:none}.brand img{height:28px}}
-@media print{.top,.tools,.drawer,.scrim{display:none!important}}
+@media print{.top,.sidebar,.side-scrim,.tools,.drawer,.scrim,#nav-toggle{display:none!important}.shell{display:block}.content{width:100%;padding:0}}
 </style>
 </head>
 <body>
@@ -396,6 +438,7 @@ dialog .acts{justify-content:flex-start}
 <header class="top">
   <div class="wrap">
     <div class="bar">
+      <button class="btn icon-btn" id="nav-toggle" type="button" title="القائمة" aria-label="فتح القائمة" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <div class="brand"><img src="/assets/logo.png" alt="EduTech Solutions 07" id="logo"><span class="t">لوحة الإدارة</span></div>
       <span class="sp"></span>
       <span class="sync" id="sync"><i></i><span id="sync-t">جارٍ التحميل…</span></span>
@@ -403,19 +446,28 @@ dialog .acts{justify-content:flex-start}
       <button class="btn icon-btn" id="theme" title="الوضع الليلي" aria-label="تبديل الوضع الليلي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
       <button class="btn" id="logout">خروج</button>
     </div>
-    <nav class="tabs" role="tablist" aria-label="أقسام اللوحة">
-      <button class="tab" role="tab" data-tab="overview" aria-selected="true">نظرة عامة</button>
-      <button class="tab" role="tab" data-tab="scan" aria-selected="false">مسح الحضور <span class="c" id="c-in">0</span></button>
-      <button class="tab" role="tab" data-tab="regs" aria-selected="false">التسجيلات <span class="c" id="c-regs">0</span></button>
-      <button class="tab" role="tab" data-tab="people" aria-selected="false">المشاركون <span class="c" id="c-people">0</span></button>
-      <button class="tab" role="tab" data-tab="pending" aria-selected="false">بانتظار التأكيد <span class="c warn" id="c-pending">0</span></button>
-      <button class="tab" role="tab" data-tab="deleted" aria-selected="false">المحذوفة <span class="c" id="c-deleted">0</span></button>
-      <button class="tab" role="tab" data-tab="checks" aria-selected="false">فحص البيانات <span class="c" id="c-checks">0</span></button>
-    </nav>
   </div>
 </header>
 
-<main class="wrap">
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+  <div class="side-brand"><b>الأقسام</b><button class="btn icon-btn btn-ghost" id="nav-close" type="button" aria-label="إغلاق القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <nav class="side-nav" role="tablist" aria-label="أقسام اللوحة">
+    <div class="lab">الرئيسية</div>
+    <button class="tab" role="tab" data-tab="overview" aria-selected="true">نظرة عامة</button>
+    <button class="tab" role="tab" data-tab="scan" aria-selected="false">مسح الحضور <span class="c" id="c-in">0</span></button>
+    <div class="lab">البيانات</div>
+    <button class="tab" role="tab" data-tab="regs" aria-selected="false">التسجيلات <span class="c" id="c-regs">0</span></button>
+    <button class="tab" role="tab" data-tab="people" aria-selected="false">المشاركون <span class="c" id="c-people">0</span></button>
+    <button class="tab" role="tab" data-tab="pending" aria-selected="false">بانتظار التأكيد <span class="c warn" id="c-pending">0</span></button>
+    <button class="tab" role="tab" data-tab="deleted" aria-selected="false">المحذوفة <span class="c" id="c-deleted">0</span></button>
+    <div class="lab">الرقابة</div>
+    <button class="tab" role="tab" data-tab="checks" aria-selected="false">فحص البيانات <span class="c" id="c-checks">0</span></button>
+  </nav>
+</aside>
+<div class="side-scrim" id="side-scrim" hidden></div>
+
+<main class="content">
   <div id="loading">
     <div class="grid kpis"><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div><div class="skel" style="height:110px"></div></div>
     <div class="grid two"><div class="skel" style="height:280px"></div><div class="skel" style="height:280px"></div></div>
@@ -555,11 +607,11 @@ dialog .acts{justify-content:flex-start}
     <div class="tools">
       <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input class="in" id="q" type="search" placeholder="بحث: اسم، بريد، هاتف، رقم تسجيل، مؤسسة، ولاية…" aria-label="بحث"></div>
-      <select id="f-status" aria-label="الحالة"><option value="confirmed">المؤكدة</option><option value="cancelled">الملغاة</option><option value="test">التجريبية</option><option value="all">الكل (عدا بانتظار التأكيد)</option></select>
-      <select id="f-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select>
-      <select id="f-paid" aria-label="الدفع"><option value="">الدفع: الكل</option><option value="yes">مدفوع</option><option value="no">غير مدفوع</option></select>
-      <select id="f-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select>
-      <select id="f-sort" aria-label="الترتيب"><option value="new">الأحدث أولًا</option><option value="old">الأقدم أولًا</option><option value="amount">المبلغ</option><option value="inst">المؤسسة</option></select>
+      <label class="field"><span class="field-l">الحالة</span><span class="field-ctl"><select id="f-status" aria-label="الحالة"><option value="confirmed">المؤكدة</option><option value="cancelled">الملغاة</option><option value="test">التجريبية</option><option value="all">الكل (عدا بانتظار التأكيد)</option></select></span></label>
+      <label class="field"><span class="field-l">العرض</span><span class="field-ctl"><select id="f-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select></span></label>
+      <label class="field"><span class="field-l">الدفع</span><span class="field-ctl"><select id="f-paid" aria-label="الدفع"><option value="">الدفع: الكل</option><option value="yes">مدفوع</option><option value="no">غير مدفوع</option></select></span></label>
+      <label class="field"><span class="field-l">الحضور</span><span class="field-ctl"><select id="f-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select></span></label>
+      <label class="field"><span class="field-l">الترتيب</span><span class="field-ctl"><select id="f-sort" aria-label="الترتيب"><option value="new">الأحدث أولًا</option><option value="old">الأقدم أولًا</option><option value="amount">المبلغ</option><option value="inst">المؤسسة</option></select></span></label>
       <button class="btn" id="csv-regs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel</button>
     </div>
     <div class="count" id="count-regs"></div>
@@ -574,9 +626,9 @@ dialog .acts{justify-content:flex-start}
     <div class="tools">
       <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input class="in" id="qp" type="search" placeholder="بحث عن مشارك…" aria-label="بحث عن مشارك"></div>
-      <select id="fp-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select>
-      <select id="fp-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select>
-      <select id="fp-paid" aria-label="الدفع"><option value="">الدفع: الكل</option><option value="yes">مدفوع</option><option value="no">غير مدفوع</option><option value="here-unpaid">حضر ولم يدفع</option></select>
+      <label class="field"><span class="field-l">العرض</span><span class="field-ctl"><select id="fp-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select></span></label>
+      <label class="field"><span class="field-l">الحضور</span><span class="field-ctl"><select id="fp-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select></span></label>
+      <label class="field"><span class="field-l">الدفع</span><span class="field-ctl"><select id="fp-paid" aria-label="الدفع"><option value="">الدفع: الكل</option><option value="yes">مدفوع</option><option value="no">غير مدفوع</option><option value="here-unpaid">حضر ولم يدفع</option></select></span></label>
       <button class="btn" id="csv-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel</button>
       <button class="btn" id="print-people">طباعة القائمة</button>
     </div>
@@ -613,6 +665,7 @@ dialog .acts{justify-content:flex-start}
     <div class="checks" id="checks"></div>
   </section>
 </main>
+</div>
 </div>
 
 <!-- drawer -->
@@ -746,7 +799,14 @@ dialog .acts{justify-content:flex-start}
   }
   document.addEventListener('visibilitychange', () => { if (!document.hidden && token && Date.now() - (meta.at || 0) > 60000) load(true); });
 
-  // ---------- tabs ----------
+  // ---------- tabs / sidebar ----------
+  function setSidebar(open) {
+    const sb = $('#sidebar'), scr = $('#side-scrim'), tog = $('#nav-toggle');
+    if (!sb) return;
+    sb.classList.toggle('open', !!open);
+    if (scr) { scr.hidden = !open; scr.classList.toggle('on', !!open); }
+    if (tog) tog.setAttribute('aria-expanded', String(!!open));
+  }
   function showTab(t) {
     tab = t;
     document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
@@ -754,8 +814,13 @@ dialog .acts{justify-content:flex-start}
     tabs.forEach(x => { $('#tab-' + x).hidden = x !== t || !rows.length && !meta.loaded; });
     try { history.replaceState(null, '', '#' + t); } catch (e) {}
     if (t === 'scan' && !$('#tab-scan').hidden) startScan(); else if (t !== 'scan') stopScan();
+    setSidebar(false);
   }
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  $('#nav-toggle') && $('#nav-toggle').addEventListener('click', () => setSidebar(!$('#sidebar').classList.contains('open')));
+  $('#nav-close') && $('#nav-close').addEventListener('click', () => setSidebar(false));
+  $('#side-scrim') && $('#side-scrim').addEventListener('click', () => setSidebar(false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#sidebar') && $('#sidebar').classList.contains('open')) setSidebar(false); });
   const h = location.hash.slice(1); if (['overview', 'scan', 'regs', 'people', 'pending', 'deleted', 'checks'].includes(h)) tab = h;
 
   // ---------- data ----------
