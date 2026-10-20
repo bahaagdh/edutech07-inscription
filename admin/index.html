@@ -195,14 +195,16 @@ main.content{padding-block:20px 70px;width:min(1360px,100%);margin-inline:auto;p
 .csel-chev svg{width:14px;height:14px}
 .csel.open .csel-chev,.csel-btn[aria-expanded="true"] .csel-chev{transform:rotate(180deg);background:var(--brand);color:#fff}
 .csel-menu{
-  position:absolute;inset-inline-start:0;top:calc(100% + 8px);z-index:60;
-  min-width:100%;width:max(100%,220px);max-height:min(280px,55vh);overflow:auto;
+  position:fixed;z-index:90;margin:0;inset:auto;
+  min-width:0;max-width:calc(100vw - 20px);overflow:auto;
   padding:8px;border-radius:16px;background:var(--surface);
   border:1px solid var(--line);box-shadow:0 18px 50px rgba(10,31,77,.18);
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   transform-origin:top center;animation:cselIn .16s ease;
 }
+.csel-menu[data-place="top"]{transform-origin:bottom center;animation-name:cselInUp}
 @keyframes cselIn{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes cselInUp{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 .csel-opt{
   display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:8px 12px;
   border:0;border-radius:12px;background:transparent;color:var(--fg);font-weight:800;font-size:.88rem;
@@ -1513,12 +1515,59 @@ dialog .acts{justify-content:flex-start}
   ['#q', '#f-status', '#f-offer', '#f-paid', '#f-in', '#f-sort'].forEach(s => $(s).addEventListener('input', renderRegs));
 
   // ---------- custom filter dropdowns ----------
+  function resetCselMenu(m) {
+    if (!m) return;
+    m.hidden = true;
+    m.removeAttribute('data-place');
+    m.style.cssText = '';
+  }
+  function placeCselMenu(btn, menu) {
+    const gap = 8, pad = 10;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const r = btn.getBoundingClientRect();
+    menu.hidden = false;
+    menu.style.visibility = 'hidden';
+    menu.style.position = 'fixed';
+    menu.style.left = '0';
+    menu.style.top = '0';
+    menu.style.right = 'auto';
+    menu.style.bottom = 'auto';
+    menu.style.width = '';
+    menu.style.maxHeight = 'none';
+    const natural = Math.max(menu.scrollWidth, r.width, 200);
+    const mw = Math.min(natural, Math.max(140, vw - pad * 2));
+    menu.style.width = mw + 'px';
+    const rtl = getComputedStyle(document.documentElement).direction === 'rtl';
+    let left = rtl ? (r.right - mw) : r.left;
+    if (left + mw > vw - pad) left = vw - pad - mw;
+    if (left < pad) left = pad;
+    const spaceBelow = vh - r.bottom - gap - pad;
+    const spaceAbove = r.top - gap - pad;
+    const need = Math.min(280, menu.scrollHeight || 180);
+    const openUp = spaceBelow < Math.min(need, 160) && spaceAbove > spaceBelow;
+    const maxH = Math.max(96, Math.min(280, openUp ? spaceAbove : spaceBelow));
+    menu.style.maxHeight = maxH + 'px';
+    const mh = Math.min(menu.scrollHeight, maxH);
+    let top = openUp ? (r.top - gap - mh) : (r.bottom + gap);
+    if (top < pad) top = pad;
+    if (top + mh > vh - pad) top = Math.max(pad, vh - pad - mh);
+    menu.style.left = Math.round(left) + 'px';
+    menu.style.top = Math.round(top) + 'px';
+    menu.style.visibility = '';
+    menu.dataset.place = openUp ? 'top' : 'bottom';
+  }
+  function repositionOpenCsels() {
+    document.querySelectorAll('.csel.open').forEach(w => {
+      const b = w.querySelector('.csel-btn'), m = w.querySelector('.csel-menu');
+      if (b && m && !m.hidden) placeCselMenu(b, m);
+    });
+  }
   function closeAllCsels(except) {
     document.querySelectorAll('.csel.open').forEach(w => {
       if (except && w === except) return;
       w.classList.remove('open');
       const b = w.querySelector('.csel-btn'); if (b) b.setAttribute('aria-expanded', 'false');
-      const m = w.querySelector('.csel-menu'); if (m) m.hidden = true;
+      resetCselMenu(w.querySelector('.csel-menu'));
     });
   }
   function enhanceSelect(sel) {
@@ -1569,11 +1618,11 @@ dialog .acts{justify-content:flex-start}
       closeAllCsels(open ? wrap : null);
       wrap.classList.toggle('open', open);
       btn.setAttribute('aria-expanded', String(open));
-      menu.hidden = !open;
       if (open) {
+        placeCselMenu(btn, menu);
         const cur = menu.querySelector('.csel-opt[aria-selected="true"]');
         if (cur) cur.focus();
-      }
+      } else resetCselMenu(menu);
     });
     btn.addEventListener('keydown', e => {
       if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
@@ -1598,8 +1647,14 @@ dialog .acts{justify-content:flex-start}
   }
   function initCustomSelects() {
     document.querySelectorAll('.tools select').forEach(enhanceSelect);
-    document.addEventListener('click', e => { if (!e.target.closest('.csel')) closeAllCsels(); });
+    document.addEventListener('click', e => {
+      if (e.target.closest('.csel-menu') || e.target.closest('.csel')) return;
+      closeAllCsels();
+    });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllCsels(); });
+    window.addEventListener('resize', repositionOpenCsels);
+    window.addEventListener('scroll', repositionOpenCsels, true);
+    window.addEventListener('orientationchange', () => setTimeout(repositionOpenCsels, 50));
   }
   initCustomSelects();
 
