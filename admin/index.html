@@ -811,6 +811,60 @@ dialog .acts{justify-content:flex-start}
       paidAt: paid ? (rec.paidAt || new Date().toISOString()) : ''
     });
   }
+  /** In-flight local edits so a quiet refresh cannot wipe a scan/payment before the sheet catches up. */
+  const pendingLocal = new Map();
+  function setPending(code, patch) {
+    pendingLocal.set(code, Object.assign({}, pendingLocal.get(code) || {}, patch, { at: Date.now() }));
+  }
+  function clearPending(code, keys) {
+    const cur = pendingLocal.get(code);
+    if (!cur) return;
+    (keys || Object.keys(cur)).forEach(k => { if (k !== 'at') delete cur[k]; });
+    if (!Object.keys(cur).some(k => k !== 'at')) pendingLocal.delete(code);
+    else pendingLocal.set(code, cur);
+  }
+  function applyPending(rec) {
+    if (!rec) return rec;
+    const p = pendingLocal.get(rec.code);
+    if (!p) return rec;
+    let out = rec;
+    if ('paid' in p) out = withPaid(out, p.paid);
+    if (p.present) {
+      const present = p.present.slice(), n = (out.members || []).length;
+      out = Object.assign({}, out, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (out.checkinAt || new Date().toISOString()) : '' });
+    }
+    return out;
+  }
+  /** Push a row into every admin view immediately (KPIs, tables, scan charts). */
+  function paintRow(rec) {
+    const out = upsertRow(rec);
+    analyse();
+    renderAll();
+    return out;
+  }
+  function snapshotRow(rec) {
+    if (!rec) return null;
+    return Object.assign({}, rec, { present: presentIds(rec).slice() });
+  }
+  /** Optimistic payment toggle: dashboard updates now, sheet syncs in the background. */
+  async function setPaidNow(code, paid) {
+    const prev = rows.find(x => x.code === code);
+    if (!prev) throw new Error('missing');
+    const before = snapshotRow(prev);
+    setPending(code, { paid: !!paid });
+    paintRow(withPaid(prev, paid));
+    try {
+      const r = await api('admin_update', { token, code, patch: { paid: !!paid } });
+      if (!r.ok) throw new Error(r.error || 'fail');
+      clearPending(code, ['paid']);
+      paintRow(withPaid(r.rec || rows.find(x => x.code === code) || before, paid));
+      return true;
+    } catch (e) {
+      clearPending(code, ['paid']);
+      if (before) paintRow(before);
+      throw e;
+    }
+  }
   function toast(t, bad) { const n = $('#toast'); n.textContent = t; n.className = 'toast' + (bad ? ' err' : ''); n.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { n.hidden = true; }, 2600); }
   function sync(state, text) {
     const cls = 'sync ' + (state || '');
@@ -927,7 +981,7 @@ dialog .acts{justify-content:flex-start}
     $('#refresh').disabled = false; loading = false;
   }
   function apply(r) {
-    rows = (r.rows || []).filter(x => x && x.code);
+    rows = (r.rows || []).filter(x => x && x.code).map(applyPending);
     meta = { loaded: true, at: Date.now(), mailLeft: r.mailLeft, now: r.now, earlyDeadline: r.earlyDeadline };
     analyse(); renderAll();
     $('#loading').hidden = true; $('#loaderr').hidden = true; showTab(tab);
@@ -1271,35 +1325,27 @@ dialog .acts{justify-content:flex-start}
       box.append(el('div', { class: 'sub', text: inCount(rec) + ' / ' + rec.members.length + ' من هذه البطاقة حضروا · ' + (rec.paid ? 'مدفوع' : 'غير مدفوع') }));
       if (kind === 'ok' || kind === 'dup') {
         const pay = el('div', { class: 'scan-pay' });
-        if (rec.paid) {
-          pay.append(el('span', { class: 'st ok', text: 'الدفع مسجَّل' }));
-          pay.append(el('div', { class: 'sub', text: (rec.paidAt ? 'منذ ' + dshort(rec.paidAt) + ' · ' : '') + fmt(rec.total) + ' دج' }));
-        } else {
-          const cid = 'scan-pay-cb';
-          const cb = el('input', { type: 'checkbox', id: cid });
-          const lab = el('label', { for: cid, text: 'تأكيد استلام الدفع (' + fmt(rec.total) + ' دج)' });
-          const hint = el('div', { class: 'sub', text: rec.offer === 'GROUPE'
-            ? 'الدفع يخص تسجيل المجموعة كاملًا ويظهر مباشرة في كل جداول الإدارة.'
-            : 'بعد التأكيد يُعلَّم التسجيل مدفوعًا في كل صفحات الإدارة فورًا.' });
-          const btn = el('button', { class: 'btn btn-primary', type: 'button', text: 'حفظ الدفع', disabled: true });
-          cb.addEventListener('change', () => { btn.disabled = !cb.checked; });
-          btn.addEventListener('click', async () => {
-            if (!cb.checked) return;
-            btn.disabled = true; cb.disabled = true;
-            try {
-              const r = await api('admin_update', { token, code: rec.code, patch: { paid: true } });
-              if (!r.ok) throw new Error(r.error || 'fail');
-              upsertRow(withPaid(r.rec || rec, true));
-              analyse(); renderAll();
-              toast('تم الدفع في جداول الإدارة · ' + fullName(m));
-              beep('ok');
-            } catch (e) {
-              if (e.message !== 'auth') toast('تعذّر حفظ الدفع، حاولوا مجددًا', true);
-              btn.disabled = !cb.checked; cb.disabled = false;
-            }
+        const cid = 'scan-pay-cb';
+        const cb = el('input', { type: 'checkbox', id: cid });
+        cb.checked = !!rec.paid;
+        const lab = el('label', { for: cid, text: (rec.paid ? 'مدفوع — ألغوا التحديد لإلغاء الدفع' : 'تأكيد استلام الدفع') + ' (' + fmt(rec.total) + ' دج)' });
+        const hint = el('div', { class: 'sub', text: rec.offer === 'GROUPE'
+          ? 'الدفع يخص المجموعة كاملة ويظهر فورًا في لوحة التحكم دون تحديث الصفحة.'
+          : 'بعد التأكيد تظهر الأرقام فورًا — يمكنكم مسح المشارك التالي مباشرة.' });
+        const btn = el('button', { class: 'btn btn-primary', type: 'button', text: 'تأكيد', disabled: true });
+        cb.addEventListener('change', () => { btn.disabled = cb.checked === !!rec.paid; });
+        btn.addEventListener('click', () => {
+          const paid = !!cb.checked;
+          if (paid === !!rec.paid) return;
+          btn.disabled = true; cb.disabled = true;
+          toast((paid ? 'تم الدفع في اللوحة · ' : 'أُلغي الدفع في اللوحة · ') + fullName(m));
+          beep('ok');
+          setPaidNow(rec.code, paid).catch(e => {
+            if (e.message !== 'auth') toast('تعذّر حفظ الدفع، حاولوا مجددًا', true);
           });
-          pay.append(el('div', { class: 'scan-pay-row' }, cb, lab), hint, el('div', { class: 'acts' }, btn));
-        }
+        });
+        if (rec.paid) pay.append(el('span', { class: 'st ok', text: 'الدفع مسجَّل' + (rec.paidAt ? ' · منذ ' + dshort(rec.paidAt) : '') }));
+        pay.append(el('div', { class: 'scan-pay-row' }, cb, lab), hint, el('div', { class: 'acts' }, btn));
         box.append(pay);
       }
       box.append(el('button', { class: 'btn btn-sm', type: 'button', text: 'فتح التسجيل', onclick: () => openDrawer(rec) }));
@@ -1331,6 +1377,18 @@ dialog .acts{justify-content:flex-start}
     if (r && r.ok && r.rec) return { ok: true, already: !!r.already || already, member: r.member || member, rec: withPresent(r.rec, r.member || member) };
     return r;
   }
+  function showCheckinResult(rec, member, already) {
+    const idx = Math.max(0, (member || 1) - 1);
+    const m = rec.members[idx] || {};
+    const name = fullName(m) || rec.code;
+    const paidHint = rec.paid ? ' · مدفوع' : ' · بانتظار الدفع';
+    scanLog.unshift({ code: rec.code, name, offer: rec.offer, detail: (already ? 'سبق حضوره' : 'حضور في اللوحة · ' + rec.inst) + paidHint, at: dshort(new Date().toISOString()) });
+    if (scanLog.length > 40) scanLog.length = 40;
+    lastScan = { kind: already ? 'dup' : 'ok', code: rec.code, member: idx + 1 };
+    renderAll();
+    if (already) { beep('dup'); flashCam('warn'); showScanCard('dup', '', rec, idx + 1); toast(name + ' سبق تسجيل حضوره في الجداول'); }
+    else { beep('ok'); flashCam('hit'); showScanCard('ok', '', rec, idx + 1); toast('حاضر الآن في جداول الإدارة · ' + name); }
+  }
   async function handleQr(raw) {
     const text = String(raw || '').trim();
     if (!text || scanBusy) return;
@@ -1343,24 +1401,45 @@ dialog .acts{justify-content:flex-start}
       else {
         const local = rows.find(x => x.code === parsed.code);
         if (local && !isConf(local)) { lastScan = null; beep('dup'); flashCam('warn'); showScanCard('pending', '', local, parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
-        else {
+        else if (local && isConf(local)) {
+          // Instant dashboard update, then sync the sheet while the camera is ready for the next badge.
+          const member = parsed.member || 1;
+          const already = isIn(local, member - 1);
+          const before = snapshotRow(local);
+          const rec = upsertRow(withPresent(local, member));
+          setPending(rec.code, { present: presentIds(rec).slice() });
+          analyse();
+          showCheckinResult(rec, member, already);
+          $('#scan-hint').textContent = 'وجّهوا الكاميرا نحو رمز QR على البطاقة';
+          scanBusy = false;
+          try {
+            const r = await saveCheckin(parsed, text);
+            if (r && r.error === 'auth') return;
+            if (r && r.ok && r.rec) {
+              clearPending(rec.code, ['present']);
+              paintRow(withPresent(r.rec, r.member || member));
+            } else if (before) {
+              clearPending(rec.code, ['present']);
+              paintRow(before);
+              lastScan = null;
+              if (r && r.error === 'not found') { beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
+              else if (r && r.error === 'not confirmed') { beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec || before, r.member || member); toast('التسجيل لم يُؤكَّد بعد', true); }
+              else { beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
+            }
+          } catch (e) {
+            clearPending(rec.code, ['present']);
+            if (before) paintRow(before);
+            if (e.message !== 'auth') { beep('bad'); flashCam('bad'); toast('تعذّر الاتصال، حاولوا مجددًا', true); }
+          }
+          return;
+        } else {
           const r = await saveCheckin(parsed, text);
           if (r && r.error === 'auth') return;
           if (r && r.error === 'not found') { lastScan = null; beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
           else if (r && r.error === 'not confirmed') { lastScan = null; beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec, r.member || parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
           else if (r && r.ok && r.rec) {
-            const rec = upsertRow(withPresent(r.rec, r.member || parsed.member));
-            analyse();
-            const idx = Math.max(0, (r.member || parsed.member || 1) - 1);
-            const m = rec.members[idx] || {};
-            const name = fullName(m) || rec.code;
-            const paidHint = rec.paid ? ' · مدفوع' : ' · بانتظار الدفع';
-            scanLog.unshift({ code: rec.code, name, offer: rec.offer, detail: (r.already ? 'سبق حضوره' : 'حضور في اللوحة · ' + rec.inst) + paidHint, at: dshort(new Date().toISOString()) });
-            if (scanLog.length > 40) scanLog.length = 40;
-            lastScan = { kind: r.already ? 'dup' : 'ok', code: rec.code, member: idx + 1 };
-            renderAll();
-            if (r.already) { beep('dup'); flashCam('warn'); showScanCard('dup', '', rec, idx + 1); toast(name + ' سبق تسجيل حضوره في الجداول'); }
-            else { beep('ok'); flashCam('hit'); showScanCard('ok', '', rec, idx + 1); toast('حاضر الآن في جداول الإدارة · ' + name); }
+            const rec = paintRow(withPresent(r.rec, r.member || parsed.member));
+            showCheckinResult(rec, r.member || parsed.member, !!r.already);
           } else { lastScan = null; beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
         }
       }
@@ -1835,19 +1914,57 @@ dialog .acts{justify-content:flex-start}
 
   async function update(code, patch, btn) {
     if (btn) btn.disabled = true;
+    const prev = snapshotRow(rows.find(x => x.code === code));
+    const instant = patch && ('paid' in patch || 'checkin' in patch || 'checkinMember' in patch);
+    const pendKeys = [];
+    if (instant && prev) {
+      let next = prev;
+      if ('checkinMember' in patch) {
+        const idx = Number(patch.checkinMember);
+        if (patch.checkin === false) {
+          const present = presentIds(prev).filter(k => k !== idx);
+          const n = (prev.members || []).length;
+          next = Object.assign({}, prev, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (prev.checkinAt || new Date().toISOString()) : '' });
+        } else next = withPresent(prev, idx);
+        setPending(code, { present: presentIds(next).slice() });
+        pendKeys.push('present');
+      } else if ('checkin' in patch) {
+        const ids = patch.checkin ? (prev.members || []).map((_, i) => i + 1) : [];
+        next = Object.assign({}, prev, { present: ids, checkin: !!patch.checkin, checkinAt: patch.checkin ? (prev.checkinAt || new Date().toISOString()) : '' });
+        setPending(code, { present: ids.slice() });
+        pendKeys.push('present');
+      }
+      if ('paid' in patch) {
+        next = withPaid(next, patch.paid);
+        setPending(code, { paid: !!patch.paid });
+        pendKeys.push('paid');
+      }
+      paintRow(next);
+      toast('تم التحديث في جداول الإدارة');
+    }
     try {
       const r = await api('admin_update', { token, code, patch });
       if (!r.ok) throw new Error(r.error);
       let rec = r.rec;
-      if (patch && 'checkinMember' in patch) rec = withPresent(rec, patch.checkinMember);
-      else if (patch && 'checkin' in patch) {
+      if (patch && 'checkinMember' in patch) {
+        if (patch.checkin === false) {
+          const present = presentIds(rec).filter(k => k !== Number(patch.checkinMember));
+          const n = (rec.members || []).length;
+          rec = Object.assign({}, rec, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (rec.checkinAt || '') : '' });
+        } else rec = withPresent(rec, patch.checkinMember);
+      } else if (patch && 'checkin' in patch) {
         const ids = patch.checkin ? (rec.members || []).map((_, i) => i + 1) : [];
         rec = Object.assign({}, rec, { present: ids, checkin: !!patch.checkin, checkinAt: patch.checkin ? (rec.checkinAt || new Date().toISOString()) : '' });
       }
       if (patch && 'paid' in patch) rec = withPaid(rec, patch.paid);
-      upsertRow(rec);
-      analyse(); renderAll(); toast('تم التحديث في جداول الإدارة');
-    } catch (e) { if (e.message !== 'auth') toast('تعذّر الحفظ، حاولوا مجددًا', true); }
+      if (pendKeys.length) clearPending(code, pendKeys);
+      paintRow(rec);
+      if (!instant) toast('تم التحديث في جداول الإدارة');
+    } catch (e) {
+      if (pendKeys.length) clearPending(code, pendKeys);
+      if (instant && prev) paintRow(prev);
+      if (e.message !== 'auth') toast('تعذّر الحفظ، حاولوا مجددًا', true);
+    }
     if (btn && document.contains(btn)) btn.disabled = false;
   }
   const dlg = $('#dlg');
