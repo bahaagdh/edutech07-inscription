@@ -205,26 +205,21 @@ table.tbl{width:100%;border-collapse:collapse}
 }
 
 /* ---------- QR check-in ---------- */
-.scan-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+.scan-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.scan-hero h1{margin:0;font-size:1.35rem;font-weight:900;letter-spacing:-.02em}
+.scan-hero p{margin:4px 0 0;color:var(--muted);font-weight:700;font-size:.9rem;max-width:46ch}
+.scan-kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}
 @media (max-width:1100px){.scan-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.scan-offers{margin-top:14px;padding:16px 18px}
-.scan-offers h2{margin:0 0 12px;font-size:.98rem;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.scan-offers h2 span{color:var(--muted);font-size:.78rem;font-weight:700}
-.scan-offer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-@media (max-width:900px){.scan-offer-grid{grid-template-columns:1fr}}
-.scan-offer{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);display:grid;gap:8px}
-.scan-offer .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.scan-offer .nums{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:.82rem}
-.scan-offer .nums b{display:block;font-size:1.05rem;font-weight:900}
-.scan-offer .nums span{color:var(--muted);font-weight:700}
-.scan-grid{grid-template-columns:minmax(0,1.35fr) minmax(300px,.9fr);align-items:stretch;margin-top:14px}
+.scan-kpis .kpi{position:relative;overflow:hidden}
+.scan-kpis .kpi::after{content:"";position:absolute;inset-inline-end:-18px;bottom:-18px;width:72px;height:72px;border-radius:50%;opacity:.12;background:currentColor;pointer-events:none}
+.scan-grid{grid-template-columns:minmax(0,1.4fr) minmax(300px,.85fr);align-items:stretch;gap:16px}
 @media (max-width:960px){.scan-grid{grid-template-columns:1fr}}
-.scan-stage{display:flex;flex-direction:column;overflow:hidden;min-height:0}
-.scan-cam{position:relative;background:radial-gradient(ellipse at 50% 40%,#13306b,#061532 70%);overflow:hidden;flex:1 1 auto;min-height:260px;aspect-ratio:16/10;max-height:min(52svh,480px)}
+.scan-stage{display:flex;flex-direction:column;overflow:hidden;min-height:0;border:0;background:linear-gradient(180deg,var(--surface) 0%,var(--surface-2) 100%)}
+.scan-cam{position:relative;background:radial-gradient(ellipse at 50% 35%,#1a3f7a 0%,#061532 72%);overflow:hidden;flex:1 1 auto;min-height:280px;aspect-ratio:16/10;max-height:min(54svh,500px)}
 .scan-cam.live{aspect-ratio:16/10}
 .scan-cam video,.scan-cam canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .scan-cam canvas{opacity:0;pointer-events:none}
-.scan-cam .frame{position:absolute;inset:14%;border:3px solid var(--lime);border-radius:18px;pointer-events:none;box-shadow:0 0 0 999px rgba(6,21,50,.4);z-index:2;opacity:0;transition:opacity .2s,border-color .2s}
+.scan-cam .frame{position:absolute;inset:14%;border:3px solid var(--lime);border-radius:18px;pointer-events:none;box-shadow:0 0 0 999px rgba(6,21,50,.42);z-index:2;opacity:0;transition:opacity .2s,border-color .2s,box-shadow .2s}
 .scan-cam.live .frame{opacity:1}
 .scan-cam .hint{position:absolute;inset-inline:16px;bottom:14px;z-index:3;text-align:center;color:#eaf2ff;font-weight:800;font-size:.86rem;text-shadow:0 1px 8px #061532;opacity:0}
 .scan-cam.live .hint{opacity:1}
@@ -235,17 +230,17 @@ table.tbl{width:100%;border-collapse:collapse}
 .scan-idle .ico{width:56px;height:56px;margin:0 auto 12px;color:var(--lime);opacity:.9}
 .scan-idle b{display:block;color:#fff;font-size:1.15rem;margin-bottom:6px}
 .scan-idle p{margin:0 auto 16px;font-weight:700;font-size:.9rem;max-width:36ch;line-height:1.55}
-.scan-bar{padding:14px 16px 16px;border-top:1px solid var(--line);background:var(--surface-2)}
+.scan-bar{padding:14px 16px 16px;border-top:1px solid var(--line);background:var(--surface)}
 .scan-bar label{margin:0 0 8px}
 .scan-bar-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.scan-bar-row .in{flex:1 1 220px;background:var(--surface)}
+.scan-bar-row .in{flex:1 1 220px;background:var(--surface-2);border-color:var(--line)}
 .scan-side{display:flex;flex-direction:column;overflow:hidden;min-height:0}
-.scan-result{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;flex:0 0 auto}
+.scan-result{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;flex:0 0 auto;background:linear-gradient(180deg,var(--surface) 60%,var(--surface-2))}
 .scan-result h2,.scan-feed h2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;font-size:.98rem;font-weight:900}
 .scan-result h2 span,.scan-feed h2 span{color:var(--muted);font-size:.78rem;font-weight:700}
 .scan-result .who{font-size:1.25rem;font-weight:900}
 .scan-result .st.big{font-size:.9rem;padding:6px 12px;width:fit-content}
-.scan-pay{margin-top:4px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);display:grid;gap:10px}
+.scan-pay{margin-top:4px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);display:grid;gap:10px;box-shadow:inset 0 0 0 1px rgba(26,111,217,.04)}
 .scan-pay-row{display:flex;align-items:center;gap:10px;font-weight:800}
 .scan-pay-row input{width:18px;height:18px;accent-color:var(--ok);flex:none}
 .scan-pay .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -259,6 +254,31 @@ table.tbl{width:100%;border-collapse:collapse}
 .scan-log button{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 8px;border:0;border-radius:10px;background:var(--surface);text-align:start;cursor:pointer}
 .scan-log button:hover{background:var(--surface-3)}
 .scan-log b{font-weight:800}.scan-log span{color:var(--muted);font-size:.78rem}
+.scan-analytics{margin-top:28px;padding-top:8px;display:grid;gap:14px}
+.scan-analytics > header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.scan-analytics > header h2{margin:0;font-size:1.15rem;font-weight:900}
+.scan-analytics > header p{margin:0;color:var(--muted);font-weight:700;font-size:.86rem}
+.scan-charts{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+@media (max-width:960px){.scan-charts{grid-template-columns:1fr}}
+.scan-charts .panel{min-height:0}
+.scan-charts .panel h3{margin:0 0 10px;font-size:.92rem;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.scan-charts .panel h3 span{color:var(--muted);font-size:.75rem;font-weight:700}
+.scan-chart{min-height:210px;width:100%}
+.scan-chart svg{width:100%;height:auto;display:block}
+.scan-offer-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.scan-offer-strip{grid-template-columns:1fr}}
+.scan-offer{padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);display:grid;gap:12px;position:relative;overflow:hidden}
+.scan-offer::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:var(--accent,var(--brand))}
+.scan-offer.VIP{--accent:var(--vip)}.scan-offer.STANDARD{--accent:var(--std)}.scan-offer.GROUPE{--accent:var(--grp)}
+.scan-offer .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.scan-offer .meter-row{display:grid;gap:8px}
+.scan-offer .meter-row label{display:flex;justify-content:space-between;gap:8px;margin:0;font-size:.78rem;font-weight:800;color:var(--fg-soft)}
+.scan-offer .meter-row label b{color:var(--fg);font-variant-numeric:tabular-nums}
+.scan-offer .bar{height:8px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+.scan-offer .bar i{display:block;height:100%;border-radius:99px;background:var(--accent,var(--brand));width:0;transition:width .35s ease}
+.scan-offer .bar i.warn{background:var(--warn)}.scan-offer .bar i.muted{background:var(--muted)}
+.scan-offer .foot{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:.78rem;font-weight:700;color:var(--muted)}
+.scan-offer .foot b{color:var(--fg)}
 @media (max-width:960px){
   .scan-cam{max-height:min(48svh,420px);aspect-ratio:4/3}
   .scan-side{min-height:420px}
@@ -388,21 +408,23 @@ dialog .acts{justify-content:flex-start}
 
   <!-- QR check-in -->
   <section id="tab-scan" role="tabpanel" hidden>
+    <div class="scan-hero">
+      <div>
+        <h1>تسجيل الحضور</h1>
+        <p>امسحوا البطاقة لتسجيل الحضور فورًا، ثم أكّدوا الدفع إن لزم. الإحصاءات التفصيلية أسفل الصفحة.</p>
+      </div>
+    </div>
     <div class="grid kpis scan-kpis">
       <div class="card kpi hero"><div class="k">حضروا</div><div class="v num" id="s-in">0</div><div class="s" id="s-in-s"></div></div>
       <div class="card kpi"><div class="k">لم يحضروا</div><div class="v num" id="s-out">0</div><div class="s" id="s-out-s"></div></div>
       <div class="card kpi"><div class="k">حضروا ولم يدفعوا</div><div class="v num" id="s-unpaid">0</div><div class="s" id="s-unpaid-s"></div></div>
       <div class="card kpi"><div class="k">نسبة الحضور</div><div class="v"><span class="num" id="s-pct">0</span><small>%</small></div><div class="meter"><i id="s-pct-m" style="width:0"></i></div><div class="s" id="s-pct-s"></div></div>
     </div>
-    <div class="grid kpis scan-kpis" style="margin-top:12px">
+    <div class="grid kpis scan-kpis">
       <div class="card kpi"><div class="k">المسجلون المؤكدون</div><div class="v num" id="s-reg">0</div><div class="s">من أكملوا التسجيل ولديهم بطاقة</div></div>
       <div class="card kpi"><div class="k">دفعوا (مشاركون)</div><div class="v num" id="s-paid-n">0</div><div class="s" id="s-paid-n-s"></div></div>
       <div class="card kpi"><div class="k">مبلغ المدفوع</div><div class="v"><span class="num" id="s-paid-da">0</span><small>دج</small></div><div class="meter"><i id="s-paid-m" style="width:0"></i></div><div class="s" id="s-paid-da-s"></div></div>
       <div class="card kpi"><div class="k">لم يدفعوا بعد</div><div class="v num" id="s-debt-n">0</div><div class="s" id="s-debt-s"></div></div>
-    </div>
-    <div class="card scan-offers" id="scan-offers">
-      <h2>الحضور والدفع حسب العرض <span>VIP · STANDARD · GROUPE</span></h2>
-      <div class="scan-offer-grid" id="scan-offer-grid"></div>
     </div>
     <div class="grid scan-grid">
       <div class="card scan-stage">
@@ -443,6 +465,52 @@ dialog .acts{justify-content:flex-start}
           <div class="scan-log" id="scan-log"></div>
         </div>
       </div>
+    </div>
+
+    <div class="scan-analytics" id="scan-analytics">
+      <header>
+        <div>
+          <h2>الحضور والدفع حسب العرض</h2>
+          <p>مقارنة VIP و STANDARD و GROUPE — حضور، غياب، ودفع</p>
+        </div>
+      </header>
+      <div class="scan-charts">
+        <div class="card panel">
+          <h3>الحضور لكل عرض <span>حضر · غاب · حضر بلا دفع</span></h3>
+          <div class="scan-chart" id="scan-chart-attend" role="img" aria-label="رسم بياني للحضور حسب العرض"></div>
+          <div class="legend">
+            <span><i style="background:var(--ok)"></i>حضروا</span>
+            <span><i style="background:var(--line-2)"></i>لم يحضروا</span>
+            <span><i style="background:var(--warn)"></i>حضروا بلا دفع</span>
+          </div>
+        </div>
+        <div class="card panel">
+          <h3>حالة الملتقى <span>كل المشاركين المؤكدين</span></h3>
+          <div class="donut-wrap">
+            <div class="chart" id="scan-chart-status"></div>
+            <div class="olist" id="scan-status-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="scan-charts">
+        <div class="card panel">
+          <h3>الدفع لكل عرض <span>مدفوع مقابل غير مدفوع</span></h3>
+          <div class="scan-chart" id="scan-chart-paid" role="img" aria-label="رسم بياني للدفع حسب العرض"></div>
+          <div class="legend">
+            <span><i style="background:var(--ok)"></i>دفعوا</span>
+            <span><i style="background:var(--bad)"></i>لم يدفعوا</span>
+          </div>
+        </div>
+        <div class="card panel">
+          <h3>المبلغ المحصَّل <span>دج حسب العرض</span></h3>
+          <div class="scan-chart" id="scan-chart-money" role="img" aria-label="رسم بياني للمبالغ حسب العرض"></div>
+          <div class="legend">
+            <span><i style="background:var(--brand)"></i>مدفوع</span>
+            <span><i style="background:var(--line-2)"></i>متبقٍ</span>
+          </div>
+        </div>
+      </div>
+      <div class="scan-offer-strip" id="scan-offer-grid"></div>
     </div>
   </section>
 
@@ -810,10 +878,64 @@ dialog .acts{justify-content:flex-start}
     const R = 60, C = 2 * Math.PI * R, svg = svgEl('svg', { viewBox: '0 0 150 150', role: 'img', 'aria-label': 'التوزيع حسب العرض', style: 'max-width:150px' });
     svg.append(svgEl('circle', { cx: 75, cy: 75, r: R, fill: 'none', stroke: 'var(--surface-3)', 'stroke-width': 18 }));
     let off = 0;
-    parts.forEach(p => { if (!p.n || !total) return; const len = C * p.n / total; svg.append(svgEl('circle', { cx: 75, cy: 75, r: R, fill: 'none', stroke: OFFER_COLOR[p.o], 'stroke-width': 18, 'stroke-dasharray': `${Math.max(0, len - 2)} ${C}`, 'stroke-dashoffset': -off, transform: 'rotate(-90 75 75)' })); off += len; });
+    parts.forEach(p => { if (!p.n || !total) return; const len = C * p.n / total; svg.append(svgEl('circle', { cx: 75, cy: 75, r: R, fill: 'none', stroke: p.color || OFFER_COLOR[p.o] || 'var(--brand)', 'stroke-width': 18, 'stroke-dasharray': `${Math.max(0, len - 2)} ${C}`, 'stroke-dashoffset': -off, transform: 'rotate(-90 75 75)' })); off += len; });
     const t1 = svgEl('text', { x: 75, y: 78, 'text-anchor': 'middle', 'font-size': 28, 'font-weight': 900, fill: 'var(--fg)' }); t1.textContent = total;
-    const t2 = svgEl('text', { x: 75, y: 98, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: 'var(--muted)' }); t2.textContent = 'مشارك';
+    const t2 = svgEl('text', { x: 75, y: 98, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: 'var(--muted)' }); t2.textContent = parts[0] && parts[0].unit ? parts[0].unit : 'مشارك';
     svg.append(t1, t2); box.append(svg);
+  }
+  /** Grouped vertical bars: groups[{ label, values:[{n,color,name}] }] */
+  function drawGroupedBars(box, groups, aria) {
+    box.textContent = '';
+    const W = 640, H = 220, pad = { l: 36, r: 16, t: 18, b: 36 };
+    const seriesN = Math.max(1, (groups[0] && groups[0].values.length) || 1);
+    const max = Math.max(1, ...groups.flatMap(g => g.values.map(v => v.n || 0)));
+    const gw = (W - pad.l - pad.r) / Math.max(1, groups.length);
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': aria || 'رسم بياني' });
+    const y = v => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+    [0, Math.ceil(max / 2), max].forEach(v => {
+      svg.append(svgEl('line', { x1: pad.l, x2: W - pad.r, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 }));
+      const t = svgEl('text', { x: pad.l - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--muted)', 'font-weight': 700 }); t.textContent = v; svg.append(t);
+    });
+    groups.forEach((g, gi) => {
+      const slot = pad.l + gi * gw;
+      const barW = Math.min(28, (gw * 0.7) / seriesN);
+      const cluster = seriesN * barW + (seriesN - 1) * 4;
+      const start = slot + (gw - cluster) / 2;
+      g.values.forEach((v, vi) => {
+        const x = start + vi * (barW + 4);
+        const h = Math.max(v.n ? 3 : 0, y(0) - y(v.n || 0));
+        const rect = svgEl('rect', { x, y: y(v.n || 0), width: barW, height: h, rx: 4, fill: v.color });
+        const tip = svgEl('title', {}); tip.textContent = g.label + ' · ' + v.name + ': ' + (v.n || 0); rect.append(tip);
+        svg.append(rect);
+        if (v.n) { const t = svgEl('text', { x: x + barW / 2, y: y(v.n) - 5, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--fg)', 'font-weight': 800 }); t.textContent = v.n; svg.append(t); }
+      });
+      const lab = svgEl('text', { x: slot + gw / 2, y: H - 10, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--fg)', 'font-weight': 800 }); lab.textContent = g.label; svg.append(lab);
+    });
+    box.append(svg);
+  }
+  function drawMoneyBars(box, rows) {
+    box.textContent = '';
+    const W = 640, H = 220, pad = { l: 36, r: 16, t: 18, b: 36 };
+    const max = Math.max(1, ...rows.map(r => r.expected || 0));
+    const gw = (W - pad.l - pad.r) / Math.max(1, rows.length);
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'المبالغ حسب العرض' });
+    const y = v => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+    [0, Math.ceil(max / 2), max].forEach(v => {
+      svg.append(svgEl('line', { x1: pad.l, x2: W - pad.r, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 }));
+      const t = svgEl('text', { x: pad.l - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 10, fill: 'var(--muted)', 'font-weight': 700 }); t.textContent = Math.round(v / 1000) + 'k'; svg.append(t);
+    });
+    rows.forEach((r, i) => {
+      const x = pad.l + i * gw + gw * 0.22, w = gw * 0.56;
+      const paid = r.paid || 0, rest = Math.max(0, (r.expected || 0) - paid);
+      if (r.expected) svg.append(svgEl('rect', { x, y: y(r.expected), width: w, height: y(0) - y(r.expected), rx: 5, fill: 'var(--line-2)' }));
+      if (paid) svg.append(svgEl('rect', { x, y: y(paid), width: w, height: y(0) - y(paid), rx: 5, fill: r.color || 'var(--brand)' }));
+      const tip = svgEl('title', {}); tip.textContent = r.label + ': مدفوع ' + fmt(paid) + ' من ' + fmt(r.expected); 
+      const g = svgEl('g', {}); g.append(tip); svg.append(g);
+      const lab = svgEl('text', { x: x + w / 2, y: H - 10, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--fg)', 'font-weight': 800 }); lab.textContent = r.label; svg.append(lab);
+      if (paid) { const t = svgEl('text', { x: x + w / 2, y: y(paid) - 5, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--fg)', 'font-weight': 800 }); t.textContent = fmt(paid); svg.append(t); }
+      void rest;
+    });
+    box.append(svg);
   }
 
   // ---------- QR check-in ----------
@@ -848,24 +970,75 @@ dialog .acts{justify-content:flex-start}
     $('#s-debt-s').textContent = fmt(expectedDA - paidDA) + ' دج متبقية';
     $('#c-in').textContent = here;
 
-    const og = $('#scan-offer-grid'); og.textContent = '';
-    ['VIP', 'STANDARD', 'GROUPE'].forEach(o => {
+    const offerStats = ['VIP', 'STANDARD', 'GROUPE'].map(o => {
       const regs = conf.filter(r => r.offer === o);
       const members = people.filter(p => p.r.offer === o);
       const present = members.filter(p => isIn(p.r, p.i)).length;
       const absent = members.length - present;
       const paidM = members.filter(p => p.r.paid).length;
+      const unpaidM = members.length - paidM;
       const paidR = regs.filter(r => r.paid).length;
       const hereUnpaid = members.filter(p => isIn(p.r, p.i) && !p.r.paid).length;
       const paidAmt = regs.filter(r => r.paid).reduce((s, r) => s + r.total, 0);
-      og.append(el('div', { class: 'scan-offer' },
-        el('div', { class: 'top' }, el('span', { class: 'pill ' + o, text: o }), el('span', { class: 'num', style: 'font-weight:800;color:var(--muted)', text: members.length + ' مشارك' })),
-        el('div', { class: 'nums' },
-          el('div', {}, el('b', { class: 'num', text: present }), el('span', { text: 'حضروا' })),
-          el('div', {}, el('b', { class: 'num', text: absent }), el('span', { text: 'لم يحضروا' })),
-          el('div', {}, el('b', { class: 'num', text: paidM }), el('span', { text: 'دفعوا' })),
-          el('div', {}, el('b', { class: 'num', text: hereUnpaid }), el('span', { text: 'حضروا بلا دفع' }))),
-        el('div', { class: 'sub', text: paidR + ' / ' + regs.length + ' تسجيل مدفوع · ' + fmt(paidAmt) + ' دج' })));
+      const expectedAmt = regs.reduce((s, r) => s + r.total, 0);
+      return { o, regs, members, present, absent, paidM, unpaidM, paidR, hereUnpaid, paidAmt, expectedAmt, total: members.length };
+    });
+
+    drawGroupedBars($('#scan-chart-attend'), offerStats.map(s => ({
+      label: s.o,
+      values: [
+        { n: s.present, color: 'var(--ok)', name: 'حضروا' },
+        { n: s.absent, color: 'var(--line-2)', name: 'لم يحضروا' },
+        { n: s.hereUnpaid, color: 'var(--warn)', name: 'حضروا بلا دفع' }
+      ]
+    })), 'الحضور حسب العرض');
+
+    drawGroupedBars($('#scan-chart-paid'), offerStats.map(s => ({
+      label: s.o,
+      values: [
+        { n: s.paidM, color: 'var(--ok)', name: 'دفعوا' },
+        { n: s.unpaidM, color: 'var(--bad)', name: 'لم يدفعوا' }
+      ]
+    })), 'الدفع حسب العرض');
+
+    drawMoneyBars($('#scan-chart-money'), offerStats.map(s => ({
+      label: s.o, paid: s.paidAmt, expected: s.expectedAmt, color: OFFER_COLOR[s.o]
+    })));
+
+    const statusParts = [
+      { o: 'here', n: here, color: 'var(--ok)', label: 'حضروا ودفعوا', unit: 'مشارك' },
+      { o: 'unpaid', n: unpaidHere, color: 'var(--warn)', label: 'حضروا بلا دفع', unit: 'مشارك' },
+      { o: 'out', n: Math.max(0, n - here), color: 'var(--line-2)', label: 'لم يحضروا', unit: 'مشارك' }
+    ];
+    // "حضروا ودفعوا" = here - unpaidHere
+    statusParts[0].n = Math.max(0, here - unpaidHere);
+    drawDonut($('#scan-chart-status'), statusParts, n);
+    const sl = $('#scan-status-list'); sl.textContent = '';
+    statusParts.forEach(p => sl.append(el('div', {},
+      el('i', { style: 'background:' + p.color }),
+      el('span', { text: p.label }),
+      el('b', { class: 'num', text: p.n }),
+      el('em', {}, n ? Math.round(100 * p.n / n) + '%' : '0%'))));
+
+    const og = $('#scan-offer-grid'); og.textContent = '';
+    offerStats.forEach(s => {
+      const pctIn = s.total ? Math.round(100 * s.present / s.total) : 0;
+      const pctPaid = s.total ? Math.round(100 * s.paidM / s.total) : 0;
+      const pctDebt = s.total ? Math.round(100 * s.hereUnpaid / s.total) : 0;
+      const card = el('div', { class: 'scan-offer ' + s.o },
+        el('div', { class: 'top' }, el('span', { class: 'pill ' + s.o, text: s.o }), el('span', { class: 'num', style: 'font-weight:800;color:var(--muted)', text: s.total + ' مشارك' })),
+        el('div', { class: 'meter-row' },
+          el('label', {}, el('span', { text: 'نسبة الحضور' }), el('b', { class: 'num', text: pctIn + '%' })),
+          el('div', { class: 'bar' }, el('i', { style: 'width:' + pctIn + '%' })),
+          el('label', {}, el('span', { text: 'نسبة الدفع' }), el('b', { class: 'num', text: pctPaid + '%' })),
+          el('div', { class: 'bar' }, el('i', { style: 'width:' + pctPaid + '%' })),
+          el('label', {}, el('span', { text: 'حضروا بلا دفع' }), el('b', { class: 'num', text: s.hereUnpaid })),
+          el('div', { class: 'bar' }, el('i', { class: 'warn', style: 'width:' + pctDebt + '%' }))),
+        el('div', { class: 'foot' },
+          el('span', {}, el('b', { class: 'num', text: s.present }), ' حضر · ', el('b', { class: 'num', text: s.absent }), ' غاب'),
+          el('span', {}, el('b', { class: 'num', text: s.paidR }), '/', el('b', { class: 'num', text: s.regs.length }), ' تسجيل مدفوع'),
+          el('span', {}, el('b', { class: 'num', text: fmt(s.paidAmt) }), ' / ', el('b', { class: 'num', text: fmt(s.expectedAmt) }), ' دج')));
+      og.append(card);
     });
 
     const log = $('#scan-log'); log.textContent = '';
