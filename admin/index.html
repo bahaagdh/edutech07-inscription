@@ -207,6 +207,16 @@ table.tbl{width:100%;border-collapse:collapse}
 /* ---------- QR check-in ---------- */
 .scan-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:1100px){.scan-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.scan-offers{margin-top:14px;padding:16px 18px}
+.scan-offers h2{margin:0 0 12px;font-size:.98rem;font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.scan-offers h2 span{color:var(--muted);font-size:.78rem;font-weight:700}
+.scan-offer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.scan-offer-grid{grid-template-columns:1fr}}
+.scan-offer{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);display:grid;gap:8px}
+.scan-offer .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.scan-offer .nums{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:.82rem}
+.scan-offer .nums b{display:block;font-size:1.05rem;font-weight:900}
+.scan-offer .nums span{color:var(--muted);font-weight:700}
 .scan-grid{grid-template-columns:minmax(0,1.35fr) minmax(300px,.9fr);align-items:stretch;margin-top:14px}
 @media (max-width:960px){.scan-grid{grid-template-columns:1fr}}
 .scan-stage{display:flex;flex-direction:column;overflow:hidden;min-height:0}
@@ -235,6 +245,10 @@ table.tbl{width:100%;border-collapse:collapse}
 .scan-result h2 span,.scan-feed h2 span{color:var(--muted);font-size:.78rem;font-weight:700}
 .scan-result .who{font-size:1.25rem;font-weight:900}
 .scan-result .st.big{font-size:.9rem;padding:6px 12px;width:fit-content}
+.scan-pay{margin-top:4px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);display:grid;gap:10px}
+.scan-pay-row{display:flex;align-items:center;gap:10px;font-weight:800}
+.scan-pay-row input{width:18px;height:18px;accent-color:var(--ok);flex:none}
+.scan-pay .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .scan-empty{display:grid;place-items:center;flex:1;text-align:center;padding:10px 8px 4px;color:var(--muted)}
 .scan-empty .ico{width:32px;height:32px;margin:0 auto 6px;opacity:.4}
 .scan-empty p{margin:0;font-weight:700;font-size:.86rem;line-height:1.55}
@@ -376,9 +390,19 @@ dialog .acts{justify-content:flex-start}
   <section id="tab-scan" role="tabpanel" hidden>
     <div class="grid kpis scan-kpis">
       <div class="card kpi hero"><div class="k">حضروا</div><div class="v num" id="s-in">0</div><div class="s" id="s-in-s"></div></div>
-      <div class="card kpi"><div class="k">المسجلون المؤكدون</div><div class="v num" id="s-reg">0</div><div class="s">من أكملوا التسجيل ولديهم بطاقة</div></div>
-      <div class="card kpi"><div class="k">لم يحضروا بعد</div><div class="v num" id="s-out">0</div><div class="s" id="s-out-s"></div></div>
+      <div class="card kpi"><div class="k">لم يحضروا</div><div class="v num" id="s-out">0</div><div class="s" id="s-out-s"></div></div>
+      <div class="card kpi"><div class="k">حضروا ولم يدفعوا</div><div class="v num" id="s-unpaid">0</div><div class="s" id="s-unpaid-s"></div></div>
       <div class="card kpi"><div class="k">نسبة الحضور</div><div class="v"><span class="num" id="s-pct">0</span><small>%</small></div><div class="meter"><i id="s-pct-m" style="width:0"></i></div><div class="s" id="s-pct-s"></div></div>
+    </div>
+    <div class="grid kpis scan-kpis" style="margin-top:12px">
+      <div class="card kpi"><div class="k">المسجلون المؤكدون</div><div class="v num" id="s-reg">0</div><div class="s">من أكملوا التسجيل ولديهم بطاقة</div></div>
+      <div class="card kpi"><div class="k">دفعوا (مشاركون)</div><div class="v num" id="s-paid-n">0</div><div class="s" id="s-paid-n-s"></div></div>
+      <div class="card kpi"><div class="k">مبلغ المدفوع</div><div class="v"><span class="num" id="s-paid-da">0</span><small>دج</small></div><div class="meter"><i id="s-paid-m" style="width:0"></i></div><div class="s" id="s-paid-da-s"></div></div>
+      <div class="card kpi"><div class="k">لم يدفعوا بعد</div><div class="v num" id="s-debt-n">0</div><div class="s" id="s-debt-s"></div></div>
+    </div>
+    <div class="card scan-offers" id="scan-offers">
+      <h2>الحضور والدفع حسب العرض <span>VIP · STANDARD · GROUPE</span></h2>
+      <div class="scan-offer-grid" id="scan-offer-grid"></div>
     </div>
     <div class="grid scan-grid">
       <div class="card scan-stage">
@@ -448,12 +472,13 @@ dialog .acts{justify-content:flex-start}
         <input class="in" id="qp" type="search" placeholder="بحث عن مشارك…" aria-label="بحث عن مشارك"></div>
       <select id="fp-offer" aria-label="العرض"><option value="">كل العروض</option><option>STANDARD</option><option>VIP</option><option>GROUPE</option></select>
       <select id="fp-in" aria-label="الحضور"><option value="">الحضور: الكل</option><option value="yes">حضر</option><option value="no">لم يحضر</option></select>
+      <select id="fp-paid" aria-label="الدفع"><option value="">الدفع: الكل</option><option value="yes">مدفوع</option><option value="no">غير مدفوع</option><option value="here-unpaid">حضر ولم يدفع</option></select>
       <button class="btn" id="csv-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Excel</button>
       <button class="btn" id="print-people">طباعة القائمة</button>
     </div>
     <div class="count" id="count-people"></div>
     <div class="card tablebox">
-      <table class="tbl"><thead><tr><th>#</th><th>المشارك</th><th>المؤسسة</th><th>العرض</th><th>الهاتف</th><th>البريد</th><th>التسجيل</th><th>الحضور</th></tr></thead><tbody id="rows-people"></tbody></table>
+      <table class="tbl"><thead><tr><th>#</th><th>المشارك</th><th>المؤسسة</th><th>العرض</th><th>الهاتف</th><th>البريد</th><th>التسجيل</th><th>الدفع</th><th>الحضور</th></tr></thead><tbody id="rows-people"></tbody></table>
       <div class="empty" id="empty-people" hidden>لا يوجد مشاركون مطابقون.</div>
     </div>
   </section>
@@ -579,7 +604,7 @@ dialog .acts{justify-content:flex-start}
     token = null; rows = []; clearInterval(timer); closeDrawer();
     try { sessionStorage.removeItem(TK); } catch (e) {}
     ['#rows-regs', '#rows-people', '#rows-pending', '#checks', '#scan-log', '#scan-card'].forEach(s => { $(s).textContent = ''; });
-    stopScan(); $('#scan-empty').hidden = false; $('#scan-card').hidden = true;
+    lastScan = null; stopScan(); $('#scan-empty').hidden = false; $('#scan-card').hidden = true;
     $('#app').hidden = true; $('#login').hidden = false;
     if (expired) loginMsg('انتهت الجلسة، سجّلوا الدخول من جديد.');
   }
@@ -705,10 +730,18 @@ dialog .acts{justify-content:flex-start}
     drawBars($('#chart-days'), series);
 
     // offers donut
-    const offers = ['STANDARD', 'VIP', 'GROUPE'].map(o => ({ o, n: by(o).length, p: by(o).reduce((s, r) => s + r.members.length, 0), amt: by(o).reduce((s, r) => s + r.total, 0) }));
+    const offers = ['STANDARD', 'VIP', 'GROUPE'].map(o => {
+      const regs = by(o);
+      return {
+        o, n: regs.length, p: regs.reduce((s, r) => s + r.members.length, 0), amt: regs.reduce((s, r) => s + r.total, 0),
+        paidP: people.filter(p => p.r.offer === o && p.r.paid).length,
+        here: people.filter(p => p.r.offer === o && isIn(p.r, p.i)).length,
+        paidAmt: regs.filter(r => r.paid).reduce((s, r) => s + r.total, 0)
+      };
+    });
     drawDonut($('#chart-offer'), offers.map(x => ({ o: x.o, n: x.p })), people.length);
     const ol = $('#offer-list'); ol.textContent = '';
-    offers.forEach(x => ol.append(el('div', {}, el('i', { style: 'background:' + OFFER_COLOR[x.o] }), el('span', { text: x.o }), el('b', { class: 'num', text: x.p + ' مشارك' }), el('em', {}, x.n + ' تسجيل · ', el('span', { class: 'num', text: fmt(x.amt) }), ' دج'))));
+    offers.forEach(x => ol.append(el('div', {}, el('i', { style: 'background:' + OFFER_COLOR[x.o] }), el('span', { text: x.o }), el('b', { class: 'num', text: x.p + ' مشارك' }), el('em', {}, x.here + ' حضر · ' + x.paidP + ' دفع · ', el('span', { class: 'num', text: fmt(x.paidAmt) }), ' / ', el('span', { class: 'num', text: fmt(x.amt) }), ' دج'))));
 
     // wilayas
     const wc = {}; conf.forEach(r => { const w = r.wilaya || '—'; wc[w] = (wc[w] || 0) + r.members.length; });
@@ -761,20 +794,65 @@ dialog .acts{justify-content:flex-start}
   // ---------- QR check-in ----------
   const scanLog = [];
   let scanStream = null, scanLoopOn = false, scanBusy = false, lastQr = '', lastQrAt = 0, scanRaf = 0, jsQRWait = null, camBlocked = false;
+  let lastScan = null; // { kind, code, member } — keeps the payment panel after refresh
   function renderScanStats() {
-    const people = A.people || [], here = people.filter(p => isIn(p.r, p.i)).length, n = people.length, pct = n ? Math.round(100 * here / n) : 0;
-    $('#s-in').textContent = here; $('#s-in-s').textContent = here ? 'آخر حضور ' + dshort((A.conf.filter(r => r.checkinAt).sort((a, b) => new Date(b.checkinAt) - new Date(a.checkinAt))[0] || {}).checkinAt) : 'ابدأوا المسح عند الباب';
-    $('#s-reg').textContent = n; $('#s-out').textContent = Math.max(0, n - here);
+    const people = A.people || [], conf = A.conf || [];
+    const hereP = people.filter(p => isIn(p.r, p.i));
+    const here = hereP.length, n = people.length, pct = n ? Math.round(100 * here / n) : 0;
+    const unpaidHere = hereP.filter(p => !p.r.paid).length;
+    const paidPeople = people.filter(p => p.r.paid).length;
+    const paidRegs = conf.filter(r => r.paid);
+    const paidDA = paidRegs.reduce((s, r) => s + r.total, 0);
+    const expectedDA = conf.reduce((s, r) => s + r.total, 0);
+    const unpaidPeople = Math.max(0, n - paidPeople);
+    const lastAt = (conf.filter(r => r.checkinAt).sort((a, b) => new Date(b.checkinAt) - new Date(a.checkinAt))[0] || {}).checkinAt;
+    $('#s-in').textContent = here; $('#s-in-s').textContent = here ? 'آخر حضور ' + dshort(lastAt) : 'ابدأوا المسح عند الباب';
+    $('#s-reg').textContent = n;
+    $('#s-out').textContent = Math.max(0, n - here);
     $('#s-out-s').textContent = n ? (n - here) + ' لم يُمسح رمزهم بعد' : '';
+    $('#s-unpaid').textContent = unpaidHere;
+    $('#s-unpaid-s').textContent = unpaidHere ? 'في الباب وبلا دفع بعد' : 'كل الحاضرين دفعوا أو لا حضور بعد';
     $('#s-pct').textContent = pct; $('#s-pct-m').style.width = pct + '%';
     $('#s-pct-s').textContent = here + ' حضروا من أصل ' + n + ' مسجَّل مؤكَّد';
+    $('#s-paid-n').textContent = paidPeople;
+    $('#s-paid-n-s').textContent = paidRegs.length + ' تسجيل مدفوع من أصل ' + conf.length;
+    $('#s-paid-da').textContent = fmt(paidDA);
+    $('#s-paid-m').style.width = (expectedDA ? 100 * paidDA / expectedDA : 0) + '%';
+    $('#s-paid-da-s').textContent = 'من أصل ' + fmt(expectedDA) + ' دج متوقع';
+    $('#s-debt-n').textContent = unpaidPeople;
+    $('#s-debt-s').textContent = fmt(expectedDA - paidDA) + ' دج متبقية';
     $('#c-in').textContent = here;
+
+    const og = $('#scan-offer-grid'); og.textContent = '';
+    ['VIP', 'STANDARD', 'GROUPE'].forEach(o => {
+      const regs = conf.filter(r => r.offer === o);
+      const members = people.filter(p => p.r.offer === o);
+      const present = members.filter(p => isIn(p.r, p.i)).length;
+      const absent = members.length - present;
+      const paidM = members.filter(p => p.r.paid).length;
+      const paidR = regs.filter(r => r.paid).length;
+      const hereUnpaid = members.filter(p => isIn(p.r, p.i) && !p.r.paid).length;
+      const paidAmt = regs.filter(r => r.paid).reduce((s, r) => s + r.total, 0);
+      og.append(el('div', { class: 'scan-offer' },
+        el('div', { class: 'top' }, el('span', { class: 'pill ' + o, text: o }), el('span', { class: 'num', style: 'font-weight:800;color:var(--muted)', text: members.length + ' مشارك' })),
+        el('div', { class: 'nums' },
+          el('div', {}, el('b', { class: 'num', text: present }), el('span', { text: 'حضروا' })),
+          el('div', {}, el('b', { class: 'num', text: absent }), el('span', { text: 'لم يحضروا' })),
+          el('div', {}, el('b', { class: 'num', text: paidM }), el('span', { text: 'دفعوا' })),
+          el('div', {}, el('b', { class: 'num', text: hereUnpaid }), el('span', { text: 'حضروا بلا دفع' }))),
+        el('div', { class: 'sub', text: paidR + ' / ' + regs.length + ' تسجيل مدفوع · ' + fmt(paidAmt) + ' دج' })));
+    });
+
     const log = $('#scan-log'); log.textContent = '';
     $('#scan-log-t').textContent = scanLog.length ? scanLog.length + ' عملية' : 'من هذا الجهاز';
     if (!scanLog.length) log.append(el('div', { class: 'scan-empty' }, el('p', { text: 'يظهر هنا كل من يُمسح رمزه على هذا الجهاز.' })));
     scanLog.slice(0, 12).forEach(x => log.append(el('button', { type: 'button', onclick: () => { const r = rows.find(z => z.code === x.code); if (r) openDrawer(r); } },
       el('b', { text: x.name }), el('span', { class: 'pill ' + x.offer, text: x.offer }),
       el('span', { text: x.detail }), el('span', { class: 'num', text: x.at }))));
+    if (lastScan && (lastScan.kind === 'ok' || lastScan.kind === 'dup')) {
+      const rec = rows.find(r => r.code === lastScan.code);
+      if (rec) showScanCard(lastScan.kind, '', rec, lastScan.member, true);
+    }
   }
   function beep(kind) {
     try {
@@ -790,9 +868,11 @@ dialog .acts{justify-content:flex-start}
     const cam = $('#scan-cam'); cam.classList.remove('hit', 'warn', 'bad'); if (cls) cam.classList.add(cls);
     clearTimeout(flashCam.t); flashCam.t = setTimeout(() => cam.classList.remove('hit', 'warn', 'bad'), 900);
   }
-  function showScanCard(kind, title, rec, member) {
+  function showScanCard(kind, title, rec, member, keep) {
     $('#scan-empty').hidden = true; $('#scan-card').hidden = false;
     const i = Math.max(0, (member || 1) - 1), m = rec && rec.members && rec.members[i] || rec && rec.members[0] || {};
+    if (rec && (kind === 'ok' || kind === 'dup')) lastScan = { kind, code: rec.code, member: i + 1 };
+    else if (!keep) lastScan = null;
     const box = $('#scan-card'); box.textContent = '';
     const st = kind === 'ok' ? el('span', { class: 'st ok big', text: 'تم تسجيل الحضور' })
       : kind === 'dup' ? el('span', { class: 'st wait big', text: 'سبق تسجيل حضوره' })
@@ -803,7 +883,40 @@ dialog .acts{justify-content:flex-start}
       box.append(el('div', { class: 'who', text: fullName(m) || rec.code }));
       box.append(el('div', {}, el('span', { class: 'pill ' + rec.offer, text: rec.offer }), ' ', el('span', { class: 'code', text: rec.code + '-' + (i + 1) })));
       box.append(el('div', { class: 'sub', text: rec.inst + (rec.wilaya ? ' · ' + rec.wilaya : '') + (rec.members.length > 1 ? ' · العضو ' + (i + 1) + ' من ' + rec.members.length : '') }));
-      box.append(el('div', { class: 'sub', text: inCount(rec) + ' / ' + rec.members.length + ' من هذه البطاقة حضروا' }));
+      box.append(el('div', { class: 'sub', text: inCount(rec) + ' / ' + rec.members.length + ' من هذه البطاقة حضروا · ' + (rec.paid ? 'مدفوع' : 'غير مدفوع') }));
+      if (kind === 'ok' || kind === 'dup') {
+        const pay = el('div', { class: 'scan-pay' });
+        if (rec.paid) {
+          pay.append(el('span', { class: 'st ok', text: 'الدفع مسجَّل' }));
+          pay.append(el('div', { class: 'sub', text: (rec.paidAt ? 'منذ ' + dshort(rec.paidAt) + ' · ' : '') + fmt(rec.total) + ' دج' }));
+        } else {
+          const cid = 'scan-pay-cb';
+          const cb = el('input', { type: 'checkbox', id: cid });
+          const lab = el('label', { for: cid, text: 'تأكيد استلام الدفع (' + fmt(rec.total) + ' دج)' });
+          const hint = el('div', { class: 'sub', text: rec.offer === 'GROUPE'
+            ? 'الدفع يخص تسجيل المجموعة كاملًا ويظهر مباشرة في كل جداول الإدارة.'
+            : 'بعد التأكيد يُعلَّم التسجيل مدفوعًا في كل صفحات الإدارة فورًا.' });
+          const btn = el('button', { class: 'btn btn-primary', type: 'button', text: 'حفظ الدفع', disabled: true });
+          cb.addEventListener('change', () => { btn.disabled = !cb.checked; });
+          btn.addEventListener('click', async () => {
+            if (!cb.checked) return;
+            btn.disabled = true; cb.disabled = true;
+            try {
+              const r = await api('admin_update', { token, code: rec.code, patch: { paid: true } });
+              if (!r.ok) throw new Error(r.error || 'fail');
+              const ix = rows.findIndex(x => x.code === rec.code); if (ix >= 0) rows[ix] = r.rec;
+              analyse(); renderAll();
+              toast('تم تسجيل الدفع · ' + fullName(m));
+              beep('ok');
+            } catch (e) {
+              if (e.message !== 'auth') toast('تعذّر حفظ الدفع، حاولوا مجددًا', true);
+              btn.disabled = !cb.checked; cb.disabled = false;
+            }
+          });
+          pay.append(el('div', { class: 'scan-pay-row' }, cb, lab), hint, el('div', { class: 'acts' }, btn));
+        }
+        box.append(pay);
+      }
       box.append(el('button', { class: 'btn btn-sm', type: 'button', text: 'فتح التسجيل', onclick: () => openDrawer(rec) }));
     }
   }
@@ -815,13 +928,13 @@ dialog .acts{justify-content:flex-start}
     return { code: parts[0] + '-' + parts[1], member: parts[2] ? Number(parts[2]) : 1 };
   }
   async function saveCheckin(parsed, raw) {
-    let r = await api('admin_checkin', { token, qr: raw, code: parsed.code, member: parsed.member });
-    if (r && r.error === 'unknown action') {
-      const local = rows.find(x => x.code === parsed.code);
-      const already = local ? isIn(local, parsed.member - 1) : false;
-      r = await api('admin_update', { token, code: parsed.code, patch: { checkinMember: parsed.member, checkin: true } });
-      if (r && r.ok && r.rec) r = { ok: true, already: already, member: parsed.member, rec: r.rec };
-    }
+    const local = rows.find(x => x.code === parsed.code);
+    const already = local ? isIn(local, Math.max(0, (parsed.member || 1) - 1)) : false;
+    // Live Apps Script already has admin_update with per-member check-in — use it first.
+    let r = await api('admin_update', { token, code: parsed.code, patch: { checkinMember: parsed.member, checkin: true } });
+    if (r && r.ok && r.rec) return { ok: true, already, member: parsed.member, rec: r.rec };
+    if (r && (r.error === 'auth' || r.error === 'not found')) return r;
+    r = await api('admin_checkin', { token, qr: raw, code: parsed.code, member: parsed.member });
     return r;
   }
   async function handleQr(raw) {
@@ -832,27 +945,29 @@ dialog .acts{justify-content:flex-start}
     $('#scan-hint').textContent = 'جارٍ الحفظ…';
     try {
       const parsed = parseBadgeId(text);
-      if (!parsed) { beep('bad'); flashCam('bad'); showScanCard('bad', 'رمز غير معروف'); toast('هذا الرمز ليس بطاقة مشارك', true); }
+      if (!parsed) { lastScan = null; beep('bad'); flashCam('bad'); showScanCard('bad', 'رمز غير معروف'); toast('هذا الرمز ليس بطاقة مشارك', true); }
       else {
         const local = rows.find(x => x.code === parsed.code);
-        if (local && !isConf(local)) { beep('dup'); flashCam('warn'); showScanCard('pending', '', local, parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
+        if (local && !isConf(local)) { lastScan = null; beep('dup'); flashCam('warn'); showScanCard('pending', '', local, parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
         else {
           const r = await saveCheckin(parsed, text);
           if (r && r.error === 'auth') return;
-          if (r && r.error === 'not found') { beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
-          else if (r && r.error === 'not confirmed') { beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec, r.member || parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
+          if (r && r.error === 'not found') { lastScan = null; beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
+          else if (r && r.error === 'not confirmed') { lastScan = null; beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec, r.member || parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
           else if (r && r.ok && r.rec) {
             const i = rows.findIndex(x => x.code === r.rec.code); if (i >= 0) rows[i] = r.rec; else rows.push(r.rec);
             analyse();
             const idx = Math.max(0, (r.member || parsed.member || 1) - 1);
             const m = r.rec.members[idx] || {};
             const name = fullName(m) || r.rec.code;
-            scanLog.unshift({ code: r.rec.code, name, offer: r.rec.offer, detail: r.already ? 'سبق حضوره' : 'حضور جديد · ' + r.rec.inst, at: dshort(new Date().toISOString()) });
+            const paidHint = r.rec.paid ? ' · مدفوع' : ' · بانتظار الدفع';
+            scanLog.unshift({ code: r.rec.code, name, offer: r.rec.offer, detail: (r.already ? 'سبق حضوره' : 'حضور جديد · ' + r.rec.inst) + paidHint, at: dshort(new Date().toISOString()) });
             if (scanLog.length > 40) scanLog.length = 40;
+            lastScan = { kind: r.already ? 'dup' : 'ok', code: r.rec.code, member: idx + 1 };
             renderAll();
             if (r.already) { beep('dup'); flashCam('warn'); showScanCard('dup', '', r.rec, idx + 1); toast(name + ' سبق تسجيل حضوره'); }
             else { beep('ok'); flashCam('hit'); showScanCard('ok', '', r.rec, idx + 1); toast('حُفظ حضور ' + name); }
-          } else { beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
+          } else { lastScan = null; beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
         }
       }
     } catch (e) { if (e.message !== 'auth') { beep('bad'); flashCam('bad'); toast('تعذّر الاتصال، حاولوا مجددًا', true); } }
@@ -1015,13 +1130,20 @@ dialog .acts{justify-content:flex-start}
 
   // ---------- people ----------
   function peopleList() {
-    const q = $('#qp').value.trim().toLowerCase(), of = $('#fp-offer').value, ci = $('#fp-in').value;
-    return A.people.filter(p => (!of || p.r.offer === of) && (!ci || (ci === 'yes') === isIn(p.r, p.i)) && (!q || [fullName(p.m), p.m.ln + ' ' + p.m.fn, p.m.em, p.m.ph, p.r.inst, p.r.code, p.r.code + '-' + (p.i + 1), p.r.wilaya].join(' ').toLowerCase().includes(q)))
-      .sort((a, b) => fullName(a.r.members[0] || a.m).localeCompare(fullName(b.r.members[0] || b.m), 'ar') || (a.r.code < b.r.code ? -1 : a.r.code > b.r.code ? 1 : 0) || a.i - b.i);
+    const q = $('#qp').value.trim().toLowerCase(), of = $('#fp-offer').value, ci = $('#fp-in').value, pd = $('#fp-paid').value;
+    return A.people.filter(p => {
+      if (of && p.r.offer !== of) return false;
+      if (ci && (ci === 'yes') !== isIn(p.r, p.i)) return false;
+      if (pd === 'yes' && !p.r.paid) return false;
+      if (pd === 'no' && p.r.paid) return false;
+      if (pd === 'here-unpaid' && !(isIn(p.r, p.i) && !p.r.paid)) return false;
+      if (q && ![fullName(p.m), p.m.ln + ' ' + p.m.fn, p.m.em, p.m.ph, p.r.inst, p.r.code, p.r.code + '-' + (p.i + 1), p.r.wilaya].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    }).sort((a, b) => fullName(a.r.members[0] || a.m).localeCompare(fullName(b.r.members[0] || b.m), 'ar') || (a.r.code < b.r.code ? -1 : a.r.code > b.r.code ? 1 : 0) || a.i - b.i);
   }
   function renderPeople() {
     const list = peopleList(), tb = $('#rows-people'); tb.textContent = '';
-    $('#count-people').textContent = list.length + ' مشارك · ' + list.filter(p => isIn(p.r, p.i)).length + ' حضر';
+    $('#count-people').textContent = list.length + ' مشارك · ' + list.filter(p => isIn(p.r, p.i)).length + ' حضر · ' + list.filter(p => p.r.paid).length + ' مدفوع';
     $('#empty-people').hidden = list.length > 0;
     const f = document.createDocumentFragment();
     const pos = (p, i) => { if (p.r.members.length < 2) return ''; const nx = list[i + 1]; return 'grp' + (nx && nx.r === p.r ? (list[i - 1] && list[i - 1].r === p.r ? ' grp-mid' : ' grp-first') : ''); };
@@ -1033,10 +1155,11 @@ dialog .acts{justify-content:flex-start}
       el('td', { 'data-l': 'الهاتف' }, el('span', { class: 'ltr', text: p.m.ph })),
       el('td', { 'data-l': 'البريد', class: 'hide-m' }, el('span', { class: 'ltr', style: 'font-size:.82rem', text: p.m.em })),
       el('td', { 'data-l': 'التسجيل' }, el('span', { class: 'code', text: p.r.code + (p.r.members.length > 1 ? '-' + (p.i + 1) : '') })),
+      el('td', { 'data-l': 'الدفع' }, chk(p.r.paid, 'مدفوع', 'غير مدفوع')),
       el('td', { 'data-l': 'الحضور' }, chk(isIn(p.r, p.i), 'حضر', '—')))));
     tb.append(f);
   }
-  ['#qp', '#fp-offer', '#fp-in'].forEach(s => $(s).addEventListener('input', renderPeople));
+  ['#qp', '#fp-offer', '#fp-in', '#fp-paid'].forEach(s => $(s).addEventListener('input', renderPeople));
   $('#print-people').addEventListener('click', () => window.print());
 
   // ---------- pending ----------
