@@ -813,7 +813,9 @@ dialog .acts{justify-content:flex-start}
   }
   /** In-flight local edits so a quiet refresh cannot wipe a scan/payment before the sheet catches up. */
   const pendingLocal = new Map();
+  const presentFlight = new Map();
   function setPending(code, patch) {
+    // present is always the full desired list from the latest local edit (replace, never union).
     pendingLocal.set(code, Object.assign({}, pendingLocal.get(code) || {}, patch, { at: Date.now() }));
   }
   function clearPending(code, keys) {
@@ -834,6 +836,33 @@ dialog .acts{justify-content:flex-start}
       out = Object.assign({}, out, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (out.checkinAt || new Date().toISOString()) : '' });
     }
     return out;
+  }
+  /** Keep every already-known present member when a slower scan response arrives. */
+  function mergePresent(rec, member) {
+    let out = rec ? Object.assign({}, rec) : null;
+    if (!out) return null;
+    if (member) out = withPresent(out, member);
+    const local = rows.find(x => x.code === out.code);
+    if (local) presentIds(local).forEach(k => { out = withPresent(out, k); });
+    const p = pendingLocal.get(out.code);
+    if (p && p.present) p.present.forEach(k => { out = withPresent(out, k); });
+    return out;
+  }
+  function beginPresentFlight(code) { presentFlight.set(code, (presentFlight.get(code) || 0) + 1); }
+  function endPresentFlight(code) {
+    const n = (presentFlight.get(code) || 1) - 1;
+    if (n <= 0) { presentFlight.delete(code); clearPending(code, ['present']); }
+    else presentFlight.set(code, n);
+  }
+  /** Undo only the member this scan added; keep siblings checked in by concurrent scans. */
+  function revertPresentMember(code, member, before) {
+    const cur = rows.find(x => x.code === code) || before;
+    if (!cur) return;
+    const was = before ? presentIds(before) : [];
+    if (was.indexOf(member) >= 0) { paintRow(mergePresent(before, null)); return; }
+    const present = presentIds(cur).filter(k => k !== member);
+    const n = (cur.members || []).length;
+    paintRow(Object.assign({}, cur, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (cur.checkinAt || '') : '' }));
   }
   /** Push a row into every admin view immediately (KPIs, tables, scan charts). */
   function paintRow(rec) {
@@ -857,11 +886,14 @@ dialog .acts{justify-content:flex-start}
       const r = await api('admin_update', { token, code, patch: { paid: !!paid } });
       if (!r.ok) throw new Error(r.error || 'fail');
       clearPending(code, ['paid']);
-      paintRow(withPaid(r.rec || rows.find(x => x.code === code) || before, paid));
+      const base = r.rec || rows.find(x => x.code === code) || before;
+      paintRow(mergePresent(withPaid(base, paid), null));
       return true;
     } catch (e) {
       clearPending(code, ['paid']);
-      if (before) paintRow(before);
+      const cur = rows.find(x => x.code === code);
+      if (before) paintRow(mergePresent(withPaid(before, before.paid), null));
+      else if (cur) paintRow(cur);
       throw e;
     }
   }
@@ -1408,27 +1440,28 @@ dialog .acts{justify-content:flex-start}
           const before = snapshotRow(local);
           const rec = upsertRow(withPresent(local, member));
           setPending(rec.code, { present: presentIds(rec).slice() });
+          beginPresentFlight(rec.code);
           analyse();
           showCheckinResult(rec, member, already);
           $('#scan-hint').textContent = 'وجّهوا الكاميرا نحو رمز QR على البطاقة';
           scanBusy = false;
           try {
             const r = await saveCheckin(parsed, text);
-            if (r && r.error === 'auth') return;
+            if (r && r.error === 'auth') { endPresentFlight(rec.code); return; }
             if (r && r.ok && r.rec) {
-              clearPending(rec.code, ['present']);
-              paintRow(withPresent(r.rec, r.member || member));
-            } else if (before) {
-              clearPending(rec.code, ['present']);
-              paintRow(before);
+              paintRow(mergePresent(r.rec, r.member || member));
+              endPresentFlight(rec.code);
+            } else {
+              endPresentFlight(rec.code);
+              revertPresentMember(rec.code, member, before);
               lastScan = null;
               if (r && r.error === 'not found') { beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
               else if (r && r.error === 'not confirmed') { beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec || before, r.member || member); toast('التسجيل لم يُؤكَّد بعد', true); }
               else { beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
             }
           } catch (e) {
-            clearPending(rec.code, ['present']);
-            if (before) paintRow(before);
+            endPresentFlight(rec.code);
+            revertPresentMember(rec.code, member, before);
             if (e.message !== 'auth') { beep('bad'); flashCam('bad'); toast('تعذّر الاتصال، حاولوا مجددًا', true); }
           }
           return;
@@ -1438,7 +1471,7 @@ dialog .acts{justify-content:flex-start}
           if (r && r.error === 'not found') { lastScan = null; beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
           else if (r && r.error === 'not confirmed') { lastScan = null; beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec, r.member || parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
           else if (r && r.ok && r.rec) {
-            const rec = paintRow(withPresent(r.rec, r.member || parsed.member));
+            const rec = paintRow(mergePresent(r.rec, r.member || parsed.member));
             showCheckinResult(rec, r.member || parsed.member, !!r.already);
           } else { lastScan = null; beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
         }
@@ -1917,6 +1950,7 @@ dialog .acts{justify-content:flex-start}
     const prev = snapshotRow(rows.find(x => x.code === code));
     const instant = patch && ('paid' in patch || 'checkin' in patch || 'checkinMember' in patch);
     const pendKeys = [];
+    let flewPresent = false;
     if (instant && prev) {
       let next = prev;
       if ('checkinMember' in patch) {
@@ -1927,11 +1961,13 @@ dialog .acts{justify-content:flex-start}
           next = Object.assign({}, prev, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (prev.checkinAt || new Date().toISOString()) : '' });
         } else next = withPresent(prev, idx);
         setPending(code, { present: presentIds(next).slice() });
+        beginPresentFlight(code); flewPresent = true;
         pendKeys.push('present');
       } else if ('checkin' in patch) {
         const ids = patch.checkin ? (prev.members || []).map((_, i) => i + 1) : [];
         next = Object.assign({}, prev, { present: ids, checkin: !!patch.checkin, checkinAt: patch.checkin ? (prev.checkinAt || new Date().toISOString()) : '' });
         setPending(code, { present: ids.slice() });
+        beginPresentFlight(code); flewPresent = true;
         pendKeys.push('present');
       }
       if ('paid' in patch) {
@@ -1948,21 +1984,28 @@ dialog .acts{justify-content:flex-start}
       let rec = r.rec;
       if (patch && 'checkinMember' in patch) {
         if (patch.checkin === false) {
-          const present = presentIds(rec).filter(k => k !== Number(patch.checkinMember));
+          const present = presentIds(mergePresent(rec, null)).filter(k => k !== Number(patch.checkinMember));
           const n = (rec.members || []).length;
           rec = Object.assign({}, rec, { present, checkin: n > 0 && present.length >= n, checkinAt: present.length ? (rec.checkinAt || '') : '' });
-        } else rec = withPresent(rec, patch.checkinMember);
+        } else rec = mergePresent(rec, patch.checkinMember);
       } else if (patch && 'checkin' in patch) {
         const ids = patch.checkin ? (rec.members || []).map((_, i) => i + 1) : [];
         rec = Object.assign({}, rec, { present: ids, checkin: !!patch.checkin, checkinAt: patch.checkin ? (rec.checkinAt || new Date().toISOString()) : '' });
-      }
+      } else rec = mergePresent(rec, null);
       if (patch && 'paid' in patch) rec = withPaid(rec, patch.paid);
-      if (pendKeys.length) clearPending(code, pendKeys);
+      if (pendKeys.indexOf('paid') >= 0) clearPending(code, ['paid']);
+      if (flewPresent) endPresentFlight(code);
+      else if (pendKeys.indexOf('present') >= 0) clearPending(code, ['present']);
       paintRow(rec);
       if (!instant) toast('تم التحديث في جداول الإدارة');
     } catch (e) {
-      if (pendKeys.length) clearPending(code, pendKeys);
-      if (instant && prev) paintRow(prev);
+      if (flewPresent) endPresentFlight(code);
+      else if (pendKeys.indexOf('present') >= 0) clearPending(code, ['present']);
+      if (pendKeys.indexOf('paid') >= 0) clearPending(code, ['paid']);
+      if (instant && prev) {
+        if (patch && 'checkinMember' in patch && patch.checkin !== false) revertPresentMember(code, Number(patch.checkinMember), prev);
+        else paintRow(mergePresent(prev, null));
+      }
       if (e.message !== 'auth') toast('تعذّر الحفظ، حاولوا مجددًا', true);
     }
     if (btn && document.contains(btn)) btn.disabled = false;
