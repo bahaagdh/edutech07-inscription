@@ -210,8 +210,6 @@ table.tbl{width:100%;border-collapse:collapse}
 .scan-hero p{margin:4px 0 0;color:var(--muted);font-weight:700;font-size:.9rem;max-width:46ch}
 .scan-kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}
 @media (max-width:1100px){.scan-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.scan-kpis .kpi{position:relative;overflow:hidden}
-.scan-kpis .kpi::after{content:"";position:absolute;inset-inline-end:-18px;bottom:-18px;width:72px;height:72px;border-radius:50%;opacity:.12;background:currentColor;pointer-events:none}
 .scan-grid{grid-template-columns:minmax(0,1.4fr) minmax(300px,.85fr);align-items:stretch;gap:16px}
 @media (max-width:960px){.scan-grid{grid-template-columns:1fr}}
 .scan-stage{display:flex;flex-direction:column;overflow:hidden;min-height:0;border:0;background:linear-gradient(180deg,var(--surface) 0%,var(--surface-2) 100%)}
@@ -302,7 +300,6 @@ table.tbl{width:100%;border-collapse:collapse}
   .scan-kpis .kpi{padding:12px 12px}
   .scan-kpis .kpi .v{font-size:1.35rem}
   .scan-kpis .kpi .s{font-size:.72rem;line-height:1.35}
-  .scan-kpis .kpi::after{width:48px;height:48px;inset-inline-end:-12px;bottom:-12px}
   .scan-cam.idle,.scan-cam.offline{border-radius:0}
   .scan-idle{padding:16px 14px 14px}
   .scan-idle .ico{width:32px;height:32px;margin-bottom:6px}
