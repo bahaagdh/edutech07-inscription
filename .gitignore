@@ -7,3 +7,8 @@ node_modules/
 .clasprc.json
 Code.js
 appsscript.json
+
+backend/_deploy/
+backend/_check/
+backend/_verify*/
+
