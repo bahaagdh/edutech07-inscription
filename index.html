@@ -224,6 +224,9 @@ footer .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:spac
 .org span{font-weight:800;font-size:.95rem}
 footer .flogo img{height:44px;width:auto}
 footer .copy{color:var(--muted);font-size:.85rem;font-weight:700;direction:ltr}
+#copy-toast{position:fixed;z-index:80;left:50%;bottom:28px;transform:translateX(-50%) translateY(16px);max-width:min(92vw,380px);padding:12px 18px;border-radius:14px;background:#071f52;color:#fff;font-weight:800;font-size:.95rem;text-align:center;box-shadow:0 12px 32px rgba(7,31,82,.35);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+#copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#copy-toast b{color:#d6f41f;letter-spacing:2px;direction:ltr;display:inline-block;unicode-bidi:isolate}
 
 @media (max-width:960px){
   .hero{min-height:auto}
@@ -683,6 +686,30 @@ footer .copy{color:var(--muted);font-size:.85rem;font-weight:700;direction:ltr}
     $('#verify').classList.remove('show'); clearAllFields();
     $('#done-code').textContent = rec.code; $('#done').classList.add('show'); $('#done').scrollIntoView({ behavior:'smooth', block:'start' });
   }
+  // ===== one-click copy from the e-mail: /?copy=XXXXXX → clipboard + fill verify/retrieve fields =====
+  (async () => {
+    const q = new URLSearchParams(location.search), copy = (q.get('copy') || '').replace(/\D/g, '');
+    if (!/^\d{6}$/.test(copy)) return;
+    history.replaceState(null, '', location.pathname + location.hash);
+    try { await navigator.clipboard.writeText(copy); }
+    catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = copy; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (err) {}
+      ta.remove();
+    }
+    const vc = $('#v-code'); if (vc) { vc.value = copy; $('#verify').classList.add('show'); }
+    const rc = $('#r-code'); if (rc) { $('#r-step2').hidden = false; rc.value = copy; }
+    let toast = $('#copy-toast');
+    if (!toast) { toast = document.createElement('div'); toast.id = 'copy-toast'; document.body.appendChild(toast); }
+    toast.innerHTML = 'تم نسخ الرمز <b dir="ltr">' + copy.split('').join(' ') + '</b>';
+    toast.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(() => toast.classList.remove('show'), 3400);
+    const target = $('#verify').classList.contains('show') ? $('#verify') : $('#retrieve');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  })();
+
   // ===== one-click link from the e-mail: /?c=REGISTRATION&k=CODE → verify, show + download the badge =====
   (async () => {
     const q = new URLSearchParams(location.search), c = q.get('c'), k = q.get('k');

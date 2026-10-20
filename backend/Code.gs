@@ -609,7 +609,7 @@ function shell(preheader, inner) {
       '.btn:hover{background:#e4ff3d!important}' +
       '@media only screen and (max-width:620px){' +
         '.wrap{width:100%!important;border-radius:0!important}.px{padding-left:20px!important;padding-right:20px!important}' +
-        '.h1{font-size:22px!important}.digit{font-size:26px!important;width:40px!important;height:52px!important;line-height:52px!important}' +
+        '.h1{font-size:22px!important}.digit{width:40px!important;height:54px!important}.digit a{height:54px!important;line-height:54px!important;font-size:26px!important}' +
         '.col{display:block!important;width:100%!important;padding:6px 0!important}.hide{display:none!important}' +
       '}' +
     '</style></head>' +
@@ -637,43 +637,63 @@ function tier(offer) {
   return                     { key:'std', band:'bandstd', accent:'#1aa7ec', accent2:'#d6f41f', ink:'#06408c', label:'STANDARD', sub:'مشارك',       top:'#0b3f93', deep:'#071f52' };
 }
 function confirmUrl(info, otp) { return SITE_URL + '/?c=' + encodeURIComponent(info.code) + '&k=' + encodeURIComponent(otp); }
+function copyCodeUrl(otp) { return SITE_URL + '/?copy=' + encodeURIComponent(String(otp || '')); }
 
-/** The badge-shaped card: navy top with the code, diagonal band, white bottom with the participant's name. */
+/** Six digit cells — one click opens the site and copies the code (email clients cannot use clipboard APIs). */
+function otpDigitsRow(otp, digitColor, borderColor) {
+  const copy = copyCodeUrl(otp);
+  return String(otp).split('').map(d =>
+    '<td align="center" valign="middle" class="digit" width="52" height="66" bgcolor="#0d2558" style="width:52px;height:66px;background:#0d2558;border:1.5px solid ' + borderColor + ';border-radius:12px;">' +
+      '<a href="' + copy + '" style="display:block;width:100%;height:66px;line-height:66px;text-decoration:none;font-family:\'Courier New\',Courier,monospace;font-size:32px;font-weight:700;color:' + digitColor + ';letter-spacing:0;">' + esc(d) + '</a>' +
+    '</td>' +
+    '<td width="7" style="width:7px;font-size:0;line-height:0;">&nbsp;</td>').join('');
+}
+
+/** The badge-shaped card: navy top (code + CTA), diagonal band, white bottom with the participant — mirrors the printed badge. */
 function ticket(info, otp, cid) {
-  const t = tier(info.offer), url = confirmUrl(info, otp), m = info.members[0] || {};
-  const digits = String(otp).split('').map(d =>
-    '<td align="center" valign="middle" class="digit" width="54" height="68" bgcolor="#112c66" style="width:54px;height:68px;line-height:68px;background:#112c66;border:1px solid #2b4d94;border-radius:12px;font-family:\'Courier New\',Courier,monospace;font-size:34px;font-weight:700;color:' + t.accent2 + ';">' + esc(d) + '</td>' +
-    '<td width="6" style="width:6px;font-size:0;line-height:0;">&nbsp;</td>').join('');
+  const t = tier(info.offer), url = confirmUrl(info, otp), copy = copyCodeUrl(otp), m = info.members[0] || {};
+  const digitColor = t.key === 'vip' ? t.accent2 : '#f4e3a1';
+  const borderColor = t.key === 'vip' ? '#8a6a28' : '#2b4d94';
   const nameColor = t.key === 'vip' ? t.ink : C.ink;
-  return '<tr><td class="px" style="padding:26px 32px 8px;" align="center">' +
-    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:22px;overflow:hidden;box-shadow:0 12px 32px rgba(7,31,82,.18);">' +
-    // navy top, like the top of the badge
-    '<tr><td bgcolor="' + t.deep + '" style="background:' + t.deep + ';background-image:linear-gradient(160deg,' + t.top + ' 0%,' + t.deep + ' 75%);padding:22px 18px 18px;" align="center">' +
+  const digits = otpDigitsRow(otp, digitColor, borderColor);
+  return '<tr><td class="px" style="padding:22px 28px 8px;" align="center">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:24px;overflow:hidden;box-shadow:0 16px 40px rgba(7,31,82,.22);">' +
+    // navy top — same language as the badge (pill + title + centered code)
+    '<tr><td bgcolor="' + t.deep + '" style="background:' + t.deep + ';background-image:linear-gradient(165deg,' + t.top + ' 0%,' + t.deep + ' 72%);padding:26px 18px 22px;" align="center">' +
+      '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 14px;"><tr>' +
+        '<td align="center" bgcolor="' + t.accent + '" style="background:' + t.accent + ';border-radius:999px;padding:7px 18px;font-family:' + FONT + ';font-size:13px;font-weight:900;color:' + (t.key === 'vip' ? '#1b1400' : C.navy) + ';">' + ltr(t.label) + '</td></tr></table>' +
       '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>' +
-        '<td width="34" style="width:34px;vertical-align:middle;"><div style="height:2px;background:' + t.accent + ';font-size:0;line-height:0;">&nbsp;</div></td>' +
-        '<td style="padding:0 12px;font-family:' + FONT + ';font-size:14px;font-weight:800;color:#dbe8ff;letter-spacing:.5px;white-space:nowrap;">رمز التحقق</td>' +
-        '<td width="34" style="width:34px;vertical-align:middle;"><div style="height:2px;background:' + t.accent + ';font-size:0;line-height:0;">&nbsp;</div></td></tr></table>' +
-      '<a href="' + url + '" style="text-decoration:none;display:block;"><table role="presentation" dir="ltr" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:16px auto 6px;"><tr>' + digits + '</tr></table></a>' +
-      '<div style="font-family:' + FONT + ';font-size:12.5px;color:#a9bfe6;line-height:1.7;margin-bottom:16px;">⏱ صالح لمدة <b style="color:#fff">' + CODE_TTL_MIN + ' دقيقة</b> &nbsp;·&nbsp; يُستخدم مرة واحدة فقط</div>' +
+        '<td width="48" style="width:48px;vertical-align:middle;"><div style="height:2px;background:' + t.accent + ';font-size:0;line-height:0;">&nbsp;</div></td>' +
+        '<td style="padding:0 14px;font-family:' + FONT + ';font-size:15px;font-weight:800;color:#dbe8ff;letter-spacing:.6px;white-space:nowrap;">رمز التحقق</td>' +
+        '<td width="48" style="width:48px;vertical-align:middle;"><div style="height:2px;background:' + t.accent + ';font-size:0;line-height:0;">&nbsp;</div></td></tr></table>' +
+      // code block: one click copies (via site landing); whole row is the tap target
+      '<a href="' + copy + '" style="text-decoration:none;display:inline-block;margin:18px auto 4px;" aria-label="نسخ رمز التحقق">' +
+        '<table role="presentation" dir="ltr" cellpadding="0" cellspacing="0" border="0" align="center"><tr>' + digits + '</tr></table>' +
+      '</a>' +
+      '<div style="font-family:' + FONT + ';font-size:12.5px;color:#c5d6f5;line-height:1.7;margin:8px 0 4px;">📋 اضغطوا على الرمز مرة واحدة لنسخه</div>' +
+      '<div style="font-family:' + FONT + ';font-size:12.5px;color:#8fa8d6;line-height:1.7;margin-bottom:18px;">⏱ صالح لمدة <b style="color:#fff">' + CODE_TTL_MIN + ' دقيقة</b> &nbsp;·&nbsp; يُستخدم مرة واحدة فقط</div>' +
       '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td align="center" bgcolor="' + t.accent2 + '" style="background:' + t.accent2 + ';border-radius:14px;">' +
-        '<a class="btn" href="' + url + '" style="display:inline-block;padding:15px 30px;font-family:' + FONT + ';font-size:16px;font-weight:900;color:' + C.navy + ';text-decoration:none;border-radius:14px;">تأكيد البريد وتحميل البطاقة ←</a>' +
+        '<a class="btn" href="' + url + '" style="display:inline-block;padding:15px 28px;font-family:' + FONT + ';font-size:16px;font-weight:900;color:' + C.navy + ';text-decoration:none;border-radius:14px;">تأكيد البريد وتحميل البطاقة ←</a>' +
       '</td></tr></table>' +
-      '<div style="font-family:' + FONT + ';font-size:12px;color:#8fa8d6;line-height:1.7;margin-top:10px;">بنقرة واحدة: يُدخَل الرمز تلقائيًا وتظهر بطاقتكم</div>' +
+      '<div style="font-family:' + FONT + ';font-size:12px;color:#8fa8d6;line-height:1.7;margin-top:12px;">أو اضغطوا الزر أعلاه: يُدخَل الرمز تلقائيًا وتظهر بطاقتكم</div>' +
     '</td></tr>' +
-    // diagonal band
+    // diagonal accent band (same asset as the printed badge)
     '<tr><td style="padding:0;line-height:0;font-size:0;background:#ffffff;"><img src="' + (cid ? 'cid:' + t.band : SITE_URL + '/assets/band-' + t.key + '.png') + '" width="600" height="44" alt="" style="display:block;width:100%;height:auto;border:0;"></td></tr>' +
-    // white bottom, like the bottom of the badge
-    '<tr><td bgcolor="#ffffff" style="background:#ffffff;padding:6px 26px 20px;font-family:' + FONT + ';text-align:right;">' +
+    // white bottom — participant panel like the badge
+    '<tr><td bgcolor="#ffffff" style="background:#ffffff;padding:10px 26px 22px;font-family:' + FONT + ';text-align:right;">' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' +
         '<td style="vertical-align:top;font-family:' + FONT + ';">' +
-          '<div style="font-size:26px;line-height:1.4;font-weight:900;color:' + nameColor + ';">' + esc((m.fn || '') + ' ' + (m.ln || '')) + '</div>' +
-          '<div style="font-size:13px;font-weight:800;color:' + t.ink + ';margin-top:2px;">' + t.sub + ' · ' + ltr(t.label) + '</div>' +
-          '<div style="font-size:15px;font-weight:700;color:' + C.text + ';margin-top:10px;">' + esc(info.inst) + '</div>' +
-          '<div style="font-size:12px;color:' + C.muted + ';margin-top:12px;">رقم التسجيل</div>' +
-          '<div style="font-family:\'Courier New\',Courier,monospace;font-size:17px;font-weight:700;color:' + C.ink + ';letter-spacing:1px;">' + ltr(info.code) + '</div>' +
+          '<div style="font-size:12px;font-weight:800;color:' + C.muted + ';margin-bottom:4px;">المشارك</div>' +
+          '<div style="font-size:26px;line-height:1.35;font-weight:900;color:' + nameColor + ';">' + esc((m.fn || '') + ' ' + (m.ln || '')) + '</div>' +
+          '<div style="font-size:13px;font-weight:800;color:' + t.ink + ';margin-top:4px;">' + t.sub + ' · ' + ltr(t.label) + '</div>' +
+          '<div style="width:72px;height:3px;background:' + t.accent + ';margin:12px 0 10px;font-size:0;line-height:0;">&nbsp;</div>' +
+          '<div style="font-size:15px;font-weight:700;color:' + C.text + ';">' + esc(info.inst) + '</div>' +
+          (info.wilaya ? '<div style="font-size:13px;color:' + C.muted + ';margin-top:4px;">' + esc(info.wilaya) + '</div>' : '') +
+          '<div style="font-size:12px;color:' + C.muted + ';margin-top:14px;">رقم التسجيل</div>' +
+          '<div style="font-family:\'Courier New\',Courier,monospace;font-size:18px;font-weight:700;color:' + C.ink + ';letter-spacing:1.5px;">' + ltr(info.code) + '</div>' +
         '</td>' +
-        '<td width="96" style="width:96px;vertical-align:top;padding-top:4px;" align="left">' +
-          '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="' + t.accent2 + '" style="background:' + t.accent2 + ';border-radius:999px;padding:6px 14px;font-family:' + FONT + ';font-size:13px;font-weight:900;color:' + C.navy + ';">' + ltr(t.label) + '</td></tr></table>' +
+        '<td width="100" style="width:100px;vertical-align:top;padding-top:2px;" align="left">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="left"><tr><td align="center" bgcolor="' + t.accent2 + '" style="background:' + t.accent2 + ';border-radius:999px;padding:8px 16px;font-family:' + FONT + ';font-size:13px;font-weight:900;color:' + C.navy + ';">' + ltr(t.label) + '</td></tr></table>' +
         '</td>' +
       '</tr></table>' +
       '<div style="border-top:1px solid ' + C.line + ';margin-top:16px;padding-top:12px;font-family:' + FONT + ';font-size:12.5px;color:' + C.muted + ';">' + ltr('31 أكتوبر 2026') + ' · الجزائر العاصمة &nbsp;·&nbsp; الملتقى الوطني السابع</div>' +
@@ -770,19 +790,27 @@ function badgesEmailHtml(info, to, idxs, hasPreviews) {
 }
 
 function lookupEmailHtml(to, otp, cid) {
-  const digits = String(otp).split('').map(d =>
-    '<td align="center" valign="middle" class="digit" width="54" height="68" bgcolor="#112c66" style="width:54px;height:68px;line-height:68px;background:#112c66;border:1px solid #2b4d94;border-radius:12px;font-family:\'Courier New\',Courier,monospace;font-size:34px;font-weight:700;color:' + C.lime + ';">' + esc(d) + '</td>' +
-    '<td width="6" style="width:6px;font-size:0;line-height:0;">&nbsp;</td>').join('');
+  const copy = copyCodeUrl(otp);
+  const digits = otpDigitsRow(otp, C.lime, '#2b4d94');
   const inner = hero(cid) +
     '<tr><td class="px" style="padding:30px 32px 6px;font-family:' + FONT + ';text-align:center;">' +
       '<div style="display:inline-block;background:#eaf3ff;color:' + C.blue + ';font-size:12px;font-weight:800;padding:6px 14px;border-radius:999px;">استرجاع بطاقة المشاركة</div>' +
       '<h1 class="h1" style="margin:16px 0 8px;font-size:24px;line-height:1.45;font-weight:900;color:' + C.ink + ';">مرحبًا ' + esc(to.fn) + '</h1>' +
       '<p style="margin:0 auto;max-width:470px;font-size:15px;line-height:1.9;color:' + C.text + ';">أدخلوا هذا الرمز في صفحة التسجيل، في خانة «لديكم بطاقة مسبقًا؟»، لعرض بطاقتكم وتحميلها.</p>' +
     '</td></tr>' +
-    '<tr><td class="px" style="padding:18px 32px 8px;" align="center"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="' + C.navy + '" style="background:' + C.navy + ';border-radius:18px;"><tr><td align="center" style="padding:22px 12px 18px;">' +
-      '<table role="presentation" dir="ltr" cellpadding="0" cellspacing="0" border="0" align="center"><tr>' + digits + '</tr></table>' +
-      '<div style="font-family:' + FONT + ';font-size:12.5px;color:#a9bfe6;line-height:1.7;margin-top:12px;">⏱ صالح لمدة <b style="color:#fff">15 دقيقة</b> · يُستخدم مرة واحدة فقط</div>' +
-    '</td></tr></table></td></tr>' +
+    '<tr><td class="px" style="padding:18px 28px 8px;" align="center">' +
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:22px;overflow:hidden;box-shadow:0 12px 32px rgba(7,31,82,.18);">' +
+      '<tr><td bgcolor="' + C.navy + '" style="background:' + C.navy + ';background-image:linear-gradient(165deg,#0b3f93 0%,' + C.navy + ' 75%);padding:26px 14px 22px;" align="center">' +
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>' +
+          '<td width="40" style="width:40px;vertical-align:middle;"><div style="height:2px;background:' + C.lime + ';font-size:0;line-height:0;">&nbsp;</div></td>' +
+          '<td style="padding:0 12px;font-family:' + FONT + ';font-size:15px;font-weight:800;color:#dbe8ff;">رمز الاسترجاع</td>' +
+          '<td width="40" style="width:40px;vertical-align:middle;"><div style="height:2px;background:' + C.lime + ';font-size:0;line-height:0;">&nbsp;</div></td></tr></table>' +
+        '<a href="' + copy + '" style="text-decoration:none;display:inline-block;margin:18px auto 4px;" aria-label="نسخ رمز الاسترجاع">' +
+          '<table role="presentation" dir="ltr" cellpadding="0" cellspacing="0" border="0" align="center"><tr>' + digits + '</tr></table>' +
+        '</a>' +
+        '<div style="font-family:' + FONT + ';font-size:12.5px;color:#c5d6f5;line-height:1.7;margin:8px 0 4px;">📋 اضغطوا على الرمز مرة واحدة لنسخه</div>' +
+        '<div style="font-family:' + FONT + ';font-size:12.5px;color:#a9bfe6;line-height:1.7;">⏱ صالح لمدة <b style="color:#fff">15 دقيقة</b> · يُستخدم مرة واحدة فقط</div>' +
+      '</td></tr></table></td></tr>' +
     '<tr><td class="px" style="padding:10px 32px 22px;font-family:' + FONT + ';font-size:12.5px;line-height:1.8;color:' + C.muted + ';text-align:center;">لم تطلبوا هذا الرمز؟ تجاهلوا هذه الرسالة؛ لا تُعرض بياناتكم دون إدخاله.</td></tr>' +
     eventStrip() + footer(cid);
   return shell('رمز استرجاع البطاقة: ' + otp + ' — صالح لمدة 15 دقيقة', inner);
