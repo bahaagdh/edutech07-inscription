@@ -3,3 +3,7 @@ node_modules/
 .env
 *.local
 .vercel
+.clasp.json
+.clasprc.json
+Code.js
+appsscript.json

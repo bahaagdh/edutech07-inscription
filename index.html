@@ -768,6 +768,7 @@ footer .copy{color:var(--muted);font-size:.85rem;font-weight:700;direction:ltr}
     const n = rec.members.length;
     const note = [rec.code + '-' + (idx+1), rec.offerLabel, rec.total + ' DA', rec.wilaya].concat(n > 1 ? [(idx+1) + '/' + n] : []).join(' · ');
     return ['BEGIN:VCARD','VERSION:3.0',
+      'UID:' + rec.code + '-' + (idx+1),
       'N:' + vEsc(m.ln) + ';' + vEsc(m.fn) + ';;;',
       'FN:' + vEsc(m.fn + ' ' + m.ln),
       'ORG:' + vEsc(rec.inst),

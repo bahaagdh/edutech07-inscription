@@ -9,7 +9,7 @@
  *   lookup_start  : "لديكم بطاقة مسبقًا؟" — e-mails a one-time code to a confirmed address.
  *   lookup_verify : returns the registration only when that code is correct.
  * Admin actions (/admin page)
- *   admin_login, admin_list, admin_update, admin_logout — password checked against a salted hash,
+ *   admin_login, admin_list, admin_update, admin_checkin, admin_logout — password checked against a salted hash,
  *   short-lived session token, lock-out after repeated failures.
  *
  * Setup: Deploy → Manage deployments → Web app → Execute as "Me", Who has access "Anyone".
@@ -65,6 +65,7 @@ function doPost(e) {
       case 'admin_login':   return out(adminLogin(body.user, body.pass));
       case 'admin_list':    return out(adminList(body.token));
       case 'admin_update':  return out(adminUpdate(body.token, body.code, body.patch));
+      case 'admin_checkin': return out(adminCheckin(body.token, body.qr, body.code, body.member));
       case 'admin_logout':  return out(adminLogout(body.token));
       default:              return out({ ok:false, error:'unknown action' });
     }
@@ -388,6 +389,55 @@ function lookupVerify(email, otp) {
   return { ok:true, idx: st.idx, rec: recFromRow(v) };
 }
 
+/** Badge QR payload is a vCard whose UID/NOTE contain ET07-XXXX-N (N = member 1–3). */
+function parseBadgeId(raw, code, member) {
+  const text = String(raw == null ? '' : raw).toUpperCase();
+  const m = text.match(/ET07-[A-Z0-9]{4,12}(?:-[1-3])?/);
+  if (m) {
+    const parts = m[0].split('-');
+    const id = parts[0] + '-' + parts[1];
+    const idx = parts[2] ? Number(parts[2]) : 1;
+    if (CODE_RE.test(id)) return { code: id, member: idx };
+  }
+  const c = String(code || '').toUpperCase().trim();
+  if (CODE_RE.test(c)) {
+    const idx = Number(member);
+    return { code: c, member: idx >= 1 && idx <= 3 ? idx : 1 };
+  }
+  return null;
+}
+/** Stored as '' (none), 'yes' (everyone — old rows), or '1,3' (those members). */
+function checkinList(raw, n) {
+  const s = String(raw == null ? '' : raw).trim();
+  if (!s) return [];
+  n = Math.max(1, Number(n) || 1);
+  const low = s.toLowerCase();
+  if (low === 'yes' || low === 'true') {
+    const all = [];
+    for (let i = 1; i <= n; i++) all.push(i);
+    return all;
+  }
+  const ids = [];
+  s.split(/[,\s]+/).forEach(function (p) {
+    const k = Number(p);
+    if (k >= 1 && k <= 3 && ids.indexOf(k) < 0) ids.push(k);
+  });
+  ids.sort(function (a, b) { return a - b; });
+  return ids;
+}
+function checkinCell(ids, n) {
+  n = Math.max(1, Number(n) || 1);
+  const uniq = [];
+  (ids || []).forEach(function (k) {
+    k = Number(k);
+    if (k >= 1 && k <= n && uniq.indexOf(k) < 0) uniq.push(k);
+  });
+  uniq.sort(function (a, b) { return a - b; });
+  if (!uniq.length) return '';
+  if (uniq.length === n) return 'yes';
+  return uniq.join(',');
+}
+
 /* ---------------------------------------------------------------- admin */
 function pwHash(pass) {
   let h = ADMIN_SALT + String(pass);
@@ -422,10 +472,13 @@ function adminRow(v, rowNum) {
     if (em) members.push({ fn: uncell(v[10 + i*4]), ln: uncell(v[11 + i*4]), em: String(em), ph: String(v[13 + i*4] || '').replace(/^'/, '') });
   }
   const iso = x => x instanceof Date ? x.toISOString() : String(x || '');
+  const present = checkinList(v[27], members.length);
   return { row: rowNum, code: String(v[0]), createdAt: iso(v[1]), status: String(v[2] || ''), offer: String(v[3] || ''),
            price: Number(v[4]) || 0, discount: Number(v[5]) || 0, total: Number(v[6]) || 0, earlyBird: v[7] === 'yes',
            inst: uncell(v[8]), wilaya: uncell(v[9]), members: members, verifiedAt: iso(v[24]),
-           paid: v[25] === 'yes', paidAt: iso(v[26]), checkin: v[27] === 'yes', checkinAt: iso(v[28]), note: uncell(v[29]) };
+           paid: v[25] === 'yes', paidAt: iso(v[26]),
+           checkin: present.length === members.length && members.length > 0,
+           present: present, checkinAt: iso(v[28]), note: uncell(v[29]) };
 }
 function adminData() {
   const sh = sheet();
@@ -445,7 +498,21 @@ function adminUpdate(token, code, patch) {
     if ('status' in patch && STATUSES.indexOf(String(patch.status)) < 0) return { ok:false, error:'bad status' };
     const now = new Date().toISOString();
     if ('paid' in patch)    sh.getRange(row, COL.paid, 1, 2).setValues([patch.paid ? ['yes', now] : ['', '']]);
-    if ('checkin' in patch) sh.getRange(row, COL.checkin, 1, 2).setValues([patch.checkin ? ['yes', now] : ['', '']]);
+    if ('checkinMember' in patch) {
+      const rec0 = adminRow(sh.getRange(row, 1, 1, HEADERS.length).getValues()[0], row);
+      const n = rec0.members.length, idx = Number(patch.checkinMember);
+      if (idx < 1 || idx > n) return { ok:false, error:'bad member' };
+      let ids = rec0.present.slice();
+      const on = patch.checkin !== false;
+      if (on && ids.indexOf(idx) < 0) ids.push(idx);
+      if (!on) ids = ids.filter(k => k !== idx);
+      sh.getRange(row, COL.checkin, 1, 2).setValues([[checkinCell(ids, n), ids.length ? now : '']]);
+    } else if ('checkin' in patch) {
+      const rec0 = adminRow(sh.getRange(row, 1, 1, HEADERS.length).getValues()[0], row);
+      const n = rec0.members.length;
+      const ids = patch.checkin ? rec0.members.map((_, i) => i + 1) : [];
+      sh.getRange(row, COL.checkin, 1, 2).setValues([[checkinCell(ids, n), ids.length ? now : '']]);
+    }
     if ('note' in patch)    sh.getRange(row, COL.note).setValue(cell(patch.note, 500));
     if ('status' in patch) {
       const s = String(patch.status);
@@ -453,6 +520,27 @@ function adminUpdate(token, code, patch) {
       sh.getRange(row, COL.status).setValue(s);
     }
     return { ok:true, rec: adminRow(sh.getRange(row, 1, 1, HEADERS.length).getValues()[0], row) };
+  });
+}
+function adminCheckin(token, qr, code, member) {
+  if (!isAdmin(token)) return { ok:false, error:'auth' };
+  const parsed = parseBadgeId(qr, code, member);
+  if (!parsed) return { ok:false, error:'bad qr' };
+  return withLock(() => {
+    const sh = sheet(), row = findRow(sh, parsed.code);
+    if (!row) return { ok:false, error:'not found' };
+    const rec = adminRow(sh.getRange(row, 1, 1, HEADERS.length).getValues()[0], row);
+    if (!CONFIRMED[rec.status]) return { ok:false, error:'not confirmed', rec: rec, member: parsed.member };
+    const n = rec.members.length;
+    let idx = parsed.member;
+    if (idx < 1 || idx > n) idx = 1;
+    const had = rec.present.indexOf(idx) >= 0;
+    if (!had) {
+      const now = new Date().toISOString();
+      sh.getRange(row, COL.checkin, 1, 2).setValues([[checkinCell(rec.present.concat([idx]), n), now]]);
+    }
+    const rec2 = adminRow(sh.getRange(row, 1, 1, HEADERS.length).getValues()[0], row);
+    return { ok:true, already: had, member: idx, rec: rec2 };
   });
 }
 
