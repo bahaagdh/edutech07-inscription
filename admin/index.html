@@ -227,9 +227,11 @@ table.tbl{width:100%;border-collapse:collapse}
 .scan-cam.warn .frame{border-color:var(--warn)}
 .scan-cam.bad .frame{border-color:var(--bad)}
 .scan-idle{position:absolute;inset:0;display:grid;place-items:center;padding:28px 24px;text-align:center;color:#c3d4f2;z-index:4}
+.scan-idle > div{display:grid;justify-items:center;gap:0;max-width:28rem}
 .scan-idle .ico{width:56px;height:56px;margin:0 auto 12px;color:var(--lime);opacity:.9}
 .scan-idle b{display:block;color:#fff;font-size:1.15rem;margin-bottom:6px}
 .scan-idle p{margin:0 auto 16px;font-weight:700;font-size:.9rem;max-width:36ch;line-height:1.55}
+.scan-idle .btn{margin-top:0}
 .scan-bar{padding:14px 16px 16px;border-top:1px solid var(--line);background:var(--surface)}
 .scan-bar label{margin:0 0 8px}
 .scan-bar-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -280,8 +282,45 @@ table.tbl{width:100%;border-collapse:collapse}
 .scan-offer .foot{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:.78rem;font-weight:700;color:var(--muted)}
 .scan-offer .foot b{color:var(--fg)}
 @media (max-width:960px){
-  .scan-cam{max-height:min(48svh,420px);aspect-ratio:4/3}
-  .scan-side{min-height:420px}
+  .scan-hero{margin-bottom:10px}
+  .scan-hero h1{font-size:1.15rem}
+  .scan-hero p{font-size:.82rem;max-width:none}
+  .scan-kpis{gap:10px;margin-bottom:10px}
+  .scan-cam.live{max-height:min(42svh,380px);aspect-ratio:4/3}
+  .scan-cam.idle,.scan-cam.offline{min-height:0;max-height:none;aspect-ratio:auto;height:auto}
+  .scan-idle{position:relative;inset:auto;padding:22px 18px 20px;min-height:0}
+  .scan-idle .ico{width:40px;height:40px;margin-bottom:8px}
+  .scan-idle b{font-size:1rem;margin-bottom:4px}
+  .scan-idle p{margin:0 auto 12px;font-size:.8rem;line-height:1.45;max-width:30ch}
+  .scan-idle .btn{min-height:38px;padding:6px 14px;font-size:.86rem}
+  .scan-side{min-height:0}
+  .scan-chart{min-height:180px}
+  .scan-analytics{margin-top:20px;gap:12px}
+}
+@media (max-width:640px){
+  .scan-hero p{display:none}
+  .scan-kpis .kpi{padding:12px 12px}
+  .scan-kpis .kpi .v{font-size:1.35rem}
+  .scan-kpis .kpi .s{font-size:.72rem;line-height:1.35}
+  .scan-kpis .kpi::after{width:48px;height:48px;inset-inline-end:-12px;bottom:-12px}
+  .scan-cam.idle,.scan-cam.offline{border-radius:0}
+  .scan-idle{padding:16px 14px 14px}
+  .scan-idle .ico{width:32px;height:32px;margin-bottom:6px}
+  .scan-idle b{font-size:.92rem;margin-bottom:0}
+  .scan-idle p{display:none}
+  .scan-idle .btn{margin-top:10px;min-height:36px;width:100%;max-width:220px}
+  .scan-bar{padding:12px 12px 14px}
+  .scan-bar-row{flex-direction:column;align-items:stretch}
+  .scan-bar-row .in,.scan-bar-row .btn{width:100%;flex:none}
+  .scan-result{padding:14px 14px}
+  .scan-result .who{font-size:1.1rem}
+  .scan-feed{padding:12px 8px 12px 12px}
+  .scan-log{min-height:100px}
+  .scan-analytics > header p{display:none}
+  .scan-charts .panel h3 span{display:none}
+  .scan-chart{min-height:160px}
+  .scan-offer{padding:12px 12px 12px 14px;gap:10px}
+  .scan-pay{padding:10px 12px}
 }
 
 /* ---------- checks ---------- */
