@@ -561,11 +561,36 @@ dialog .acts{justify-content:flex-start}
   const isConf = r => r.status === 'verified' || r.status === 'badges sent';
   const fullName = m => (String(m.fn || '') + ' ' + String(m.ln || '')).trim();
   function presentIds(r) {
-    if (Array.isArray(r.present)) return r.present.map(Number);
+    if (Array.isArray(r.present)) return r.present.map(Number).filter(k => k >= 1);
     return r.checkin ? (r.members || []).map((_, i) => i + 1) : [];
   }
   const isIn = (r, i) => presentIds(r).indexOf(i + 1) >= 0;
   const inCount = r => presentIds(r).filter(k => k >= 1 && k <= (r.members || []).length).length;
+  /** Keep attendance/payment visible in every admin tab from the same in-memory row. */
+  function upsertRow(rec) {
+    if (!rec || !rec.code) return null;
+    const i = rows.findIndex(x => x.code === rec.code);
+    if (i >= 0) rows[i] = rec; else rows.push(rec);
+    return rec;
+  }
+  function withPresent(rec, member) {
+    const n = (rec.members || []).length;
+    const idx = Math.max(1, Math.min(n || 1, Number(member) || 1));
+    const present = presentIds(rec).slice();
+    if (present.indexOf(idx) < 0) present.push(idx);
+    present.sort((a, b) => a - b);
+    return Object.assign({}, rec, {
+      present,
+      checkin: n > 0 && present.length >= n,
+      checkinAt: rec.checkinAt || new Date().toISOString()
+    });
+  }
+  function withPaid(rec, paid) {
+    return Object.assign({}, rec, {
+      paid: !!paid,
+      paidAt: paid ? (rec.paidAt || new Date().toISOString()) : ''
+    });
+  }
   function toast(t, bad) { const n = $('#toast'); n.textContent = t; n.className = 'toast' + (bad ? ' err' : ''); n.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { n.hidden = true; }, 2600); }
   function sync(state, text) { const s = $('#sync'); s.className = 'sync ' + (state || ''); $('#sync-t').textContent = text; }
   const ICON = {
@@ -904,9 +929,9 @@ dialog .acts{justify-content:flex-start}
             try {
               const r = await api('admin_update', { token, code: rec.code, patch: { paid: true } });
               if (!r.ok) throw new Error(r.error || 'fail');
-              const ix = rows.findIndex(x => x.code === rec.code); if (ix >= 0) rows[ix] = r.rec;
+              upsertRow(withPaid(r.rec || rec, true));
               analyse(); renderAll();
-              toast('تم تسجيل الدفع · ' + fullName(m));
+              toast('تم الدفع في جداول الإدارة · ' + fullName(m));
               beep('ok');
             } catch (e) {
               if (e.message !== 'auth') toast('تعذّر حفظ الدفع، حاولوا مجددًا', true);
@@ -928,13 +953,22 @@ dialog .acts{justify-content:flex-start}
     return { code: parts[0] + '-' + parts[1], member: parts[2] ? Number(parts[2]) : 1 };
   }
   async function saveCheckin(parsed, raw) {
+    const member = parsed.member || 1;
     const local = rows.find(x => x.code === parsed.code);
-    const already = local ? isIn(local, Math.max(0, (parsed.member || 1) - 1)) : false;
-    // Live Apps Script already has admin_update with per-member check-in — use it first.
-    let r = await api('admin_update', { token, code: parsed.code, patch: { checkinMember: parsed.member, checkin: true } });
-    if (r && r.ok && r.rec) return { ok: true, already, member: parsed.member, rec: r.rec };
+    const already = local ? isIn(local, member - 1) : false;
+    let r = await api('admin_update', { token, code: parsed.code, patch: { checkinMember: member, checkin: true } });
+    if (r && r.ok && r.rec) {
+      let rec = withPresent(r.rec, member);
+      // If the live script ignored per-member check-in, fall back to full registration check-in then keep this member present in the dashboard.
+      if (!isIn(r.rec, member - 1) && !(r.rec.checkin === true && (r.rec.members || []).length <= 1)) {
+        const r2 = await api('admin_update', { token, code: parsed.code, patch: { checkin: true } });
+        if (r2 && r2.ok && r2.rec) rec = withPresent(r2.rec, member);
+      }
+      return { ok: true, already, member, rec };
+    }
     if (r && (r.error === 'auth' || r.error === 'not found')) return r;
-    r = await api('admin_checkin', { token, qr: raw, code: parsed.code, member: parsed.member });
+    r = await api('admin_checkin', { token, qr: raw, code: parsed.code, member });
+    if (r && r.ok && r.rec) return { ok: true, already: !!r.already || already, member: r.member || member, rec: withPresent(r.rec, r.member || member) };
     return r;
   }
   async function handleQr(raw) {
@@ -955,18 +989,18 @@ dialog .acts{justify-content:flex-start}
           if (r && r.error === 'not found') { lastScan = null; beep('bad'); flashCam('bad'); showScanCard('bad', 'لا يوجد تسجيل بهذا الرقم'); toast('لا يوجد تسجيل مطابق', true); }
           else if (r && r.error === 'not confirmed') { lastScan = null; beep('dup'); flashCam('warn'); showScanCard('pending', '', r.rec, r.member || parsed.member); toast('التسجيل لم يُؤكَّد بعد', true); }
           else if (r && r.ok && r.rec) {
-            const i = rows.findIndex(x => x.code === r.rec.code); if (i >= 0) rows[i] = r.rec; else rows.push(r.rec);
+            const rec = upsertRow(withPresent(r.rec, r.member || parsed.member));
             analyse();
             const idx = Math.max(0, (r.member || parsed.member || 1) - 1);
-            const m = r.rec.members[idx] || {};
-            const name = fullName(m) || r.rec.code;
-            const paidHint = r.rec.paid ? ' · مدفوع' : ' · بانتظار الدفع';
-            scanLog.unshift({ code: r.rec.code, name, offer: r.rec.offer, detail: (r.already ? 'سبق حضوره' : 'حضور جديد · ' + r.rec.inst) + paidHint, at: dshort(new Date().toISOString()) });
+            const m = rec.members[idx] || {};
+            const name = fullName(m) || rec.code;
+            const paidHint = rec.paid ? ' · مدفوع' : ' · بانتظار الدفع';
+            scanLog.unshift({ code: rec.code, name, offer: rec.offer, detail: (r.already ? 'سبق حضوره' : 'حضور في اللوحة · ' + rec.inst) + paidHint, at: dshort(new Date().toISOString()) });
             if (scanLog.length > 40) scanLog.length = 40;
-            lastScan = { kind: r.already ? 'dup' : 'ok', code: r.rec.code, member: idx + 1 };
+            lastScan = { kind: r.already ? 'dup' : 'ok', code: rec.code, member: idx + 1 };
             renderAll();
-            if (r.already) { beep('dup'); flashCam('warn'); showScanCard('dup', '', r.rec, idx + 1); toast(name + ' سبق تسجيل حضوره'); }
-            else { beep('ok'); flashCam('hit'); showScanCard('ok', '', r.rec, idx + 1); toast('حُفظ حضور ' + name); }
+            if (r.already) { beep('dup'); flashCam('warn'); showScanCard('dup', '', rec, idx + 1); toast(name + ' سبق تسجيل حضوره في الجداول'); }
+            else { beep('ok'); flashCam('hit'); showScanCard('ok', '', rec, idx + 1); toast('حاضر الآن في جداول الإدارة · ' + name); }
           } else { lastScan = null; beep('bad'); flashCam('bad'); toast('تعذّر تسجيل الحضور', true); }
         }
       }
@@ -1300,8 +1334,15 @@ dialog .acts{justify-content:flex-start}
     try {
       const r = await api('admin_update', { token, code, patch });
       if (!r.ok) throw new Error(r.error);
-      const i = rows.findIndex(x => x.code === code); if (i >= 0) rows[i] = r.rec;
-      analyse(); renderAll(); toast('تم الحفظ في Google Sheet');
+      let rec = r.rec;
+      if (patch && 'checkinMember' in patch) rec = withPresent(rec, patch.checkinMember);
+      else if (patch && 'checkin' in patch) {
+        const ids = patch.checkin ? (rec.members || []).map((_, i) => i + 1) : [];
+        rec = Object.assign({}, rec, { present: ids, checkin: !!patch.checkin, checkinAt: patch.checkin ? (rec.checkinAt || new Date().toISOString()) : '' });
+      }
+      if (patch && 'paid' in patch) rec = withPaid(rec, patch.paid);
+      upsertRow(rec);
+      analyse(); renderAll(); toast('تم التحديث في جداول الإدارة');
     } catch (e) { if (e.message !== 'auth') toast('تعذّر الحفظ، حاولوا مجددًا', true); }
     if (btn && document.contains(btn)) btn.disabled = false;
   }
